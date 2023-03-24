@@ -1,0 +1,85 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  m_sendmail1 : 연차계획일 메일 발송 (7일전)
+//  시작시간 : 08:00
+//  종료시간 : 08:30 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+n_smtp ln_smtp
+String ls_body
+Boolean lb_html
+ls_body = ''
+lb_html = FALSE
+Long i
+Integer li_no
+DateTime ld_date
+String ls_empno, ls_tomail, ls_toname, ls_ccmail, ls_ccname, ls_daycnt, ls_date, ls_posi
+
+st_msg1.text = '-'
+
+IF Mid(is_time,1,4) >= is_job[1,2]  AND Mid(is_time,1,4) <= is_job[1,3]  THEN
+	IF dw_sendmail1.RetRieve(is_date) < 1 THEN
+		st_msg1.Text = '메일발송 : SKIP' 
+		RETURN
+	END IF
+	
+
+	// 메일 발송 
+	FOR i = 1 TO dw_sendmail1.RowCount()
+		
+		// 메일수산자 및 참조자 정보
+		li_no     = dw_sendmail1.GetItemNumber(i, 'I_NO')
+		ls_empno  = dw_sendmail1.GetItemString(i, 'I_EMPNO')
+		ls_tomail = dw_sendmail1.GetItemString(i, 'E_MAIL')
+		ls_toname = dw_sendmail1.GetItemString(i, 'N_EMPNM') 
+		ls_posi   = dw_sendmail1.GetItemString(i, 'N_POSI') 
+		ls_daycnt = String(dw_sendmail1.GetItemNumber(i, 'M_CNT'))
+		ls_ccmail = dw_sendmail1.GetItemString(i, 'E_MAIL2')
+		ls_ccname = dw_sendmail1.GetItemString(i, 'N_EMPNM2')
+		ld_date   = dw_sendmail1.GetItemDateTime(i, 'D_DATE')		
+		ls_date   = String(ld_date, 'yyyy') + '년 ' + String(ld_date, 'mm') + '월 ' + String(ld_date, 'dd') + '일'
+		
+		// 메일 본문 내용 
+		ls_body = ''
+		ls_body = ls_body + ls_toname + ' ' + ls_posi +'님!'
+		ls_body = ls_body + '~r~n~r~n'
+		ls_body = ls_body + ls_date   + '은 ' +   Mid(ls_date,1,4) + '년 개인별 연차휴가 사용 계획 ' + ls_daycnt + '일 전 입니다.'
+		ls_body = ls_body + '~r~n~r~n'
+		ls_body = ls_body + '연차휴가 사용 계획 변경 사항 발생 시 ERP 시스템에서 수정하시기 바랍니다.'
+		ls_body = ls_body + '~r~n~r~n'
+		ls_body = ls_body + '감사합니다'
+		
+		// 메일 작성 및 발송 
+		ln_smtp.of_SetLogfile(True)	
+		ln_smtp.of_DeleteLogfile()
+		
+		ln_smtp.of_SetLogin(is_uid, is_pwd)
+		ln_smtp.of_SetPort(Integer(is_port))
+		ln_smtp.of_SetServer(is_server)
+		
+		ln_smtp.of_SetReceipt(FALSE)
+		
+		ln_smtp.of_Reset()
+		
+		ln_smtp.of_SetFrom('steerp@s-tank.com', 'STank ERP')  
+		ln_smtp.of_SetSubject('연차 사용 계획일 안내')
+		
+		ln_smtp.of_SetBody(ls_body , lb_html)  // 내용 
+		ln_smtp.of_AddTo(ls_tomail, ls_toname) // 수신자
+		
+		IF ls_tomail <> ls_ccmail THEN ln_smtp.of_AddCc(ls_ccmail, ls_ccname) // 참조자
+		
+		ln_smtp.of_SetBody(ls_body, lb_html) 
+		IF ln_smtp.of_SendMail()  THEN           // 메일 발송 
+			INSERT INTO TB_LOGMAILSEND 
+            	      (C_GCODE, D_DATE, I_SER, I_EMPNO, T_TO, T_MENU, T_REMARK, D_CRDATE)
+			     VALUES (:is_job[1,1], TO_DATE(:is_date, 'yyyy.mm.dd'), :li_no, :ls_empno, :ls_tomail, :ls_body, :ls_ccmail, SYSDATE);
+			COMMIT USING SQLCA;
+		END IF
+		
+		
+	NEXT
+	
+	st_msg1.Text = '메일발송 : ' + is_date
+
+END IF
+

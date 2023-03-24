@@ -1,0 +1,89 @@
+0.  NLS_LANG CharacterSet 변경
+sqlplus "/as sysdba"
+
+shutdown immediate;
+startup mount;
+alter system enable restricted session;
+alter system set job_queue_processes=0;
+alter system set aq_tm_processes=0;
+alter database open;
+alter database character set internal_use KO16MSWIN949;
+
+
+shutdown immediate;
+startup;
+
+
+1.  Table Space생성
+1.1 ADT / ADT_TMP
+CREATE TABLESPACE ADT
+	DATAFILE 'D:\oracleex\app\oracle\oradata\ADT\ADT.DBF' SIZE 50M  
+AUTOEXTEND ON  NEXT 2M    MAXSIZE UNLIMITED;
+
+CREATE TEMPORARY TABLESPACE ADT_TMP
+    TEMPFILE 'D:\oracleex\app\oracle\oradata\ADT\ADT_TMP.DBF' size 1000M
+ EXTENT management local UNIFORM SIZE 256k ;
+
+
+1.2 TECH_DB / TECH_TMP
+CREATE TABLESPACE TECH_DB
+	DATAFILE 'D:\oracleex\app\oracle\oradata\TECH\TECH.DBF' SIZE 50M  
+AUTOEXTEND ON  NEXT 2M    MAXSIZE UNLIMITED;
+
+CREATE TEMPORARY TABLESPACE TECH_TMP
+    TEMPFILE 'D:\oracleex\app\oracle\oradata\TECH\TECH_TMP.DBF' size 1000M
+ EXTENT management local UNIFORM SIZE 256k ;
+
+1.3 STE_APP
+CREATE TABLESPACE STE_APP
+	DATAFILE 'D:\oracleex\app\oracle\oradata\STE_APP.DBF' SIZE 50M  
+AUTOEXTEND ON  NEXT 2M    MAXSIZE UNLIMITED;
+
+1.4 TS_STEVIEW
+CREATE TABLESPACE TS_STEVIEW
+	DATAFILE 'D:\oracleex\app\oracle\oradata\STE\STEVIEW.DBF' SIZE 50M  
+AUTOEXTEND ON  NEXT 2M    MAXSIZE UNLIMITED;
+
+1.5 USERS02
+CREATE TABLESPACE USERS02
+	DATAFILE 'D:\oracleex\app\oracle\oradata\STE\USERS02.DBF' SIZE 50M  
+AUTOEXTEND ON  NEXT 2M    MAXSIZE UNLIMITED;
+
+1.6 NEOE
+CREATE TABLESPACE NEOE
+	DATAFILE 'D:\oracleex\app\oracle\oradata\NEOE\NEOE.DBF' SIZE 50M  
+AUTOEXTEND ON  NEXT 2M    MAXSIZE UNLIMITED;
+
+
+
+2. 사용장 생성
+create user ste identified by ste2010;
+create user neoe identified by neoe default tablespace NEOE;
+create user nesting identified by nestingdpgml;
+create user steview identified by steview;
+create user secoms1 identified by s1secom;
+create user tech identified by stanktech#2021 default tablespace TECH_DB temporary tablespace TECH_TMP;
+create user adt identified by adt12 default tablespace ADT temporary tablespace ADT_TMP;
+create user ewalker identified by "ewalker2021!";
+
+
+3. 사용자 권한 부여
+grant dba to neoe;
+
+
+4. IMPDP 절차
+디렉터리 생성
+CREATE DIRECTORY dir_dump as 'D:\STE_FTP\DBDUMP';
+
+IMP 시작
+impdp system/stank#2013 dumpfile=EXPDP_NEOE.DMP directory=dir_dump EXCLUDE=INDEX_STATISTICS  LOGFILE=neoedp.log
+impdp system/stank#2013 dumpfile=EXPDP_NESTING.DMP directory=dir_dump EXCLUDE=INDEX_STATISTICS  LOGFILE=nestingdp.log
+impdp system/stank#2013 dumpfile=EXPDP_SECOMS1.DMP directory=dir_dump EXCLUDE=INDEX_STATISTICS  LOGFILE=secoms1dp.log
+impdp system/stank#2013 dumpfile=EXPDP_ADT.DMP directory=dir_dump EXCLUDE=INDEX_STATISTICS  LOGFILE=adtdp.log
+
+impdp system/stank#2013 dumpfile=EXPDP_STE.DMP directory=dir_dump EXCLUDE=INDEX_STATISTICS  LOGFILE=stedp.log
+
+
+
+
+

@@ -1,0 +1,8 @@
+socket.io.js:1595 WebSocket connection to 'wss://protagonist.kro.kr/socket.io/?EIO=4&transport=websocket' failed: 
+
+
+curl "/protagonist.kro.kr//socket.io/?EIO=4&transport=polling"
+
+curl /protagonist.kro.kr//socket.io/?EIO=4&transport=polling
+
+https://protagonist.kro.kr//socket.io/?EIO=4&transport=polling

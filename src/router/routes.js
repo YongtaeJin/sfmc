@@ -50,12 +50,6 @@ const routes = [
 		meta: { requireLogin: true },
 	},
 	{
-		path: '/shop/signed',
-		name: 'ShopSigned',
-		component: () => import(/* webpackChunkName: "ShopSigned" */ '../views/shop/Signed.vue'),
-		meta: { requireLogin: true },
-	},
-	{
 		path: '/shop/shopmag',
 		name: 'ShopMag',
 		component: () => import(/* webpackChunkName: "ShopMag" */ '../views/shop/Shopmag.vue'),

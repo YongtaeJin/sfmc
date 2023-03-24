@@ -13,7 +13,7 @@ const configModel = {
 		};
 		for (const row of rows) {
 			this.setConfigItem(row, true);
-		}
+		}		
 	},
 	setConfigItem(item, isLoading = false) {
 		configModel.clearConfigItem(item.cf_key, isLoading);
