@@ -2,7 +2,7 @@
   <v-avatar color="accent" size="32">
     <template v-if="member">
       <v-img v-if="hasImage" :src="memberPhoto" @error="imageError" />
-      <div v-else>{{ member.mb_name[0] }}</div>
+      <div v-else>{{ member.n_name[0] }}</div>
     </template>
     <v-icon v-else>mdi-account</v-icon>
   </v-avatar>
@@ -24,12 +24,12 @@ export default {
   },
   computed: {
     memberPhoto() {
-      if (this.member.mb_photo) {
+      if (this.member.t_photo) {
 				this.hasImage = true;
-        if (this.member.mb_photo.startsWith("/upload")) {
-          return this.member.mb_photo + "?w=32&h=32";
+        if (this.member.t_photo.startsWith("/upload")) {
+          return this.member.t_photo + "?w=32&h=32";
         } else {
-          return this.member.mb_photo;
+          return this.member.t_photo;
         }
       } else {
 				this.hasImage = false;

@@ -8,7 +8,7 @@
   >
     <input-duplicate-check
       ref="id"
-      v-model="form.mb_id"
+      v-model="form.i_id"
       label="아이디"
       prepend-icon="mdi-account"
       readonly
@@ -16,15 +16,15 @@
 
     <v-text-field
       label="이름"
-      v-model="form.mb_name"
+      v-model="form.n_name"
       prepend-icon="mdi-card-account-details-outline"
       :rules="rules.name()"
     />
 
-    <template v-if="!member.mb_provider">
+    <template v-if="!member.i_provider">
       <input-password
         label="비밀번호"
-        v-model="form.mb_password"
+        v-model="form.p_password"
         prepend-icon="mdi-lock"
         :rules="rules.password2({ required: false , len: 3 })"
       />
@@ -33,61 +33,21 @@
         label="비밀번호 확인"
         v-model="confirmPw"
         prepend-icon="mdi-lock"
-        :rules="[rules.matchValue(form.mb_password)]"
+        :rules="[rules.matchValue(form.p_password)]"
       />
     </template>
 
     <input-duplicate-check
       ref="email"
-      v-model="form.mb_email"
+      v-model="form.e_email"
       label="이메일"
       prepend-icon="mdi-email"
       :rules="rules.email()"
       :cbCheck="cbCheckEmail"
-      :origin="member.mb_email"
+      :origin="member.e_email"
       :readonly="!admMode"
     />
-<!--
-    <input-date
-      v-model="form.mb_birth"
-      label="생년월일"
-      prepend-icon="mdi-calendar"
-      :rules="rules.date({ label: '생년월일' })"
-    />
 
-    <div class="d-flex align-center">
-      <display-avatar :member="member" />
-      <v-file-input
-        class="ml-2"
-        label="회원이미지"
-        v-model="form.mb_image"
-        :prepend-icon="null"
-        accept="image/jpg,image/png"
-      />
-      <v-checkbox v-model="form.deleteImage" label="삭제"> </v-checkbox>
-    </div>
-
-    <input-radio
-      v-model="form.mb_gender"
-      :items="genderItems"
-      row
-      prepend-icon="mdi-gender-male-female"
-      :rules="[rules.require({ label: '성별' })]"
-    />
-
-    <input-phone
-      v-model="form.mb_phone"
-      label="전화번호"
-      prepend-icon="mdi-phone"
-      :rules="rules.phone()"
-    />
-
-    <input-post
-      :zipcode.sync="form.mb_zip"
-      :addr1.sync="form.mb_addr1"
-      :addr2.sync="form.mb_addr2"
-    />
--->
     <v-btn type="submit" block color="primary" :loading="isLoading">
       정보 수정
     </v-btn>
@@ -150,16 +110,16 @@ export default {
   },
   mounted() {
     this.form = deepCopy(this.member);
-    this.form.mb_password = "";
+    this.form.p_password = "";
     this.form.admMode = this.admMode;
     this.form.deleteImage = false;
-    delete this.form.mb_create_at;
-    delete this.form.mb_create_ip;
-    delete this.form.mb_update_at;
-    delete this.form.mb_update_ip;
-    delete this.form.mb_login_at;
-    delete this.form.mb_login_ip;
-    delete this.form.mb_leave_at;
+    delete this.form.d_create_at;
+    delete this.form.t_create_ip;
+    delete this.form.d_update_at;
+    delete this.form.t_update_ip;
+    delete this.form.d_login_at;
+    delete this.form.t_login_ip;
+    delete this.form.d_leave_at;
   },
   destroyed() {
     this.form = null;

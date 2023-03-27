@@ -30,12 +30,12 @@ export default {
   methods: {
     ...mapActions("user", ["duplicateCheck", 'createMember']),
     async checkId(id) {
-      const data = await this.duplicateCheck({ field: "mb_id", value: id });
+      const data = await this.duplicateCheck({ field: "i_id", value: id });
       return data;
     },
     async checkEmail(email) {
       const data = await this.duplicateCheck({
-        field: "mb_email",
+        field: "e_email",
         value: email,
       });
       return data;
@@ -45,8 +45,8 @@ export default {
       const data = await this.createMember(form);
     	this.isLoading = false;
 			if(data) {
-				const mb_name = form.get('mb_name');
-				this.$toast.info(`${mb_name}님 회원 가입하셧습니다.`);
+				const n_name = form.get('n_name');
+				this.$toast.info(`${n_name}님 회원 가입하셧습니다.`);
 				this.$router.push('/login');
 			}
     },

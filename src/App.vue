@@ -71,20 +71,5 @@ export default {
 </script>
 
 <style>
-.mytable table th {
-    /* background-color: lightgoldenrodyellow; */	
-	background-color: #D4F755;
-    border-bottom: none !important;
- }
- 
-.v-data-table > .v-data-table__wrapper > table > tbody > tr > th, .v-data-table > .v-data-table__wrapper > table > thead > tr > th, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > th 
-{
-	font-size: 1.00rem;
-    height: 35px;    
-}
-.v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
-  font-size: 0.35rem;
-  height: 26px; 
-}
 
 </style>

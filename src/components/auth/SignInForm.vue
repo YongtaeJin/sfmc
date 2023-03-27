@@ -1,9 +1,9 @@
 <template>
   <v-form @submit.prevent="save" ref="form" v-model="valid" lazy-validation>
-    <v-text-field label="아이디" v-model="form.mb_id" :rules="rules.id()" />
+    <v-text-field label="아이디" v-model="form.i_id" :rules="rules.id()" />
     <input-password
       label="비밀번호"
-      v-model="form.mb_password"
+      v-model="form.p_password"
       :rules="rules.password2({len:3})"
     />
     <v-btn block color="primary" type="submit" :loading="isLoading">
@@ -28,8 +28,8 @@ export default {
     return {
       valid: true,
       form: {
-        mb_id: "",
-        mb_password: "",
+        i_id: "",
+        p_password: "",
       },
     };
   },

@@ -4,8 +4,7 @@ import { LV } from '../../../util/level';
 
 export const state = () => ({
 	member: null,
-	token: null,
-	shopinfo: null,   // 스마트공방 신청 정보
+	token: null,	
 });
 
 export const mutations = {
@@ -15,24 +14,15 @@ export const mutations = {
 	SET_TOKEN(state, token) {
 		state.token = token;
 	},	
-	SET_SHOPINFO(state, shopinfo) {
-		state.shopinfo = shopinfo;
-	}
+	
 };
 export const getters = {
 	isAdmin(state) {
-		return state.member && state.member.mb_level >= LV.ADMIN;
+		return state.member && state.member.i_level >= LV.ADMIN;
 	},
 	isSuper(state) {
-		return state.member && state.member.mb_level >= LV.SUPER;
-	},
-	isShopinfochk(state) {
-		for(let ob in state.shopinfo) {
-			// console.log(ob, state.shopinfo[ob]);
-			if (!state.shopinfo[ob]) { return 0 ;}
-		}
-		return 1;
-	}
+		return state.member && state.member.i_level >= LV.SUPER;
+	},	
 };
 export const actions = {
 	async initUser({ commit }) {
@@ -60,20 +50,15 @@ export const actions = {
 			commit('SET_MEMBER', data.member);
 			commit('SET_TOKEN', data.token);
 		}
-		const data2 = await $axios.get(`/api/shopinfo`, form);		
-		if (data2) {			
-			commit('SET_SHOPINFO', data2);
-		}
 		return !!data;
 	},
 	async signOut({ commit, state }) {
 		const { $axios } = Vue.prototype;
-		const mb_name = state.member.mb_name;
+		const n_name = state.member.n_name;
 		const data = await $axios.get('/api/member/signOut');
 		commit('SET_MEMBER', null);
-		commit('SET_TOKEN', null);
-		commit('SET_SHOPINFO', null);
-		return mb_name;
+		commit('SET_TOKEN', null);		
+		return n_name;
 	},
 	async findIdLocal(ctx, form) {
 		const { $axios } = Vue.prototype;
@@ -104,18 +89,5 @@ export const actions = {
 			commit('SET_MEMBER', data);
 		}
 		return !!data;
-	},
-	async checkShopInfo({ commit }, form) {
-		const { $axios } = Vue.prototype;
-		const data = await $axios.get(`/api/shopinfo`, form);		
-		if (data) {			
-			commit('SET_SHOPINFO', data);
-		}				
-		return !!data;
-	},
-	async updateShopInfo({ commit }, form) {
-		const { $axios } = Vue.prototype;
-		const data = await $axios.patch(`/api/shopinfo`, form);		
-		return !!data;
-	}
+	},	
 };

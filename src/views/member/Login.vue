@@ -65,8 +65,8 @@ export default {
       const data = await this.signInLocal(form);
       this.isLoading = false;
       if (data) {
-        const mb_name = this.$store.state.user.member.mb_name;
-        this.$toast.info(`${mb_name}님 환영합니다.`);
+        const n_name = this.$store.state.user.member.n_name;
+        this.$toast.info(`${n_name}님 환영합니다.`);
         this.$router.push("/");
       }
     },
@@ -76,7 +76,7 @@ export default {
       this.isLoading = false;
       if (data && data.mb_id) {
         await this.$ezNotify.alert(
-          `<span style="font-size:1.5em">회원 아이디 : [ <b>${data.mb_id}</b> ]</span>`,
+          `<span style="font-size:1.5em">회원 아이디 : [ <b>${data.i_id}</b> ]</span>`,
           "아이디 찾기 결과"
         );
         this.tabs = 0;
@@ -88,7 +88,7 @@ export default {
       this.isLoading = false;
       if (data) {
         await this.$ezNotify.alert(
-          `${data.mb_name}님<br><b>${form.mb_email}</b>로 이메일 발송하였습니다.`,
+          `${data.mb_name}님<br><b>${form.e_email}</b>로 이메일 발송하였습니다.`,
           "이메일 발송 성공"
         );
         this.tabs = 0;
@@ -121,7 +121,7 @@ export default {
         this.SET_TOKEN(payload.token);
         this.$router.push("/");
         this.$toast.info(
-          `${this.$store.state.user.member.mb_name}님 환영합니다.`
+          `${this.$store.state.user.member.n_name}님 환영합니다.`
         );
       }
     },

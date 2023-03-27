@@ -2,6 +2,7 @@
 node_modules
 /OracleKey
 /upload
+/dist
 
 # local env files
 .env.local

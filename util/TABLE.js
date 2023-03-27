@@ -1,9 +1,7 @@
 const TABLE = {
-	MEMBER : 'member',
-	SEND_MAIL : 'send_mail',
-	CONFIG : 'config',
-	COMPANY : 'tb_company',
-	USERS : 'tb_members',
+	MEMBER : 'tb_member',
+	SEND_MAIL : 'tb_send_mail',
+	CONFIG : 'tb_config',	
 };
 
 module.exports = TABLE;

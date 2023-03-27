@@ -1,7 +1,6 @@
 <template>
   <v-btn to="/" text plain class="px-0 text-none text-h6">
-    등록(도입기업 전용)
-    <!-- {{ title }} -->
+    {{ title }}
   </v-btn>
 </template>
 

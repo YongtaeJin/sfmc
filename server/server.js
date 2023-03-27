@@ -89,7 +89,7 @@ require('./plugins/pm2Bus');
 
 		const ctx = {
 			url: req.url,
-			title: 'Protagonist App',
+			title: 'SFMC App',
 			metas: `<!-- inject more metas -->`,
 			token: req.cookies.token || null,
 			member: req.user || null,

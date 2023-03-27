@@ -1,9 +1,9 @@
 <template>
   <v-form @submit.prevent="save" ref="form" v-model="valid" lazy-validation>
-    <v-text-field label="이름" v-model="form.mb_name" :rules="rules.name()" />
+    <v-text-field label="이름" v-model="form.n_name" :rules="rules.name()" />
     <v-text-field
       label="이메일"
-      v-model="form.mb_email"
+      v-model="form.e_email"
       :rules="rules.email()"
     />
     <v-btn block color="primary" type="submit" :loading="isLoading">
@@ -26,8 +26,8 @@ export default {
     return {
       valid: true,
       form: {
-        mb_name: "",
-        mb_email: "",
+        n_name: "",
+        e_email: "",
       },
     };
   },

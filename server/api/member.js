@@ -35,10 +35,10 @@ router.post('/loginLocal', async (req, res) => {
 					res.json({ err })
 				} else {					
 					const token = jwt.getToken(member);
-					console.log("token", token);
-					const data = memberModel.loginMember(req);
-					member.mb_login_at = data.mb_login_at;
-					member.mb_login_ip = data.mb_login_ip;
+					// console.log("token----", token);
+					const data = memberModel.loginMember(req);					
+					member.d_login_at = data.d_login_at;
+					member.t_login_ip = data.t_login_ip;
 					res.cookie('token', token, { httpOnly: true });
 					res.json({ token, member });
 				}
@@ -57,9 +57,7 @@ router.get('/auth', (req, res) => {
 
 // 로그아웃 
 router.get('/signOut', (req, res) => {
-	res.clearCookie('token');
-	res.clearCookie('i_no');
-	res.clearCookie('i_shop');
+	res.clearCookie('token');	
 	res.json(true);
 });
 

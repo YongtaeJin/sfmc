@@ -37,13 +37,13 @@ module.exports = (app) => {
 
 	passport.use(new LocalStrategy(
 		{
-			usernameField: 'mb_id',
-			passwordField: 'mb_password'
+			usernameField: 'i_id',
+			passwordField: 'p_password'
 		},
-		async (mb_id, mb_password, done) => {
+		async (i_id, p_password, done) => {
 			try {
-				mb_password = jwt.generatePassword(mb_password);
-				const member = await memberModel.getMemberBy({ mb_id, mb_password });
+				p_password = jwt.generatePassword(p_password);
+				const member = await memberModel.getMemberBy({ i_id, p_password });
 				const msg = loginRules(member);
 				if (msg) {
 					return done(null, null, msg);
@@ -149,12 +149,12 @@ module.exports = (app) => {
 	app.use(async (req, res, next) => {
 		const token = req.cookies.token;
 		if (!token) return next();
-		const { mb_id } = jwt.vetify(token);
+		const { i_id } = jwt.vetify(token);
 		const user = jwt.vetify(token);
 		
-		if (!mb_id) return next();
+		if (!i_id) return next();
 		try {
-			const member = await memberModel.getMemberBy({ mb_id });
+			const member = await memberModel.getMemberBy({ i_id });
 			req.login(member, { session: false }, (err) => { });
 		} catch (e) {
 			console.log(e);
