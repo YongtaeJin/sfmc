@@ -2,7 +2,7 @@
   <div :style="{'padding-left' : depth*2 + 'px'}">
     <div v-for="(item, i) in items" :key="`${i}${item.title}`">
       <v-list-group
-        v-if="item.subItems && item.subItems.length > 0 && member.mb_level >= item.grant "
+        v-if="item.subItems && item.subItems.length > 0 && member.i_level >= item.grant "
         :prepend-icon="depth === 0 ? item.icon : ''"
         no-action
         :sub-group="depth > 0"
@@ -19,7 +19,7 @@
         <nested-menu :items="item.subItems" :depth="depth + 1" />
       </v-list-group>
       
-      <v-list-item v-else-if="member.mb_level >= item.grant" v-bind="getLink(item)">
+      <v-list-item v-else-if="member.i_level >= item.grant" v-bind="getLink(item)">
         <v-list-item-icon v-if="depth === 0">
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>

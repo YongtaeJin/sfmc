@@ -1,8 +1,0 @@
-axios.get('https://extreme-ip-lookup.com/json').then(res => { console.log(res.data);});
-
-fetch('https://api.ipify.org?format=json')
-        .then(x => x.json())
-        .then(({ ip }) => {
-        this.term = ip;
-        console.log(ip);
-        });

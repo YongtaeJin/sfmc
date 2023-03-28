@@ -27,6 +27,164 @@ const store = new Vuex.Store({
 					newTab : false,
 					subItems : []
 				},
+				{
+					title : "시스템관리",
+					icon : "mdi-database-settings",
+					to : '',
+					grant : 2, 
+					newTab : false,
+					subItems : [
+						{
+							title : "공통코드관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "사용자관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+					]
+				},
+				{
+					title : "기준정보",
+					icon : "mdi-ab-testing",
+					to : '/about',
+					grant : 2, 
+					newTab : false,
+					subItems : [
+						{
+							title : "거래처관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "품목관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "공정관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "라우팅관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+					]
+				},
+				{
+					title : "영업관리",
+					icon : "mdi-handshake",
+					to : '/about',
+					grant : 2, 
+					newTab : false,
+					subItems : [
+						{
+							title : "견적관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "수주관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+					]
+				},
+				{
+					title : "생산계획",
+					icon : "mdi-wrench",
+					to : '/about',
+					grant : 2, 
+					newTab : false,
+					subItems : [
+						{
+							title : "생산계획",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "작업시지",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+					]
+				},
+				{
+					title : "생산관리",
+					icon : "mdi-basket-fill",
+					to : '/about',
+					grant : 2, 
+					newTab : false,
+					subItems : [
+						{
+							title : "생산실적",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},	
+					]
+				},
+				{
+					title : "납품관리",
+					icon : "mdi-car-multiple",
+					to : '/about',
+					grant : 2, 
+					newTab : false,
+					subItems : [
+						{
+							title : "출하관리",
+							icon : "",
+							to : '',
+							grant : 2, 
+							newTab : false,
+							subItems : []
+						},
+					]
+				},
+				{
+					title : "현황분석",
+					icon : "mdi-chart-bar-stacked",
+					to : '/about',
+					grant : 2, 
+					newTab : false,
+					subItems : []
+				},
 				
 			]
 		},
