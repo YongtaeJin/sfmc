@@ -3,6 +3,7 @@ const TABLE = {
 	USERS : 'tb_users',
 	SEND_MAIL : 'tb_send_mail',
 	CONFIG : 'tb_config',	
+	WORKSITE: 'tb_worksite',
 };
 
 module.exports = TABLE;

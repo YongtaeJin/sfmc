@@ -56,7 +56,7 @@ const configModel = {
 		let where = {};
 		if (all == 'true') {
 			// 권한 확인
-			if (!isGrant(req, LV.ADMIN)) {
+			if (!isGrant(req, LV.SUPER)) {
 				throw new Error('관리자 설정 목록 권한이 없습니다.');
 			}
 			const sort = {
