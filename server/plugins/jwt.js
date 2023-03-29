@@ -20,7 +20,8 @@ const token = {
 	},	
 	getToken(user) {
 		const payload = {
-			i_id : user.i_id
+			i_id : user.i_id,
+			c_com : user.c_com
 		};
 		return jwt.sign(payload, SECRET_KEY, options);
 	},

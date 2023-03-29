@@ -9,7 +9,7 @@ const sqlHelper = require('../../../util/sqlHelper');
 const TABLE = require('../../../util/TABLE');
 const { LV } = require('../../../util/level');
 const moment = require('../../../util/moment');
-const { getIp } = require('../../../util/lib');
+const { getIp, getIdComDiv } = require('../../../util/lib');
 
 function clearMemberField(member) {
 	delete member.p_password;
@@ -145,22 +145,47 @@ const memberModel = {
 		return await memberModel.getMemberBy({i_id});
 	},
 	async getMemberBy(form, cols = []) {
-		const sql = sqlHelper.SelectSimple(TABLE.MEMBER, form, cols);
+		// const sql = sqlHelper.SelectSimple(TABLE.MEMBER, form, cols);
+
+		const { p_idcom, p_password } = form;
+		const sql = { query: null, values:[]};
+		if (p_idcom) {
+			let idcom = getIdComDiv(p_idcom);
+			delete form.p_idcom;			
+			form.i_id = idcom[0];
+			form.c_com = idcom[1];				
+			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider  from tb_member where 'system'=? and i_id=? and p_password=? " +
+						"union " +
+			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider from tb_users where c_com=? and i_id=? and p_password=? "
+			sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_member where
+			sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_users where
+		} else {						
+			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider  from tb_member where 'system'=? and i_id=? " +
+						"union " +
+			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider from tb_users where c_com=? and i_id=?  "
+			sql.values.push(form.c_com|"-"); sql.values.push(form.i_id);   // tb_member where
+			sql.values.push(form.c_com|"-"); sql.values.push(form.i_id);   // tb_users where			
+		}
 		const [[row]] = await db.execute(sql.query, sql.values);
-		if (!row) {
+		if (!row) {			
 			throw new Error('존재하지 않는 회원입니다.');
 		}
 		return clearMemberField(row);
 	},
 	loginMember(req) {
+		// getMemberBy -> 확인후 -> 접속시간, IP 저장
+		const { i_id, c_com } = req.body;
 		const data = {
 			d_login_at: moment().format('LT'),
 			t_login_ip: getIp(req),
 		};
-		const { i_id } = req.body;
-
-		const sql = sqlHelper.Update(TABLE.MEMBER, data, { i_id });
-		db.execute(sql.query, sql.values);
+		if (c_com == "system") {
+			const sql = sqlHelper.Update(TABLE.MEMBER, data, { i_id });
+			db.execute(sql.query, sql.values);
+		} else {
+			const sql2 = sqlHelper.Update(TABLE.USERS, data, { i_id, c_com });
+			db.execute(sql2.query, sql.values);
+		}
 		return data;
 	},
 	async findId(data) {

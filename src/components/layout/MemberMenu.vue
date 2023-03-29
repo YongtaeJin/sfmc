@@ -1,6 +1,6 @@
 <template>
   <div>
-		<v-list v-if="isAdmin" dense class="mt-n6">
+		<v-list v-if="isSuper" dense class="mt-n6">
 			<v-subheader>관리자 메뉴</v-subheader>
 			<v-list-item
 				v-for="item in admMenus"
@@ -41,7 +41,7 @@ export default {
 		...mapState({
 			member : state => state.user.member,
 		}),
-		...mapGetters('user', ['isAdmin'])
+		...mapGetters('user', ['isSuper'])
 	},
   methods: {
     ...mapActions("user", ["signOut"]),

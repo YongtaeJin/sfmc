@@ -33,8 +33,8 @@ router.post('/loginLocal', async (req, res) => {
 				if (err) {
 					console.log('loginLocal', err);
 					res.json({ err })
-				} else {					
-					const token = jwt.getToken(member);
+				} else {
+					const token = jwt.getToken(member);					
 					// console.log("token----", token);
 					const data = memberModel.loginMember(req);					
 					member.d_login_at = data.d_login_at;

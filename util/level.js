@@ -2,27 +2,36 @@ const level = {
 	LV: {
 		BLOCK: 0,
 		AWAIT: 1,
-		MEMBER: 2,
-		VIP: 4,
-		MANAGER: 7,
-		ADMIN: 9,
+		MEMBER: 2,		
+		DELIVERY : 4,		
+		MANAGER: 5,
+		PRODUCTION: 6,
+		BUSINESS: 7,
+		ADMIN: 8,
+		SYSTEN: 9,
 		SUPER: 10
 	},
 	LV_LABEL: (lv) => {
 		if (lv >= level.LV.SUPER) {
-			return '최고관리자';
-		} else if (level.LV.ADMIN <= lv && lv < level.LV.SUPER) {
+			return '프로그램관리자';
+		} else if (level.LV.ADMIN <= lv && lv < level.LV.SYSTEN) {
+			return '시스템관리자';
+		} else if (level.LV.BUSINESS <= lv && lv < level.LV.ADMIN) {			
 			return '관리자';
-		} else if (level.LV.MANAGER <= lv && lv < level.LV.ADMIN) {
-			return '매니져';
-		} else if (level.LV.VIP <= lv && lv < level.LV.MANAGER) {
-			return '우수회원';
-		} else if (level.LV.MEMBER <= lv && lv < level.LV.VIP) {
-			return '일반회원';
+		} else if (level.LV.PRODUCTION <= lv && lv < level.LV.BUSINESS) {
+			return '영업관리';
+		} else if (level.LV.MANAGER <= lv && lv < level.LV.PRODUCTION) {
+			return '생산계획';
+		} else if (level.LV.DELIVERY <= lv && lv < level.LV.MANAGER) {
+			return '생산관리';
+		} else if (level.LV.MEMBER <= lv && lv < level.LV.DELIVERY) {
+			return '납품관리';
+		} else if (level.LV.AWAIT <= lv && lv < level.LV.MEMBER) {
+			return '일반';
 		} else if (level.LV.AWAIT == lv) {
-			return '대기회원';
+			return '대기';
 		} else {
-			return '차단/비 회원';
+			return '차단';
 		}
 	},
 	LV_COLOR: (lv) => {

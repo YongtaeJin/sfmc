@@ -31,14 +31,14 @@ const store = new Vuex.Store({
 					title : "시스템관리",
 					icon : "mdi-database-settings",
 					to : '',
-					grant : 2, 
+					grant : 9, 
 					newTab : false,
 					subItems : [
 						{
 							title : "공통코드관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 9, 
 							newTab : false,
 							subItems : []
 						},
@@ -46,7 +46,7 @@ const store = new Vuex.Store({
 							title : "사용자관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 9, 
 							newTab : false,
 							subItems : []
 						},
@@ -55,15 +55,15 @@ const store = new Vuex.Store({
 				{
 					title : "기준정보",
 					icon : "mdi-ab-testing",
-					to : '/about',
-					grant : 2, 
+					to : '',
+					grant : 8, 
 					newTab : false,
 					subItems : [
 						{
 							title : "거래처관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 8, 
 							newTab : false,
 							subItems : []
 						},
@@ -71,7 +71,7 @@ const store = new Vuex.Store({
 							title : "품목관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 8, 
 							newTab : false,
 							subItems : []
 						},
@@ -79,7 +79,7 @@ const store = new Vuex.Store({
 							title : "공정관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 8, 
 							newTab : false,
 							subItems : []
 						},
@@ -87,7 +87,7 @@ const store = new Vuex.Store({
 							title : "라우팅관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 8, 
 							newTab : false,
 							subItems : []
 						},
@@ -96,15 +96,15 @@ const store = new Vuex.Store({
 				{
 					title : "영업관리",
 					icon : "mdi-handshake",
-					to : '/about',
-					grant : 2, 
+					to : '',
+					grant : 7, 
 					newTab : false,
 					subItems : [
 						{
 							title : "견적관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -112,7 +112,7 @@ const store = new Vuex.Store({
 							title : "수주관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -121,15 +121,15 @@ const store = new Vuex.Store({
 				{
 					title : "생산계획",
 					icon : "mdi-wrench",
-					to : '/about',
-					grant : 2, 
+					to : '',
+					grant : 6, 
 					newTab : false,
 					subItems : [
 						{
 							title : "생산계획",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -137,7 +137,7 @@ const store = new Vuex.Store({
 							title : "작업시지",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -146,15 +146,15 @@ const store = new Vuex.Store({
 				{
 					title : "생산관리",
 					icon : "mdi-basket-fill",
-					to : '/about',
-					grant : 2, 
+					to : '',
+					grant : 5, 
 					newTab : false,
 					subItems : [
 						{
 							title : "생산실적",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 5, 
 							newTab : false,
 							subItems : []
 						},	
@@ -163,15 +163,15 @@ const store = new Vuex.Store({
 				{
 					title : "납품관리",
 					icon : "mdi-car-multiple",
-					to : '/about',
-					grant : 2, 
+					to : '',
+					grant : 4, 
 					newTab : false,
 					subItems : [
 						{
 							title : "출하관리",
 							icon : "",
 							to : '',
-							grant : 2, 
+							grant : 4, 
 							newTab : false,
 							subItems : []
 						},
@@ -180,8 +180,8 @@ const store = new Vuex.Store({
 				{
 					title : "현황분석",
 					icon : "mdi-chart-bar-stacked",
-					to : '/about',
-					grant : 2, 
+					to : '',
+					grant : 6, 
 					newTab : false,
 					subItems : []
 				},

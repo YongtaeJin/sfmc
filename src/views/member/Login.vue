@@ -14,15 +14,15 @@
           <v-tab-item>
             <sign-in-form @save="loginLocal" :isLoading="isLoading" />
           </v-tab-item>
-          <v-tab-item>
+          <!-- <v-tab-item>
             <find-id-form @save="findId" :isLoading="isLoading" />
           </v-tab-item>
           <v-tab-item>
             <find-pw-form @save="findPw" :isLoading="isLoading" />
-          </v-tab-item>
+          </v-tab-item> -->
         </v-tabs-items>
       </v-card-text>
-      <template>
+      <!-- <template>
         <v-card-text v-if=false class="mt-n4">
           <v-btn @click="loginGoogle" block>구글 로그인</v-btn>
         </v-card-text>
@@ -35,7 +35,7 @@
         <v-card-text class="mt-n4">
           <v-btn to="/join" block>회원가입</v-btn>
         </v-card-text>
-      </template>
+      </template> -->
     </v-card>
   </div>
 </template>
@@ -51,9 +51,10 @@ export default {
   name: "Login",
   data() {
     return {
-      tabs: parseInt(this.$route.query.tabs) || 0,
-      items: ["로그인", "아이디 찾기", "비밀번호 찾기"],
-      //items: ["로그인"],
+      // tabs: parseInt(this.$route.query.tabs) || 0,
+      // items: ["로그인", "아이디 찾기", "비밀번호 찾기"],
+      tabs: 0,
+      items: ["로그인"],
       isLoading: false,
     };
   },
@@ -61,7 +62,7 @@ export default {
     ...mapActions("user", ["signInLocal", "findIdLocal", "findPwLocal"]),
     ...mapMutations("user", ["SET_MEMBER", "SET_TOKEN"]),
     async loginLocal(form) {
-      this.isLoading = true;
+      this.isLoading = true;      
       const data = await this.signInLocal(form);
       this.isLoading = false;
       if (data) {

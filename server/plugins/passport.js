@@ -21,10 +21,10 @@ const {
 
 function loginRules(member) {
 	// 탈퇴회원
-	if (member.mb_leave_at) {
+	if (member.d_leave_at) {
 		return '탈퇴 회원입니다.';
 	}
-	switch (member.mb_level) {
+	switch (member.i_level) {
 		case LV.AWAIT:
 			return '대기 회원입니다.';
 		case LV.BLOCK:
@@ -37,13 +37,13 @@ module.exports = (app) => {
 
 	passport.use(new LocalStrategy(
 		{
-			usernameField: 'i_id',
-			passwordField: 'p_password'
+			usernameField: 'p_idcom',
+			passwordField: 'p_password',			
 		},
-		async (i_id, p_password, done) => {
-			try {
-				p_password = jwt.generatePassword(p_password);
-				const member = await memberModel.getMemberBy({ i_id, p_password });
+		async (p_idcom, p_password, done) => {
+			try {								
+				p_password = jwt.generatePassword(p_password);	
+				const member = await memberModel.getMemberBy({ p_idcom, p_password });
 				const msg = loginRules(member);
 				if (msg) {
 					return done(null, null, msg);
@@ -149,12 +149,12 @@ module.exports = (app) => {
 	app.use(async (req, res, next) => {
 		const token = req.cookies.token;
 		if (!token) return next();
-		const { i_id } = jwt.vetify(token);
+		const { i_id, c_com } = jwt.vetify(token);
 		const user = jwt.vetify(token);
 		
 		if (!i_id) return next();
 		try {
-			const member = await memberModel.getMemberBy({ i_id });
+			const member = await memberModel.getMemberBy({ c_com, i_id });
 			req.login(member, { session: false }, (err) => { });
 		} catch (e) {
 			console.log(e);

@@ -44,6 +44,9 @@ const lib = {
 			parent = parent.$parent
 		}
 		return null;
+	},
+	getIdComDiv(req) {
+		return req.split('^:^');
 	}
 }
 
