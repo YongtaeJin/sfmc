@@ -31,7 +31,7 @@ export function createRouter() {
 		const access = store.getters.access;
 		const GRANT = store.getters['user/GRANT'];
 		const isMember = !!store.state.user.member;
-		// console.log(to.path, to.name);
+
 		let msg = '';
 		if (to.name.startsWith('NoAuth') && isMember) {
 			// 비회원 인경우에만 접근
@@ -40,7 +40,7 @@ export function createRouter() {
 			// 관리자 전용 페이지
 			msg = `${LV_LABEL(LV.SUPER)}(${LV.SUPER}) 이상 접근 가능합니다.`;
 		} else {
-			// 메뉴 접근 레벨에 따름
+			// 메뉴 접근 레벨에 따름			
 			const accessLV = access[to.path] || LV.BLOCK;
 			if (accessLV > GRANT) {
 				msg = `${LV_LABEL(accessLV)}(${accessLV}) 이상 접근 가능합니다.`;
@@ -51,9 +51,8 @@ export function createRouter() {
 			if ($toast) $toast.error(msg);
 			if ($Progress) $Progress.fail();
 			if (from.name) { // 이전 경로가 있으면 라우팅을 동작하지 않고
-				next(false);
+				next(false);			
 			} else { // 이전 경로가 없으면 홈으로 이동 또는 로그인 페이지로 보내도 됨
-				console.log('isMember : ', isMember);
 				return isMember ? next('/') : next({
 					name: 'NoAuthLogin',
 					query: { next: to.fullPath }

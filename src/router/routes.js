@@ -35,7 +35,7 @@ const routes = [
 	},	
 	{
 		path: '/adm/worksite',
-		name: '',
+		name: 'AdmWorksite',
 		component: () => import(/* webpackChunkName: "AdmWorksite" */ '../views/admin/Worksite.vue')
 	},
 	{

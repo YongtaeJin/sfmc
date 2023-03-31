@@ -7,14 +7,22 @@
         </v-toolbar>
         <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo>
         </v-data-table>
+
+        <ez-dialog ref="dialog" label="사업장" persistent>
+            <worksite-form>
+                
+            </worksite-form>
+        </ez-dialog>
     </v-container>
+    
 </template>
 
 <script>
 import TooltipBtn from "../../components/etc/TooltipBtn.vue";
 import EzDialog from '../../components/etc/EzDialog.vue';
+import WorksiteForm from './ConfigComponent/WorksiteForm.vue';
 export default {
-    components: { TooltipBtn, EzDialog }, 
+    components: { TooltipBtn, EzDialog, WorksiteForm }, 
     name: "AdmWorksite",
     mounted() {
         this.init();
@@ -44,10 +52,10 @@ export default {
             this.items = await this.$axios.get(`/api/system/`);
         },
         async showRowInfo(event, { item } ) {
-            
+             this.$refs.dialog.open();
         },
         async addWorkSite(item) {
-            console.log("addWorkSite");
+            this.$refs.dialog.open();
         },
     },
 }

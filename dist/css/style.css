@@ -19,3 +19,19 @@
 .config-list-group .client {position: relative; left:5px}
 .config-list-group .comment {font-size: 0.9em;}
 .config-list-group .handle {cursor: grab;}
+
+
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > th, .v-data-table > .v-data-table__wrapper > table > thead > tr > th, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > th 
+{
+    font-size: 0.7rem;    
+    height: 30px;    	
+	background-color: #6db5e6;
+	/* border-bottom: none !important; */
+}
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
+  font-size: 0.35rem;
+  height: 24px; 
+}
+.v-toolbar__title {
+	font-size: 1.0rem !important;
+}

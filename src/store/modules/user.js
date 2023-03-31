@@ -23,6 +23,9 @@ export const getters = {
 	isSuper(state) {
 		return state.member && state.member.i_level >= LV.SUPER;
 	},	
+	GRANT(state) {
+		return state.member ? state.member.i_level : 2 ;
+	} ,
 };
 export const actions = {
 	async initUser({ commit }) {
