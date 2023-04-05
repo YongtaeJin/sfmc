@@ -114,7 +114,7 @@ const rules = {
 		}
 		arr.push(rules.pattern(opt));
 		return arr;
-	}
+	},
 };
 
 module.exports = rules;

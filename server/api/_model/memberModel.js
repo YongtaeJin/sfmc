@@ -154,17 +154,18 @@ const memberModel = {
 			delete form.p_idcom;			
 			form.i_id = idcom[0];
 			form.c_com = idcom[1];				
-			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider  from tb_member where 'system'=? and i_id=? and p_password=? " +
+			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider  from tb_member where 'system'=? and i_id=? and p_password=? and d_leave_at is null " +
 						"union " +
-			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider from tb_users where c_com=? and i_id=? and p_password=? "
+			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider from tb_users where c_com=? and i_id=? and p_password=? and d_leave_at is null "
 			sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_member where
 			sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_users where
+			
 		} else {						
 			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider  from tb_member where 'system'=? and i_id=? " +
 						"union " +
 			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider from tb_users where c_com=? and i_id=?  "
 			sql.values.push(form.c_com|"-"); sql.values.push(form.i_id);   // tb_member where
-			sql.values.push(form.c_com|"-"); sql.values.push(form.i_id);   // tb_users where			
+			sql.values.push(form.c_com|"-"); sql.values.push(form.i_id);   // tb_users where				
 		}
 		const [[row]] = await db.execute(sql.query, sql.values);
 		if (!row) {			
@@ -184,7 +185,7 @@ const memberModel = {
 			db.execute(sql.query, sql.values);
 		} else {
 			const sql2 = sqlHelper.Update(TABLE.USERS, data, { i_id, c_com });
-			db.execute(sql2.query, sql.values);
+			db.execute(sql2.query, sql2.values);
 		}
 		return data;
 	},

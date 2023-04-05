@@ -2,14 +2,15 @@
     <v-container fluid>
         <v-toolbar height="40px" background-color="primary" dark>
             <v-toolbar-title>사업장 관리</v-toolbar-title>
-            <v-spacer/>
+            <v-spacer/>           
             <tooltip-btn fab small label="추가" @click="addWorkSite"><v-icon>mdi-plus</v-icon></tooltip-btn>
+            <tooltip-btn fab small label="조회" @click="fetchData"><v-icon>mdi-magnify</v-icon></tooltip-btn>
         </v-toolbar>
         <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo>
         </v-data-table>
 
-        <ez-dialog ref="dialog" label="사업장" persistent>
-            <worksite-form>
+        <ez-dialog ref="dialog" label="사업장" persistent @onClose="closeDialog" width="500px">
+            <worksite-form :data="item" :keyCheckCom="keyCheckCom" :keyCheckId="keyCheckId" :isLoad="isLoad" @onSave="save">
                 
             </worksite-form>
         </ez-dialog>
@@ -18,9 +19,11 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import TooltipBtn from "../../components/etc/TooltipBtn.vue";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import WorksiteForm from './ConfigComponent/WorksiteForm.vue';
+import { deepCopy } from '../../../util/lib';
 export default {
     components: { TooltipBtn, EzDialog, WorksiteForm }, 
     name: "AdmWorksite",
@@ -37,6 +40,15 @@ export default {
                 {text: '사용여부',  value: 'f_use', sortable: false, align:'center', width: "100px"}, 
                 ],
             items: [],
+            item : {
+                c_com: "",
+                n_com: "",
+                n_name: "",
+                i_id: "",
+                f_use: "",
+                t_remark: "",
+            },
+            isLoad: false,
         };
     },
     watch: {
@@ -45,6 +57,7 @@ export default {
     },
     
     methods: {
+        ...mapActions("system", ["duplicateCheck", "duplicateDualCheck", "insertWorksite", "updateWorksite"]),
         async init() {
             this.fetchData();
         },
@@ -52,11 +65,47 @@ export default {
             this.items = await this.$axios.get(`/api/system/`);
         },
         async showRowInfo(event, { item } ) {
-             this.$refs.dialog.open();
-        },
-        async addWorkSite(item) {
+            this.item = deepCopy(item);            
             this.$refs.dialog.open();
         },
+        async addWorkSite(item) {
+            this.isLoad = true;
+            this.item = null;
+            this.$refs.dialog.open();            
+        },
+        closeDialog() { 
+            this.isLoad = false;           
+            this.item = null;
+        },
+        async keyCheckCom(value){
+            const payload = {
+                field: "c_com",
+                value,
+            };            
+            return await this.duplicateCheck(payload); 
+        },
+        async keyCheckId(value, aFiled){           
+            const payload = {
+                com: "c_com",
+                aFiled, 
+                field: "i_id",
+                value,
+            };            
+            return await this.duplicateDualCheck(payload); 
+        },
+        async save(form) {
+            this.isLoading = true;   
+            // console.log(this.item ? "update" : "insert")
+            if (this.item) {
+                // update
+                const data = await this.updateWorksite(form); 
+            } else {
+                // insert
+                const data = await this.insertWorksite(form); 
+            }
+            this.isLoading = false;   
+            this.$refs.dialog.close(); 
+        }
     },
 }
 </script>

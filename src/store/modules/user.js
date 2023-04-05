@@ -49,6 +49,7 @@ export const actions = {
 	async signInLocal({ commit }, form) {
 		const { $axios } = Vue.prototype;
 		const data = await $axios.post('/api/member/loginLocal', form);
+		// console.log(data);
 		if (data) {
 			commit('SET_MEMBER', data.member);
 			commit('SET_TOKEN', data.token);

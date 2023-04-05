@@ -10,4 +10,24 @@ router.get('/', async (req, res) => {
 	res.json(result);
 });
 
+router.get('/duplicateCheck/:field/:value', async (req, res) => {	
+	const result = await modelCall(systemModel.duplicateCheck, req.params)	
+	res.json(result);
+});
+router.get('/duplicateDualCheck/:com/:aFiled/:field/:value', async (req, res) => {	
+	const result = await modelCall(systemModel.duplicateDualCheck, req.params)	
+	res.json(result);
+});
+
+router.post('/', async (req, res) => {
+	const result = await modelCall(systemModel.insertWorksite, req);
+	res.json(result);
+});
+
+router.patch('/', async (req, res) => {
+	const result = await modelCall(systemModel.updateWorksite, req);
+	res.json(result);
+});
+
+
 module.exports = router;

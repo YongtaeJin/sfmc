@@ -1,5 +1,5 @@
 <template>
-    <v-form @submit.prevent="save" ref="form" v-model="valid" lazy-validation>
+    <v-form @submit.prevent="save" ref="form" v-model="valid" :lazy-validation="lazy">
         <v-select 
             v-model="form.i_com"
             prepend-icon="mdi-office-building-outline"
@@ -72,7 +72,8 @@ export default {
     },
     data() {
         return {
-            valid: true,            
+            valid: true,
+            lazy: false,
             form: {
                 i_com: "",                
                 i_id: "",

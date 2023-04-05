@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  	name: "InputDuplicateCheck",
+  	name: "InputDuplicateDualCheck",
   	model: {
 		prop: "value",
 		event: "input",
@@ -40,6 +40,10 @@ export default {
 			default : null,
 		},
 		origin : {
+			type : String,
+			default : "",
+		},
+		aFiled : {
 			type : String,
 			default : "",
 		}
@@ -72,12 +76,17 @@ export default {
 			this.successMsg = "";
       		this.$emit("input", val);
     	},
+		init() {
+			this.errMsg = "";
+			this.successMsg = "";
+			this.isCheck = false;
+		},
 		async check() {
 			if(!this.isSend) return;
 			this.loading = true;
 			this.errMsg = "";
 			this.successMsg = "";
-			const data = await this.cbCheck(this.value);
+			const data = await this.cbCheck(this.value, this.aFiled);
 
 			if(!this.value) {
 				this.successMsg = "";
@@ -89,11 +98,6 @@ export default {
 				this.isCheck = false;
 			}
 			this.loading = false;
-		},
-		init() {
-			this.errMsg = "";
-			this.successMsg = "";
-			this.isCheck = false;
 		},
 		validate() {
 			if(!this.isCheck) {
