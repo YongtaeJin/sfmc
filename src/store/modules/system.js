@@ -23,4 +23,10 @@ export const actions = {
 		const data = await $axios.patch(`/api/system`, form);	
 		return !!data;
 	},	
+	async iuWorkUser( { commit }, form) {
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/system/iuWorkUser', form);
+		return data;
+	},
+	
 };

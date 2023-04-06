@@ -45,7 +45,7 @@ const store = new Vuex.Store({
 						{
 							title : "사용자관리",
 							icon : "",
-							to : '',
+							to : '/adm/systemusers',
 							grant : 9, 
 							newTab : false,
 							subItems : []

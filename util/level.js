@@ -8,13 +8,13 @@ const level = {
 		PRODUCTION: 6,
 		BUSINESS: 7,
 		ADMIN: 8,
-		SYSTEN: 9,
+		SYSTEM: 9,
 		SUPER: 10
 	},
 	LV_LABEL: (lv) => {
 		if (lv >= level.LV.SUPER) {
 			return '프로그램관리자';
-		} else if (level.LV.ADMIN <= lv && lv < level.LV.SYSTEN) {
+		} else if (level.LV.ADMIN <= lv && lv < level.LV.SYSTEM) {
 			return '시스템관리자';
 		} else if (level.LV.BUSINESS <= lv && lv < level.LV.ADMIN) {			
 			return '관리자';

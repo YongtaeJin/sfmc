@@ -38,6 +38,19 @@ const routes = [
 		name: 'AdmWorksite',
 		component: () => import(/* webpackChunkName: "AdmWorksite" */ '../views/admin/Worksite.vue')
 	},
+	// 시스템관리 
+	{
+		path: '/adm/systemcode',
+		name: 'SystemCode',
+		component: () => import(/* webpackChunkName: "Systemcode" */ '../views/system/Systemcode.vue')
+	},
+	{
+		path: '/adm/systemusers',
+		name: 'Systemusers',
+		component: () => import(/* webpackChunkName: "Systemusers" */ '../views/system/Systemusers.vue')
+	},
+
+
 	{
 		path: '*',
 		name: 'Error',
