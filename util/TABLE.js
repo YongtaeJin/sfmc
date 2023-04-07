@@ -4,6 +4,8 @@ const TABLE = {
 	SEND_MAIL : 'tb_send_mail',
 	CONFIG : 'tb_config',	
 	WORKSITE: 'tb_worksite',
+	GRPCODE: 'tb_grpcode',
+	COMCODE: 'tb_comcode',
 };
 
 module.exports = TABLE;

@@ -42,4 +42,13 @@ router.delete('/delWorkUser/:c_com/:i_id', async(req, res)=>{
 	const result = await modelCall(systemModel.delWorkUser, req);
 	res.json(result);
 });
+// 시스템 코드 관리
+router.get('/grpcode', async (req, res) => {
+	const result = await modelCall(systemModel.grpcode, req);
+	res.json(result);
+});
+router.get('/comcode', async (req, res) => {
+	const result = await modelCall(systemModel.comcode, req);
+	res.json(result);
+});
 module.exports = router;

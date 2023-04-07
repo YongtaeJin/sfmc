@@ -105,8 +105,9 @@ const systemModel = {
         
         const { c_com } = req.user;
         const sql = sqlHelper.SelectSimple(TABLE.USERS, { c_com });
+        sql.query = sql.query + ' and d_leave_at is null '
         const [rows] = await db.execute(sql.query, sql.values);
-
+        
         rows.forEach((row) => {
             clearUserField(row);
         });        
@@ -133,8 +134,7 @@ const systemModel = {
             payload.d_update_at = at;
             payload.t_update_ip = getIp(req);
             delete payload.d_create_at;
-            delete payload.t_create_ip;
-            
+            delete payload.t_create_ip;            
 
             const sql = sqlHelper.Update(TABLE.USERS, payload, {c_com, i_id});
             const [row] = await db.execute(sql.query, sql.values);
@@ -150,10 +150,37 @@ const systemModel = {
     async delWorkUser(req) {
 		if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
 		const { c_com, i_id } = req.params;
-        const sql = sqlHelper.DeleteSimple(TABLE.USERS, { c_com, i_id });
-		const [row] = await db.execute(sql.query, sql.values);		
+        const field = { d_leave_at : moment().format('LT')};
+        
+        const sql = sqlHelper.Update(TABLE.USERS, field, { c_com, i_id });
+        const [row] = await db.execute(sql.query, sql.values);		
 		return row.affectedRows == 1;
-	}
+	},
+
+    // 시스템코드 관리
+    async grpcode(req) {     
+        // 권한 확인
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+        
+        const { c_com } = req.user;
+        const sort = {s_sort: true, c_gcode: true};
+
+        const sql = sqlHelper.SelectSimple(TABLE.GRPCODE, { c_com }, [], sort);    
+        const [rows] = await db.execute(sql.query, sql.values);
+    
+        return rows;
+    },
+    async comcode(req) {     
+        // 권한 확인
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+        
+        const { c_com } = req.user;
+        const sort = {s_sort: true, c_code: true};
+        const sql = sqlHelper.SelectSimple(TABLE.COMCODE, { c_com }, [], sort);    
+        const [rows] = await db.execute(sql.query, sql.values);
+    
+        return rows;
+    },
 };
 
 module.exports = systemModel;

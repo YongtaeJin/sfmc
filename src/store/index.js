@@ -37,7 +37,7 @@ const store = new Vuex.Store({
 						{
 							title : "공통코드관리",
 							icon : "",
-							to : '',
+							to : '/adm/systemcode',
 							grant : 9, 
 							newTab : false,
 							subItems : []
