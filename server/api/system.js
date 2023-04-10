@@ -51,4 +51,29 @@ router.get('/comcode', async (req, res) => {
 	const result = await modelCall(systemModel.comcode, req);
 	res.json(result);
 });
+router.get('/duplicateGrpcodeCheck/:com/:value1/:grp/:value2', async (req, res) => {	
+	const result = await modelCall(systemModel.duplicateGrpcodeCheck, req.params)	
+	res.json(result);
+});
+router.get('/duplicateComcodeCheck/:com/:value1/:grp/:value2/:cod/:value3', async (req, res) => {	
+	const result = await modelCall(systemModel.duplicateComcodeCheck, req.params)	
+	res.json(result);
+});
+router.post('/iuGprCode', async (req, res) => {
+	const result = await modelCall(systemModel.iuGprCode, req);
+	res.json(result);
+});
+router.delete('/delGprCode/:c_com/:c_gcode', async(req, res)=>{
+	const result = await modelCall(systemModel.delGprCode, req);
+	res.json(result);
+});
+router.post('/iuComCode', async (req, res) => {
+	const result = await modelCall(systemModel.iuComCode, req);
+	res.json(result);
+});
+router.delete('/delComCode/:c_com/:c_gcode/:c_code', async(req, res)=>{
+	const result = await modelCall(systemModel.delComCode, req);
+	res.json(result);
+});
+
 module.exports = router;

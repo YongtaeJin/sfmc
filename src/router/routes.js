@@ -41,7 +41,7 @@ const routes = [
 	// 시스템관리 
 	{
 		path: '/adm/systemcode',
-		name: 'SystemCode',
+		name: 'Systemcode',
 		component: () => import(/* webpackChunkName: "Systemcode" */ '../views/system/Systemcode.vue')
 	},
 	{

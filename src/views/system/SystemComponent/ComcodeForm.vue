@@ -1,5 +1,4 @@
 <template>
-    <!-- <v-container fluid> -->
     <div>
         <v-toolbar height="40px" background-color="primary" >
             <v-toolbar-title>{{title}}</v-toolbar-title>
@@ -7,14 +6,11 @@
             <tooltip-btn label="추가" @click="addUser" fab x-small><v-icon>mdi-plus</v-icon></tooltip-btn>            
             <tooltip-btn label="삭제" @click="delUser" fab x-small><v-icon>mdi-minus</v-icon></tooltip-btn>
         </v-toolbar>
-        <v-data-table :headers="headers" :items="data" @click:row="rowSelect"
+        <v-data-table :headers="headers" :items="data" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1" 
             item-key="c_code" single-select
             :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" >
-
         </v-data-table>
-    </div>
-    <!-- </v-container>    -->
-    
+    </div>    
 </template>
 
 <script>
@@ -32,6 +28,10 @@ export default {
             default: null,
         },        
     },
+    watch: {
+    },
+    computed: {
+    },
     data() {
         return {
             headers: [
@@ -43,7 +43,8 @@ export default {
                 {text: '숫자1',  value: 'm_buf1', sortable: false,  },
                 {text: '숫자2',  value: 'm_buf2', sortable: false,  },
                 {text: '비고',  value: 't_remark', sortable: false, }, 
-                ],            
+                ],
+            item: null,
         }
     },
     methods: {
@@ -51,14 +52,18 @@ export default {
 
         },
         async addUser() {
-
+            this.$emit('onshowRowInfo');
         },
-        async delUser() {
-
+        async delUser() {            
+            this.$emit('onDelete', this.item);
         },
         rowSelect :function (item, row) {    
-            row.select(true);
+            row.select(true);            
+            this.item = item;
             this.$emit('onSelect', item);
+        },
+        async showRowInfo(event, { item }) {
+            this.$emit('onshowRowInfo', item);
         }
     }
 }

@@ -6,12 +6,10 @@
             <tooltip-btn label="추가" @click="addUser" fab x-small><v-icon>mdi-plus</v-icon></tooltip-btn>            
             <tooltip-btn label="삭제" @click="delUser" fab x-small><v-icon>mdi-minus</v-icon></tooltip-btn>
         </v-toolbar>
-        <v-data-table :headers="headers" :items="data" @click:row="rowSelect"
+        <v-data-table :headers="headers" :items="data" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1" 
             item-key="c_gcode" single-select
             :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" >
-
-        </v-data-table>
-        
+        </v-data-table>        
     </div>    
 </template>
 
@@ -24,7 +22,7 @@ export default {
         data: {
             type: Array,
             default: null,
-        },
+        }        
     },
     data() {
         return {
@@ -34,28 +32,35 @@ export default {
                 {text: '명칭',  value: 'n_gcode', sortable: false,  },
                 {text: '비고',  value: 't_remark', sortable: false, }, 
                 ],            
-        }
+            item: null,
+        }        
+    },
+    watch: {
+    },
+    computed: {
     },
     methods: {
         async fetchData() {
             
         },
         async addUser() {
-
+            this.$emit('onshowRowInfo');
         },
-        async delUser() {
-
+        async delUser() {            
+            this.$emit('onDelete', this.item);
         },
         rowSelect :function (item, row) {    
-            row.select(true);
+            row.select(true);            
+            this.item = item;
             this.$emit('onSelect', item);
+        },
+        async showRowInfo(event, { item }) {
+            this.$emit('onshowRowInfo', item);
         }
     }
 }
 </script>
 
-<style scoped>
-    ::v-deep tr.v-data-table__selected {
-        background: hsl(45, 86%, 73%) !important;
-    }
+<style>
+    
 </style>

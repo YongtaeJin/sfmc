@@ -20,7 +20,7 @@
                 :items="yesnoItem"
                 :rules="[rules.require({ label: '사용' })]"/>
             <v-textarea label="설명" v-model="form.t_remark" />
-            <v-btn type="submit" color="primar" block>저장</v-btn>
+            <v-btn type="submit" color="primary" block>저장</v-btn>
         </v-form>       
     </v-container>
 </template>

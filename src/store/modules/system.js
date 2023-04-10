@@ -28,5 +28,26 @@ export const actions = {
 		const data = await $axios.post('/api/system/iuWorkUser', form);
 		return data;
 	},
+	async duplicateGrpcodeCheck(ctx, { com, value1, grp, value2 }) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.get(`/api/system/duplicateGrpcodeCheck/${com}/${value1}/${grp}/${value2}`);		
+		return data;
+    },
+	async duplicateComcodeCheck(ctx, { com, value1, grp, value2, cod, value3 }) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.get(`/api/system/duplicateComcodeCheck/${com}/${value1}/${grp}/${value2}/${cod}/${value3}`);		
+		return data;
+    },
+	async iuGprCode( { commit }, form) {
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/system/iuGprCode', form);
+		return data;
+	},
+	async iuComCode( { commit }, form) {
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/system/iuComCode', form);
+		return data;
+	},
+	
 	
 };

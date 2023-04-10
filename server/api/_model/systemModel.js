@@ -100,9 +100,8 @@ const systemModel = {
     
     // 사업장별 사용자 관리
     async worksiteusers(req) {     
-        // 권한 확인
-        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
-        
+        // 권한 확인        
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');        
         const { c_com } = req.user;
         const sql = sqlHelper.SelectSimple(TABLE.USERS, { c_com });
         sql.query = sql.query + ' and d_leave_at is null '
@@ -152,7 +151,7 @@ const systemModel = {
 		const { c_com, i_id } = req.params;
         const field = { d_leave_at : moment().format('LT')};
         
-        const sql = sqlHelper.Update(TABLE.USERS, field, { c_com, i_id });
+        const sql = sqlHelper.Update(TABLE.USERS, field, { c_com, i_id });        
         const [row] = await db.execute(sql.query, sql.values);		
 		return row.affectedRows == 1;
 	},
@@ -181,6 +180,109 @@ const systemModel = {
     
         return rows;
     },
+    async duplicateGrpcodeCheck({ com, value1, grp, value2 }) {
+        const sql = sqlHelper.SelectSimple(
+			TABLE.GRPCODE,
+			{ [com]: value1, [grp]: value2 },
+			['COUNT(*) AS cnt']
+		);
+        const [[row]] = await db.execute(sql.query, sql.values);
+        return row;
+    },
+    async duplicateComcodeCheck({ com, value1, grp, value2, cod, value3 }) {
+        const sql = sqlHelper.SelectSimple(
+			TABLE.COMCODE,
+			{ [com]: value1, [grp]: value2, [cod]: value3 },
+			['COUNT(*) AS cnt']
+		);
+        const [[row]] = await db.execute(sql.query, sql.values);
+        return row;
+    }, 
+
+    async iuGprCode(req) {
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+        const at = moment().format('LT');                
+        const payload = {
+			...req.body,
+        }
+        const {c_com, c_gcode } = payload;          
+        if (!payload.d_create_at) { 
+            payload.n_crnm = req.user.n_name;
+            payload.d_create_at = at;
+            
+            const sql = sqlHelper.Insert(TABLE.GRPCODE, payload);
+            const [row] = await db.execute(sql.query, sql.values);            
+            if (row.affectedRows < 1) return '';                        
+        } else {
+            payload.d_update_at = at;
+            payload.n_upnm = req.user.n_name;
+            delete payload.d_create_at;
+            delete payload.n_crnm;            
+
+            const sql = sqlHelper.Update(TABLE.GRPCODE, payload, {c_com, c_gcode});
+            const [row] = await db.execute(sql.query, sql.values);
+            if (row.affectedRows < 1) return '';            
+        }
+        const grpsql = sqlHelper.SelectSimple(TABLE.GRPCODE,{ c_com,  c_gcode });
+        const [[grpcode]] = await db.execute(grpsql.query, grpsql.values);
+        return grpcode;
+    },
+    async delGprCode(req) {
+		if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+		const { c_com, c_gcode } = req.params;
+                
+        const sql = sqlHelper.DeleteSimple(TABLE.GRPCODE, { c_com, c_gcode });
+        const [row] = await db.execute(sql.query, sql.values);		
+		return row.affectedRows == 1;
+	},
+
+    async iuComCode(req) {
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+        const at = moment().format('LT');                
+        const payload = {
+			...req.body,
+        }
+        const {c_com, c_gcode, c_code } = payload; 
+        
+        delete payload.d_buf1;
+        delete payload.d_buf3;
+        delete payload.d_buf2;
+        delete payload.t_buf1;
+        delete payload.t_buf2;
+        delete payload.t_buf3;
+
+        if (!payload.d_create_at) { 
+            payload.n_crnm = req.user.n_name;
+            payload.d_create_at = at;
+            delete payload.d_update_at;
+            delete payload.n_upnm;   
+
+            const sql = sqlHelper.Insert(TABLE.COMCODE, payload);
+            const [row] = await db.execute(sql.query, sql.values);            
+            if (row.affectedRows < 1) return '';                        
+        } else {
+            payload.d_update_at = at;
+            payload.n_upnm = req.user.n_name;
+            delete payload.d_create_at;
+            delete payload.n_crnm;            
+
+            const sql = sqlHelper.Update(TABLE.COMCODE, payload, {c_com, c_gcode, c_code});
+            const [row] = await db.execute(sql.query, sql.values);
+            if (row.affectedRows < 1) return '';            
+        }
+        const comsql = sqlHelper.SelectSimple(TABLE.COMCODE,{ c_com, c_gcode, c_code });
+        const [[comcode]] = await db.execute(comsql.query, comsql.values);
+        return comcode;
+    },
+    async delComCode(req) {
+		if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+		const { c_com, c_gcode, c_code } = req.params;
+        
+        const sql = sqlHelper.DeleteSimple(TABLE.COMCODE, { c_com, c_gcode, c_code });
+        const [row] = await db.execute(sql.query, sql.values);		
+		return row.affectedRows == 1;
+	},
+
 };
 
 module.exports = systemModel;
