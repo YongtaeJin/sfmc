@@ -6,6 +6,8 @@ const TABLE = {
 	WORKSITE: 'tb_worksite',
 	GRPCODE: 'tb_grpcode',
 	COMCODE: 'tb_comcode',
+	VEND: 'tb_vend',
+
 };
 
 module.exports = TABLE;

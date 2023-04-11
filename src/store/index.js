@@ -62,7 +62,7 @@ const store = new Vuex.Store({
 						{
 							title : "거래처관리",
 							icon : "",
-							to : '',
+							to : '/base/basejobvend',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -70,7 +70,7 @@ const store = new Vuex.Store({
 						{
 							title : "품목관리",
 							icon : "",
-							to : '',
+							to : '/base/basejobitem',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -78,7 +78,7 @@ const store = new Vuex.Store({
 						{
 							title : "공정관리",
 							icon : "",
-							to : '',
+							to : '/base/basejobprocess',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -86,7 +86,7 @@ const store = new Vuex.Store({
 						{
 							title : "라우팅관리",
 							icon : "",
-							to : '',
+							to : '/base/basejobroute',
 							grant : 8, 
 							newTab : false,
 							subItems : []

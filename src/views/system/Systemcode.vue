@@ -73,6 +73,8 @@ export default {
     methods: {
         ...mapActions("system", ["duplicateGrpcodeCheck", "duplicateComcodeCheck", "iuGprCode", "iuComCode"]),
         async fetchData() {
+            this.grpcodes.splice(0);
+            this.comcodes.splice(0);
             this.grpcodes = await this.$axios.get(`/api/system/grpcode`);
             this.comcodes = await this.$axios.get(`/api/system/comcode`);
         },

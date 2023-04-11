@@ -64,6 +64,7 @@ export default {
             this.fetchData();
         },
         async fetchData() {
+            this.items.splice(0);
             this.items = await this.$axios.get(`/api/system/worksiteusers`);            
         },
         async addUser () {       

@@ -49,7 +49,30 @@ const routes = [
 		name: 'Systemusers',
 		component: () => import(/* webpackChunkName: "Systemusers" */ '../views/system/Systemusers.vue')
 	},
+	// 기준정보
+	{
+		path: '/base/basejobvend',
+		name: 'Basejobvend',
+		component: () => import(/* webpackChunkName: "Basejobvend" */ '../views/basejob/BasejobVend.vue')
+	},	
+	{
+		path: '/base/basejobitem',
+		name: 'Basejobitem',
+		component: () => import(/* webpackChunkName: "Basejobitem" */ '../views/basejob/BasejobItem.vue')
+	},
+	{
+		path: '/base/basejobprocess',
+		name: 'Basejobprocess',
+		component: () => import(/* webpackChunkName: "Basejobprocess" */ '../views/basejob/BasejobProcess.vue')
+	},
+	{
+		path: '/base/basejobroute',
+		name: 'Basejobroute',
+		component: () => import(/* webpackChunkName: "Basejobroute" */ '../views/basejob/BasejobRoute.vue')
+	},
 
+
+	
 
 	{
 		path: '*',

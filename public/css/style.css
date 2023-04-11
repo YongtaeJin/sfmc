@@ -31,14 +31,25 @@
 }
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
   font-size: 0.8rem;  
-  height: 24px; 
+  height: 24px;   
 }
 .v-toolbar__title {
 	font-size: 1.0rem !important;
 }
 .v-data-table > .v-data-table-header {
-	color: white;	
+	color: white;		
 }
 tr.v-data-table__selected {
 	background: hwb(144 76% 2%) !important;
+}
+
+.text-input-blue .v-text-field__slot input {
+	color: #00f !important;
+}
+.text-input-red .v-text-field__slot input {
+	color: red !important;
+}
+.text-input-redwhite .v-text-field__slot input {	
+	color: white !important;
+	background: red !important;
 }
