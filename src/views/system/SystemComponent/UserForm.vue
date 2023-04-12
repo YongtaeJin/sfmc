@@ -13,7 +13,13 @@
                 v-model="form.n_name" />
             <input-password label="비밀번호"
                 v-model="form.p_password"
-                :rules="rules.password2({ label: '비밀번호', required: false , len: 3 })" />                
+                :rules="rules.password2({ label: '비밀번호', required: false , len: 3 })" />
+            <v-select laebl="사용등급"
+                v-model="form.i_level"
+                :items="lvitems"
+                item-text="label"
+                item-value="lv"
+                />
             <input-radio label="사용여부"
                 v-model="form.f_use"
                 row
@@ -27,6 +33,7 @@
 
 <script>
 import { deepCopy } from '../../../../util/lib';
+import { LVITEMS } from '../../../../util/level';
 import validateRules from "../../../../util/validateRules";
 import InputDuplicateDualCheck from '../../../components/InputForms/InputDuplicateDualCheck.vue';
 import InputPassword from '../../../components/InputForms/InputPassword.vue';
@@ -56,7 +63,7 @@ export default {
                 i_id: "",
                 n_name: "",
                 p_password: "",
-                i_level: 0,
+                i_level: 2,
                 f_use: "Y",
                 t_remark: "",
             },
@@ -64,10 +71,12 @@ export default {
                 {label: "사용", value: "Y"},
                 {label: "중지", value: "N"},
             ],
+            lvitems: null,
         }
     },
     created() {
         this.init();
+        this.lvitems = LVITEMS;
     },
     watch: {
         isLoad() {

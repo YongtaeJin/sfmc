@@ -11,6 +11,17 @@ const level = {
 		SYSTEM: 9,
 		SUPER: 10
 	},
+	LVITEMS : [
+		{ label: "BLOCK", lv: 0 },
+		{ label: "AWAIT", lv: 1 },
+		{ label: "MEMBER", lv: 2 },		
+		{ label: "DELIVERY", lv: 4 },		
+		{ label: "MANAGER", lv: 5 },
+		{ label: "PRODUCTION", lv: 6 },
+		{ label: "BUSINESS", lv: 7 },
+		{ label: "ADMIN", lv: 8 },
+		{ label: "SYSTEM", lv: 9 },
+	],
 	LV_LABEL: (lv) => {
 		if (lv >= level.LV.SUPER) {
 			return '프로그램관리자';

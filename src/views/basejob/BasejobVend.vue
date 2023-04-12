@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import qs from "qs";
 import { mapActions } from "vuex";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
@@ -74,8 +75,12 @@ export default {
     methods: {
         ...mapActions("basejob", ["duplicateVendCheck", "iuBaseVend"]),
         async init() {
-            if (this.vends) this.vends.splice(0);
-            this.vends = await this.$axios.get(`/api/basejob/getBaseVned`);            
+            const where = { search: this.search.trim() };
+            const query = qs.stringify(where);
+
+            if (this.vends) this.vends.splice(0);            
+            this.vends = await this.$axios.get(`/api/basejob/getBaseVned?${query}`);      
+
         },
         async addVend() {
             this.isLoad = true;                         

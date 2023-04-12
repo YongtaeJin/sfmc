@@ -3,55 +3,56 @@
         <v-form @submit.prevent="save" ref="form" v-model="valid" lazy-validation>
             <v-row>
                 <v-col col="12" sm="2" md="2">
-                    <v-text-field v-model="form.s_sort" label="No" :rules="[rules.Num()]"/>
+                    <v-text-field v-model="form.s_sort" label="No" :rules="[rules.Num()]" solo hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="6" md="6">
-                    <v-text-field v-model="form.n_compnay" label="명칭"/>
+                    <v-text-field v-model="form.n_compnay" label="명칭" solo hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="4" md="4">
-                    <v-checkbox v-model="form.f_use" label="거래유무" true-value="Y"  false-value="N"/>
+                    <v-checkbox v-model="form.f_use" label="거래유무" true-value="Y"  false-value="N" hide-details="false"/>
                 </v-col>                
                 <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.n_vend" label="약칭"/>
+                    <v-text-field v-model="form.n_vend" label="약칭" solo hide-details="false"/>
                 </v-col>                                
                 <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.n_ceo" label="대표자"/>
+                    <v-text-field v-model="form.n_ceo" label="대표자" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.i_company" label="사업자번호"/>
+                    <v-text-field v-model="form.i_company" label="사업자번호" hide-details="false"/>
                 </v-col>                
                 <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.t_tel" label="연락처" />                    
+                    <v-text-field v-model="form.t_tel" label="연락처" hide-details="false"/>                    
                 </v-col>
                  <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.t_fax" label="FAX"/>
+                    <v-text-field v-model="form.t_fax" label="FAX" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.e_mail" label="회사EMail"/>
+                    <v-text-field v-model="form.e_mail" label="회사EMail" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.n_mag" label="담당자"/>
+                    <v-text-field v-model="form.n_mag" label="담당자" hide-details="false"/>
                 </v-col>
                  <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.t_magtel" label="담당자연락처"/>
+                    <v-text-field v-model="form.t_magtel" label="담당자연락처" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="4" md="4">
-                    <v-text-field v-model="form.t_magmail" label="담당자EMail"/>
+                    <v-text-field v-model="form.t_magmail" label="담당자EMail" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="6" md="6">
-                    <v-text-field v-model="form.t_job1" label="업태"/>
+                    <v-text-field v-model="form.t_job1" label="업태" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="6" md="6">
-                    <v-text-field v-model="form.t_job2" label="업종"/>
+                    <v-text-field v-model="form.t_job2" label="업종" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="12" md="12">
-                    <v-text-field v-model="form.t_addr" label="회사 주소"/>
+                    <v-text-field v-model="form.t_addr" label="회사 주소" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="12" md="12">
-                    <v-text-field v-model="form.t_remark" label="비고"/>
+                    <v-text-field v-model="form.t_remark" label="비고" hide-details="false"/>
                 </v-col>    
                 
             </v-row>
+            <v-row><v-col></v-col></v-row>
             <v-btn type="submit" color="primary" block>저장</v-btn>
         </v-form>
     </v-container>

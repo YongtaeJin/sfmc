@@ -8,8 +8,14 @@
             <tooltip-btn label="삭제" @click="delUser"><v-icon>mdi-minus</v-icon></tooltip-btn>
         </v-toolbar>
         
-        <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo
-           v-model="selected" :single-select="true" item-key="i_id" show-select >            
+        <v-data-table :headers="headers" :items="items" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1" 
+            item-key="i_id" single-select
+            :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" >
+        <!-- <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo
+            v-model="selected" :single-select="true" item-key="i_id" show-select > -->
+            <template v-slot:[`item.i_level`]="{ item }">                
+                {{ getLvlabel(item.i_level) }}                
+            </template>
         </v-data-table> 
 
         <ez-dialog ref="dialog" label="사용자 추가/수정" persistent @onClose="closeDialog" width="350px">           
@@ -23,6 +29,7 @@
 <script>
 import { mapActions } from "vuex";
 import { deepCopy } from '../../../util/lib';
+import { LVITEMS } from '../../../util/level';
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import UserForm from './SystemComponent/UserForm.vue';
@@ -39,8 +46,8 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'ID',  value: 'i_id', sortable: true, align:'center', },
-                {text: '성명',  value: 'n_name', sortable: true, align:'center', },
+                {text: 'ID',  value: 'i_id', sortable: true, align:'left', },
+                {text: '성명',  value: 'n_name', sortable: true, align:'left', },
                 {text: '등급',  value: 'i_level', sortable: true, align:'center', width: "100px"},
                 {text: '사용',  value: 'f_use', sortable: true, align:'center', width: "100px"}, 
                 {text: '접속일',  value: 'd_login_at', sortable: false, align:'center', width: "150px"}, 
@@ -56,10 +63,19 @@ export default {
     },
     watch: {
     },
-    computed: {
+    computed: {        
     },    
     methods: {
         ...mapActions("system", ["duplicateDualCheck", "iuWorkUser"]),
+        getLvlabel (lv) {            
+            var i = LVITEMS.findIndex(i => i.lv == lv );
+            return (lv > -1) ?  LVITEMS[i].label : lv;
+        },
+        rowSelect :function (item, row) {    
+            row.select(true);            
+            this.item = item;
+            this.$emit('onSelect', item);
+        },
         async init() {
             this.fetchData();
         },
@@ -73,23 +89,23 @@ export default {
             this.$refs.dialog.open();
         },
         async delUser () {
-            if (!this.selected.length) return;
-            
-            const idx = this.items.indexOf(this.selected[0]);
+            // if (!this.selected.length) return; 
+            const idx = this.items.indexOf(this.item);
             if (idx < 0) return;
+            if (!this.item) return;
 
             const result = await this.$ezNotify.confirm(
-			 	`<b>성명 : ${this.selected[0].n_name}</b><br> 삭제 하시겠습니까 ? <br> 삭제한 ID는 사용 불가 합니다.`,
-			 	`ID : ${this.selected[0].i_id} 삭제`,
+			 	`<b>성명 : ${this.item.n_name}</b><br> 삭제 하시겠습니까 ? <br> 삭제한 ID는 사용 불가 합니다.`,
+			 	`ID : ${this.item.i_id} 삭제`,
 			 	{icon : 'mdi-delete', iconColor: 'red'}
 			);
             if(!result) return;
 
-            const data = await this.$axios.delete(`/api/system/delWorkUser/${this.selected[0].c_com}/${this.selected[0].i_id}`);
+            const data = await this.$axios.delete(`/api/system/delWorkUser/${this.item.c_com}/${this.item.i_id}`);
 
             if(data) this.items.splice(idx, 1);
 
-            this.$toast.info(`[${this.selected[0].n_name}] 삭제 하였습니다.`);
+            this.$toast.info(`[${this.item.n_name}] 삭제 하였습니다.`);
         },
         async showRowInfo(event, { item } ) {
             this.isLoad = true;

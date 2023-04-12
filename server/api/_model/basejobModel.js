@@ -20,9 +20,15 @@ const basejobModel = {
         if (!isGrant(req, LV.ADMIN)) {
             throw new Error('권한이 없습니다.');
         }   
-        const { c_com } = req.user;
+        const { search } = req.query        
+        const { c_com } = req.user;        
         const sort = {s_sort: true, c_vend: true};
-        const sql = sqlHelper.SelectSimple(TABLE.VEND, { c_com }, [], sort);          
+        const sql = sqlHelper.SelectSimple(TABLE.VEND, { c_com });
+        if (search) {
+            sql.query = sql.query + ` and (n_vend like '${search}%' or n_compnay like '${search}%') `;
+        }
+        sql.query = sql.query + ` ORDER BY s_sort ASC , c_vend ASC `;
+        
         const [rows] = await db.execute(sql.query, sql.values);        
         return rows;
     },
