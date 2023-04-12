@@ -1,10 +1,140 @@
 <template>
-  
+    <v-container fluid>
+        <v-toolbar height="40px" background-color="primary" dark>
+            <v-toolbar-title>품목 관리</v-toolbar-title>
+            <v-spacer/>
+            <v-text-field v-model="search" ense single-line hide-details/>
+            <tooltip-btn label="조회" @click="fatch"><v-icon>mdi-magnify</v-icon></tooltip-btn>            
+            <tooltip-btn label="추가" @click="addItem"><v-icon>mdi-plus</v-icon></tooltip-btn>            
+            <tooltip-btn label="삭제" @click="delItem"><v-icon>mdi-minus</v-icon></tooltip-btn>
+        </v-toolbar>
+        <v-data-table :headers="headers" :items="items" @click:row="rowSelect" @dblclick:row="showRowInfo" 
+            item-key="c_process" single-select
+            :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+            class="elevation-1" height="600px">  
+           
+            <template v-slot:[`item.f_use`]="{ item }">
+                <v-chip x-small :color="getColor(item.f_use)" dark>
+                    {{ item.f_use == 'Y' ? '사용' : '중지' }}
+                </v-chip>
+            </template>
+        </v-data-table>
+        <ez-dialog ref="dialog" label="품목 등록(수정)" persistent @onClose="close" width="500px">            
+            <basejobitem-form
+                :data="item" :keyCheckItem="keyCheckItem" :isLoad="isLoad" :s_sort=getMaxNo 
+                :units="units" :itemtypes="itemtypes"
+                @onSave="saveItem">
+            </basejobitem-form>
+        </ez-dialog>
+    </v-container>
 </template>
 
 <script>
+import qs from "qs";
+import { mapActions } from "vuex";
+import EzDialog from '../../components/etc/EzDialog.vue';
+import TooltipBtn from '../../components/etc/TooltipBtn.vue';
+import BasejobitemForm from './JobComponent/BasejobitemForm.vue';
 export default {
-
+    components: { TooltipBtn, EzDialog, BasejobitemForm },
+    name: "BasejobProcess",
+    mounted() {
+        this.init();
+    },
+    data() {
+        return {
+            headers: [
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "30px"},
+                {text: '공정코드',  value: 'c_process', sortable: false, align:'left', },
+                {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
+                {text: '공정설명',  value: 't_remark', sortable: false, align:'left', },
+                {text: '외주공정',  value: 'f_outside', sortable: false, align:'left', },
+                {text: '사용여부',  value: 'f_use', sortable: false, align:'center', },
+                
+            ],
+            items: [],
+            item: null,
+            search: '',
+            isLoad: false,          
+        }
+    },
+    watch: {
+    },
+    computed: {
+        getMaxNo() {            
+            const max = Math.max(...this.items.map((item) => item.s_sort));
+            return isFinite(max) ? max : 0;
+        },
+    },    
+    methods: {
+        ...mapActions("basejob", ["duplicateProcessCheck", "iuBaseProcess"]),
+        async init() {
+            
+            this.fatch();
+        },
+        async fatch() {            
+            const where = { search: this.search.trim() };
+            const query = qs.stringify(where);            
+            if (this.items) this.items.splice(0);            
+            this.items = await this.$axios.get(`/api/basejob/getBaseProcess?${query}`);      
+        },
+        
+        async addItem() {
+            this.isLoad = true;
+            this.item = null;
+            this.$refs.dialog.open();
+        },
+        async delItem() {
+            const idx = this.items.indexOf(this.item);
+            if (idx < 0) return;
+            const result = await this.$ezNotify.confirm(
+			 	`<b>Code : ${this.item.c_process}</b> 삭제 하시겠습니까 ?`,
+			 	`Code`,
+			 	{icon : 'mdi-delete', iconColor: 'red'}
+			);
+            if(!result) return;
+            const data = await this.$axios.delete(`/api/basejob/delBaseProcess/${this.item.c_com}/${this.item.c_process}`);
+            if(data) {
+                this.items.splice(idx, 1);                
+                this.$toast.info(`[${this.item.c_process}] 삭제 하였습니다.`);
+            } 
+        },
+        async saveItem(form) {
+            this.isLoading = true;
+            const data = await this.iuBaseProcess(form);
+            this.isLoading = false;
+            if (data) {                
+                this.$toast.info(`[${data.c_item}] 저장 하였습니다.`);
+                const idx = this.items.indexOf(this.item);
+                idx >= 0 ? this.items.splice(idx, 1, data) : this.items.push(data);
+            }
+            this.$refs.dialog.close();
+        },
+        async close() {
+            this.isLoad = false;
+            this.item = null;
+        },
+        async keyCheckItem(value) {
+            const payload = {
+                c_item: "c_process",
+                value           
+            };            
+            return await this.duplicateProcessCheck(payload); 
+        },
+        getColor (yn) {
+            if(yn == "N") { return 'red'; } 
+            else { return 'green';}
+        },
+        rowSelect :function (item, row) {    
+            row.select(true);            
+            this.item = item;            
+        },
+        async showRowInfo(event, { item }) {
+            this.isLoad = true;     
+            this.item = item;
+            this.$refs.dialog.open();
+        },
+    },
 }
 </script>
 

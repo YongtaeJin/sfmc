@@ -93,7 +93,7 @@ export default {
 		init() {
 			this.errMsg = "";
 			this.successMsg = "";
-			this.isCheck = false;
+			// this.isCheck = false;
 		},
 		validate() {
 			if(!this.isCheck) {

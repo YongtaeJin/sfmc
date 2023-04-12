@@ -283,6 +283,14 @@ const systemModel = {
 		return row.affectedRows == 1;
 	},
 
+    async getCodeList(req) {
+        const { c_com, c_gcode } = req.query;       
+        const sort = {s_sort: true, c_code: true};
+        const sql = sqlHelper.SelectSimple(TABLE.COMCODE, { c_com, c_gcode }, [ 'c_code', 'n_code', 's_sort' ], sort);
+        const [rows] = await db.execute(sql.query, sql.values);    
+        return rows;
+    }
+ 
 };
 
 module.exports = systemModel;

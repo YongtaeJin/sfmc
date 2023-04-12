@@ -4,7 +4,7 @@ const { modelCall } = require('../../util/lib');
 const passport = require('passport');
 const jwt = require('../plugins/jwt');
 
-
+// 거래처 관리
 router.get('/getBaseVned', async (req, res) => {
     const result = await modelCall(basejobModel.getBaseJobVned, req);
 	res.json(result);
@@ -19,6 +19,40 @@ router.delete('/delBaseVned/:c_com/:c_vend', async(req, res)=>{
 });
 router.post('/iuBaseVend', async (req, res) => {
 	const result = await modelCall(basejobModel.iuBaseVend, req);
+	res.json(result);
+});
+// ITEM 관리
+router.get('/getBaseItem', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseItem, req);
+	res.json(result);
+});
+router.get('/duplicateItemCheck/:c_item/:value', async (req, res) => {	
+	const result = await modelCall(basejobModel.duplicateItemCheck, req)	
+	res.json(result);
+});
+router.delete('/delBaseItem/:c_com/:c_item', async(req, res)=>{
+	const result = await modelCall(basejobModel.delBaseItem, req);
+	res.json(result);
+});
+router.post('/iuBaseItem', async (req, res) => {
+	const result = await modelCall(basejobModel.iuBaseItem, req);
+	res.json(result);
+});
+// 공정관리
+router.get('/getBaseProcess', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseProcess, req);
+	res.json(result);
+});
+router.get('/duplicateProcessCheck/:c_process/:value', async (req, res) => {	
+	const result = await modelCall(basejobModel.duplicateProcessCheck, req)	
+	res.json(result);
+});
+router.delete('/delBaseProcess/:c_com/:c_process', async(req, res)=>{
+	const result = await modelCall(basejobModel.delBaseProcess, req);
+	res.json(result);
+});
+router.post('/iuBaseProcess', async (req, res) => {
+	const result = await modelCall(basejobModel.iuBaseProcess, req);
 	res.json(result);
 });
 

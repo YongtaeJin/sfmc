@@ -7,6 +7,8 @@ const TABLE = {
 	GRPCODE: 'tb_grpcode',
 	COMCODE: 'tb_comcode',
 	VEND: 'tb_vend',
+	ITEM: 'tb_item',
+	PROCESS: 'tb_process',
 
 };
 

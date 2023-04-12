@@ -76,4 +76,8 @@ router.delete('/delComCode/:c_com/:c_gcode/:c_code', async(req, res)=>{
 	res.json(result);
 });
 
+router.get('/getCodeList', async (req, res) => {
+	const result = await modelCall(systemModel.getCodeList, req);
+	res.json(result);
+});
 module.exports = router;
