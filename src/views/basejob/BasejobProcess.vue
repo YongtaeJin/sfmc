@@ -12,19 +12,23 @@
             item-key="c_process" single-select
             :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
             class="elevation-1" height="600px">  
-           
+
+            <template v-slot:[`item.f_outside`]="{ item }">
+                <v-chip x-small :color="getColor2(item.f_outside)" dark>
+                    {{ item.f_outside == 'Y' ? '외주공정' : '사내공정' }}
+                </v-chip>
+            </template>
             <template v-slot:[`item.f_use`]="{ item }">
                 <v-chip x-small :color="getColor(item.f_use)" dark>
                     {{ item.f_use == 'Y' ? '사용' : '중지' }}
                 </v-chip>
             </template>
         </v-data-table>
-        <ez-dialog ref="dialog" label="품목 등록(수정)" persistent @onClose="close" width="500px">            
-            <basejobitem-form
-                :data="item" :keyCheckItem="keyCheckItem" :isLoad="isLoad" :s_sort=getMaxNo 
-                :units="units" :itemtypes="itemtypes"
+        <ez-dialog ref="dialog" label="공정 등록(수정)" persistent @onClose="close" width="500px">            
+            <basejobprocess-form
+                :data="item" :keyCheckItem="keyCheckItem" :isLoad="isLoad" :s_sort=getMaxNo                 
                 @onSave="saveItem">
-            </basejobitem-form>
+            </basejobprocess-form>
         </ez-dialog>
     </v-container>
 </template>
@@ -34,9 +38,9 @@ import qs from "qs";
 import { mapActions } from "vuex";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
-import BasejobitemForm from './JobComponent/BasejobitemForm.vue';
+import BasejobprocessForm from './JobComponent/BasejobprocessForm.vue';
 export default {
-    components: { TooltipBtn, EzDialog, BasejobitemForm },
+    components: { TooltipBtn, EzDialog, BasejobprocessForm },
     name: "BasejobProcess",
     mounted() {
         this.init();
@@ -48,7 +52,7 @@ export default {
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'left', },
                 {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
                 {text: '공정설명',  value: 't_remark', sortable: false, align:'left', },
-                {text: '외주공정',  value: 'f_outside', sortable: false, align:'left', },
+                {text: '외주공정',  value: 'f_outside', sortable: false, align:'center', },
                 {text: '사용여부',  value: 'f_use', sortable: false, align:'center', },
                 
             ],
@@ -68,8 +72,7 @@ export default {
     },    
     methods: {
         ...mapActions("basejob", ["duplicateProcessCheck", "iuBaseProcess"]),
-        async init() {
-            
+        async init() {            
             this.fatch();
         },
         async fatch() {            
@@ -104,7 +107,7 @@ export default {
             const data = await this.iuBaseProcess(form);
             this.isLoading = false;
             if (data) {                
-                this.$toast.info(`[${data.c_item}] 저장 하였습니다.`);
+                this.$toast.info(`[${data.c_process}] 저장 하였습니다.`);
                 const idx = this.items.indexOf(this.item);
                 idx >= 0 ? this.items.splice(idx, 1, data) : this.items.push(data);
             }
@@ -116,14 +119,16 @@ export default {
         },
         async keyCheckItem(value) {
             const payload = {
-                c_item: "c_process",
+                c_process: "c_process",
                 value           
             };            
             return await this.duplicateProcessCheck(payload); 
         },
-        getColor (yn) {
-            if(yn == "N") { return 'red'; } 
-            else { return 'green';}
+        getColor (yn) {            
+            return yn == "N" ? 'red' : 'green';
+        },
+        getColor2 (yn) {            
+            return yn == "Y" ? 'red' : 'green';
         },
         rowSelect :function (item, row) {    
             row.select(true);            

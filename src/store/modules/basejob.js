@@ -36,5 +36,26 @@ export const actions = {
 		const data = await $axios.post('/api/basejob/iuBaseProcess', form);
 		return data;
 	},
+	// 공정유형관리
+	async duplicateProcesstypeCheck(ctx, { c_ptype, value }) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.get(`/api/basejob/duplicateProcesstypeCheck/${c_ptype}/${value}`);		
+		return data;
+    },
+	async iuBaseProcesstype( { commit }, form) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/basejob/iuBaseProcesstype', form);
+		return data;
+	},
+	async duplicateProcesstypeCheckLi(ctx, { c_col1, value1, c_col2, value }) {	
+		const { $axios } = Vue.prototype;
+		const data = await $axios.get(`/api/basejob/duplicateProcesstypeCheckLi/${c_col1}/${value1}/${c_col2}/${value}`);		
+		return data;
+    },
+	async iuBaseProcesstypeLi( { commit }, form) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/basejob/iuBaseProcesstypeLi', form);
+		return data;
+	},
 
 };

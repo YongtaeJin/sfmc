@@ -84,6 +84,14 @@ const store = new Vuex.Store({
 							subItems : []
 						},
 						{
+							title : "공정유형관리",
+							icon : "",
+							to : '/base/basejobprocesstype',
+							grant : 8, 
+							newTab : false,
+							subItems : []
+						},
+						{
 							title : "라우팅관리",
 							icon : "",
 							to : '/base/basejobroute',

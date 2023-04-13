@@ -55,5 +55,42 @@ router.post('/iuBaseProcess', async (req, res) => {
 	const result = await modelCall(basejobModel.iuBaseProcess, req);
 	res.json(result);
 });
+router.get('/getProcessItem', async (req, res) => {
+    const result = await modelCall(basejobModel.getProcessItem, req);
+	res.json(result);
+});
+// 공정유형관리
+router.get('/getBaseProcesstype', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseProcesstype, req);
+	res.json(result);
+});
+router.get('/duplicateProcesstypeCheck/:c_ptype/:value', async (req, res) => {	
+	const result = await modelCall(basejobModel.duplicateProcesstypeCheck, req)	
+	res.json(result);
+});
+router.delete('/delBaseProcesstype/:c_com/:c_ptype', async(req, res)=>{
+	const result = await modelCall(basejobModel.delBaseProcesstype, req);
+	res.json(result);
+});
+router.post('/iuBaseProcesstype', async (req, res) => {
+	const result = await modelCall(basejobModel.iuBaseProcesstype, req);
+	res.json(result);
+});
+router.get('/getBaseProcesstypeLi', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseProcesstypeLi, req);
+	res.json(result);
+});
+router.get('/duplicateProcesstypeCheckLi/:c_col1/:value1/:c_col2/:value', async (req, res) => {	
+	const result = await modelCall(basejobModel.duplicateProcesstypeCheckLi, req)	
+	res.json(result);
+});
+router.delete('/delBaseProcesstypeLi/:c_com/:c_ptype', async(req, res)=>{
+	const result = await modelCall(basejobModel.delBaseProcesstypeLi, req);
+	res.json(result);
+});
+router.post('/iuBaseProcesstypeLi', async (req, res) => {
+	const result = await modelCall(basejobModel.iuBaseProcesstypeLi, req);
+	res.json(result);
+});
 
 module.exports = router;

@@ -9,6 +9,8 @@ const TABLE = {
 	VEND: 'tb_vend',
 	ITEM: 'tb_item',
 	PROCESS: 'tb_process',
+	PROCESSTYPE: 'tb_ptype',
+	PROCESSTYPELIST: 'tb_ptypeli',
 
 };
 
