@@ -84,7 +84,7 @@ router.get('/duplicateProcesstypeCheckLi/:c_col1/:value1/:c_col2/:value', async 
 	const result = await modelCall(basejobModel.duplicateProcesstypeCheckLi, req)	
 	res.json(result);
 });
-router.delete('/delBaseProcesstypeLi/:c_com/:c_ptype', async(req, res)=>{
+router.delete('/delBaseProcesstypeLi/:c_com/:c_ptype/:c_process', async(req, res)=>{
 	const result = await modelCall(basejobModel.delBaseProcesstypeLi, req);
 	res.json(result);
 });

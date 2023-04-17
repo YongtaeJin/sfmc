@@ -130,7 +130,7 @@ const basejobModel = {
         const at = moment().format('LT');                
         const payload = {
 			...req.body,
-        }
+        }        
         const {c_com, c_item } = payload;        
         if (!payload.n_crnm) { 
             // delete payload.c_vend;
@@ -328,6 +328,7 @@ const basejobModel = {
         const payload = {
 			...req.body,
         }
+        delete payload.c_id;
         const {c_com, c_ptype, c_process } = payload;        
         if (!payload.n_crnm) {             
             payload.n_crnm = req.user.n_name;
@@ -341,7 +342,7 @@ const basejobModel = {
             payload.n_upnm = req.user.n_name;
             delete payload.d_create_at;
             delete payload.n_crnm;            
-
+            
             const sql = sqlHelper.Update(TABLE.PROCESSTYPELIST, payload, {c_com, c_ptype, c_process});            
             const [row] = await db.execute(sql.query, sql.values);
             if (row.affectedRows < 1) return '';            

@@ -16,7 +16,7 @@ const rules = {
 	},
 	matchValue(origin) {
 		return v => origin === v || '비밀번호가 일치하지 않습니다.';
-	},
+	},	
 	id(options) {
 		const defaultOptions = {
 			label : '아이디',

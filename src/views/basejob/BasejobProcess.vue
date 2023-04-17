@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-toolbar height="40px" background-color="primary" dark>
-            <v-toolbar-title>품목 관리</v-toolbar-title>
+            <v-toolbar-title>공정 관리</v-toolbar-title>
             <v-spacer/>
             <v-text-field v-model="search" ense single-line hide-details/>
             <tooltip-btn label="조회" @click="fatch"><v-icon>mdi-magnify</v-icon></tooltip-btn>            

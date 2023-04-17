@@ -66,9 +66,9 @@ const routes = [
 		component: () => import(/* webpackChunkName: "Basejobprocess" */ '../views/basejob/BasejobProcess.vue')
 	},
 	{
-		path: '/base/basejobprocesstype',
-		name: 'Basejobprocesstype',
-		component: () => import(/* webpackChunkName: "Basejobprocesstype" */ '../views/basejob/BasejobProcesstype.vue')
+		path: '/base/basejobprtype',
+		name: 'Basejobprtype',
+		component: () => import(/* webpackChunkName: "Basejobprtype" */ '../views/basejob/BasejobPrType.vue')
 	},
 	{
 		path: '/base/basejobroute',
