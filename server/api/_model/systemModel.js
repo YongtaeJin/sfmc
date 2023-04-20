@@ -258,8 +258,7 @@ const systemModel = {
             delete payload.n_upnm;   
 
             const sql = sqlHelper.Insert(TABLE.COMCODE, payload);
-            const [row] = await db.execute(sql.query, sql.values);       
-            
+            const [row] = await db.execute(sql.query, sql.values);            
             if (row.affectedRows < 1) return '';                        
         } else {
             payload.d_update_at = at;

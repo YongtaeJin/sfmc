@@ -12,12 +12,6 @@
             item-key="c_item" single-select
             :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
             class="elevation-1" height="600px">  
-            <template v-slot:[`item.i_unit`]="{ item }">
-                 {{ getNameUnit(item.i_unit) }}
-            </template>
-            <template v-slot:[`item.i_type`]="{ item }">
-                 {{ getNameType(item.i_type) }}
-            </template>
             <template v-slot:[`item.a_bye`]="{ item }">
                  {{ item.a_bye.toLocaleString()}}
             </template>
@@ -72,7 +66,6 @@ export default {
             isLoad: false,
             units:[],
             itemtypes:[],
-            abc: 'aaa',            
         }
     },
     watch: {
@@ -82,18 +75,9 @@ export default {
             const max = Math.max(...this.items.map((item) => item.s_sort));
             return isFinite(max) ? max : 0;
         },
-        
     },    
     methods: {
         ...mapActions("basejob", ["duplicateItemCheck", "iuBaseItem"]),
-        getNameUnit(data) {
-            const unit = this.units.find(v => v.c_code == data);            
-            return unit ? unit.n_code : '';
-        },
-        getNameType(data) {
-            const type = this.itemtypes.find(v => v.c_code == data);            
-            return type ? type.n_code : '';
-        },
         async init() {
             // 단위
             const unit = {c_com: this.$store.state.user.member.c_com, c_gcode: "UNIT"};
@@ -102,8 +86,9 @@ export default {
             
             // 제품타입
             const type = {c_com: this.$store.state.user.member.c_com, c_gcode: "ITEMTYPE"};
-            query = qs.stringify(type);
-            this.itemtypes = await this.$axios.get(`/api/system/getCodeList?${query}`);            
+            var query = qs.stringify(type);
+            this.itemtypes = await this.$axios.get(`/api/system/getCodeList?${query}`);
+            
             
             this.fatch();
         },

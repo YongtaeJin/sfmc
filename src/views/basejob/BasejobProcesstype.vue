@@ -46,11 +46,10 @@
     </ez-dialog>
     
     <ez-dialog ref="dialogLi" label="공정추가/삭제" persistent @onClose="closeLi" width="500px">
-        <basejobprtypeli-from :data="typeliitem" :keyCheckItem="keyCheckItemLi" :isLoad="isLoad" 
+        <basejobprocesstypeli-from :data="typeliitem" :keyCheckItem="keyCheckItemLi" :isLoad="isLoad" 
             :c_ptype="this.typeitem.c_ptype" :s_sort=getMaxNo2                 
             @onSave="saveTypeLi">
-        </basejobprtypeli-from>  
-        
+        </basejobprocesstypeli-from>  
     </ez-dialog>
     </v-container>
     
@@ -62,11 +61,10 @@ import { mapActions } from "vuex";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import BasejobprocesstypeFrom from './JobComponent/BasejobprocesstypeFrom.vue';
-import BasejobprtypeliFrom from './JobComponent/BasejobprtypeliFrom.vue';
-
+import BasejobprocesstypeliFrom from './JobComponent/BasejobprocesstypeliFrom.vue';
 
 export default {
-    components: { TooltipBtn, EzDialog, BasejobprocesstypeFrom, BasejobprtypeliFrom,  },
+    components: { TooltipBtn, EzDialog, BasejobprocesstypeFrom, BasejobprocesstypeliFrom,  },
     name: "BasejobProcesstype",
     mounted() {
         this.init();
