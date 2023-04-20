@@ -137,5 +137,9 @@ router.post('/iuBaseRouteProc', async (req, res) => {
 	const result = await modelCall(basejobModel.iuBaseRouteProc, req);
 	res.json(result);
 });
+router.delete('/delBaseRouteProc/:c_com/:c_item/:i_ser', async(req, res)=>{
+	const result = await modelCall(basejobModel.delBaseRouteProc, req);
+	res.json(result);
+});
 
 module.exports = router;

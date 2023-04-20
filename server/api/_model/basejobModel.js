@@ -427,6 +427,10 @@ const basejobModel = {
         const [row] = await db.execute(sql.query, sql.values);
 
         // 라우팅 공정,공정유형 삭제처리
+        if (row.affectedRows > 0) {
+            const sqldt = sqlHelper.DeleteSimple(TABLE.ROUTEPROC, { c_com, c_item });
+            await db.execute(sqldt.query, sqldt.values);
+        }
 
 		return row.affectedRows == 1;
 	},
@@ -568,6 +572,14 @@ const basejobModel = {
         const [[item]] = await db.execute(sqlrv.query, sqlrv.values); 
         return item;
     },
+    async delBaseRouteProc(req) {
+		if (!isGrant(req, LV.ADMIN))  throw new Error('권한이 없습니다.');
+		const { c_com, c_item, i_ser } = req.params;
+                
+        const sql = sqlHelper.DeleteSimple(TABLE.ROUTEPROC, { c_com, c_item, i_ser });
+        const [row] = await db.execute(sql.query, sql.values);
+		return row.affectedRows == 1;
+	},
 
     //console.log('at', extractNumber(moment().format('LTM')));
 }

@@ -89,10 +89,6 @@
     </ez-dialog>
     
     <ez-dialog ref="dialogLi" label="라우팅 품목 추가/삭제" persistent @onClose="closeLi" width="400px">
-        <!-- <basejobprtypeli-from :data="typeliitem" :keyCheckItem="keyCheckItemLi" :isLoad="isLoad" 
-            :c_ptype="c_ptype" :s_sort=getMaxNo2 :proclist="proclist"
-            @onSave="saveLiType">
-        </basejobprtypeli-from>   -->
         <basejobrouteli-from :data="procDetail" :isLoad="isLoad" :s_sort=getMaxNo 
             :prcoess="prcoess" :route="route" @onSave="saveRouterProc">
         </basejobrouteli-from>
@@ -207,7 +203,14 @@ export default {
             if(data) { 
                 this.routes.splice(idx, 1);
                 this.$toast.info(`[${this.route.c_item}] 삭제 하였습니다.`);
-                this.route = null;
+
+                for (var i = this.routesProcs.length - 1; i >= 0; i--) {
+                    if (this.routesProcs[i].c_item == this.route.c_item) this.routesProcs.splice(i, 1);
+                }
+                this.selected1 = [];
+                this.selected2 = [];  
+                this.routesPro = null;
+                this.procDetail = null;                
             } 
         },
         async keyCheckRoute() {
@@ -255,7 +258,21 @@ export default {
             this.$refs.dialogLi.open();
         },
         async delDetail() {
-            this.isLoad = false;            
+            const idx = this.routesProcs.indexOf(this.procDetail);
+            if (idx < 0) return;
+            const result = await this.$ezNotify.confirm(
+			 	`<b>라우팅 공정코드 : ${this.procDetail.c_process}</b> 삭제 하시겠습니까 ?`,
+			 	`공정 삭제`,
+			 	{icon : 'mdi-delete', iconColor: 'red'}
+			);
+            if(!result) return;
+            const data = await this.$axios.delete(`/api/basejob/delBaseRouteProc/${this.procDetail.c_com}/${this.procDetail.c_item}/${this.procDetail.i_ser}`);
+            if(data) { 
+                this.routesProcs.splice(idx, 1);
+                this.$toast.info(`[${this.route.c_item}] 삭제 하였습니다.`);
+                const idx1 = this.routesProc.indexOf(this.procDetail);
+                if(idx >= 0 ) this.routesProc.splice(idx1, 1);                
+            }       
         },
         
         async showRowInfoDetail() {

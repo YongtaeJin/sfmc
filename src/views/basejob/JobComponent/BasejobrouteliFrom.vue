@@ -19,7 +19,7 @@
                     </v-select>
                 </v-col>
                 <v-col col="12" sm="3" md="3">
-                    <v-text-field v-model="form.m_whour" label="작업시간" :rules="[rules.Num()]" hide-details="false" readonly/>
+                    <v-text-field v-model="form.m_whour" label="작업시간" :rules="[rules.Num()]" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="5" md="5">
                     <v-checkbox v-model="form.f_jobs" label="첫공정" true-value="Y"  false-value="N" hide-details="false"/>
@@ -119,7 +119,7 @@ export default {
             await this.$nextTick();
             if (!this.valid) return;            
             this.$emit('onSave', this.form);
-            this.init();
+            // this.init();
             
         },
         getText(item) {
