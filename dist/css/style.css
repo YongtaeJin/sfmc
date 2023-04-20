@@ -38,18 +38,24 @@
 	font-size: 1.0rem !important;
 }
 /* .v-data-table > .v-data-table-header {
-	color: white;		
+	color: white;		v-text-field label left.label-end .v-label {
+	right: 0 !important;
+	text-align: end;
+	left: 100px !important;
+  }
 } */
 tr.v-data-table__selected {
 	background: hwb(144 76% 2%) !important;
 }
-
 .text-input-blue .v-text-field__slot input {
 	color: #00f !important;
 }
 .text-input-red .v-text-field__slot input {
 	color: red !important;
 }
+/* .text-input-white .v-text-field__slot input, label {
+	color: white !important;		
+} */
 .text-input-bluewhite .v-text-field__slot input {
 	color: white !important;
 	background: #00f !important;
@@ -57,4 +63,56 @@ tr.v-data-table__selected {
 .text-input-redwhite .v-text-field__slot input {	
 	color: white !important;
 	background: red !important;
+}
+.label-end .v-label {
+	right: 0 !important;
+	text-align: end;
+	left: 100px !important;
+	
+}
+
+table.type07 {	
+	border-collapse: collapse;
+	text-align: left;
+	line-height: 0.8;
+	border: 1px solid #ccc;
+	width: 100% !important;;	
+	/* margin: 20px 10px; */
+  }
+  table.type07 thead {
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	background: hwb(144 76% 2%);
+  }
+  table.type07 thead th {
+	padding: 5px;	
+	font-size: 0.8rem;
+	vertical-align: top;
+	/* color: #fff; */
+	/* border-bottom: 1px solid #ccc; */
+  }
+  table.type07 tbody th {
+	width: 15%;
+	/* width: 10vw; */
+	padding: 5px;
+	vertical-align: top;
+	border-bottom: 1px solid #ccc;
+	background: #fcf1f4;
+  }
+  table.type07 td {	
+	padding: 5px;
+	width: 85%;
+	vertical-align: top;
+	font-size: 0.7rem;
+	/* color: hsl(272, 87%, 3%); */
+	border-bottom: 1px solid #ccc;
+  }
+
+.s_no.v-text-field {
+	width: 50px !important;
+}
+
+.icon-container {
+	display: flex;
+	flex-direction: row;
 }
