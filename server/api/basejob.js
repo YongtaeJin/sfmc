@@ -26,6 +26,10 @@ router.get('/getBaseItem', async (req, res) => {
     const result = await modelCall(basejobModel.getBaseItem, req);
 	res.json(result);
 });
+router.get('/getBaseItemUse', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseItemUse, req);
+	res.json(result);
+});
 router.get('/duplicateItemCheck/:c_item/:value', async (req, res) => {	
 	const result = await modelCall(basejobModel.duplicateItemCheck, req)	
 	res.json(result);
@@ -84,12 +88,53 @@ router.get('/duplicateProcesstypeCheckLi/:c_col1/:value1/:c_col2/:value', async 
 	const result = await modelCall(basejobModel.duplicateProcesstypeCheckLi, req)	
 	res.json(result);
 });
-router.delete('/delBaseProcesstypeLi/:c_com/:c_ptype', async(req, res)=>{
+router.delete('/delBaseProcesstypeLi/:c_com/:c_ptype/:c_process', async(req, res)=>{
 	const result = await modelCall(basejobModel.delBaseProcesstypeLi, req);
 	res.json(result);
 });
 router.post('/iuBaseProcesstypeLi', async (req, res) => {
 	const result = await modelCall(basejobModel.iuBaseProcesstypeLi, req);
+	res.json(result);
+});
+// 라우트 관리
+router.get('/getBaseRoute', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseRoute, req);
+	res.json(result);
+});
+router.get('/getNotItemList', async (req, res) => {
+    const result = await modelCall(basejobModel.getNotItemList, req);
+	res.json(result);
+});
+router.get('/getUseProcess', async (req, res) => {
+    const result = await modelCall(basejobModel.getUseProcess, req);
+	res.json(result);
+});
+router.get('/getUseProcessList', async (req, res) => {
+    const result = await modelCall(basejobModel.getUseProcessList, req);
+	res.json(result);
+});
+router.get('/duplicateRouteCheck/:c_item/:value', async (req, res) => {	
+	const result = await modelCall(basejobModel.duplicateRouteCheck, req)	
+	res.json(result);
+});
+router.delete('/delBaseRoute/:c_com/:c_item', async(req, res)=>{
+	const result = await modelCall(basejobModel.delBaseRoute, req);
+	res.json(result);
+});
+router.post('/iuBaseRoute', async (req, res) => {
+	const result = await modelCall(basejobModel.iuBaseRoute, req);
+	res.json(result);
+});
+router.get('/getBaseRouteProc', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseRouteProc, req);
+	res.json(result);
+});
+router.get('/getBaseRouteProc/:c_com/:c_item', async (req, res) => {
+    const result = await modelCall(basejobModel.getBaseRouteProc, req);
+	res.json(result);
+});
+router.post('/iuBaseRouteProc', async (req, res) => {
+	const result = await modelCall(basejobModel.iuBaseRouteProc, req);
 	res.json(result);
 });
 
