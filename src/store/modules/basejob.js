@@ -57,5 +57,21 @@ export const actions = {
 		const data = await $axios.post('/api/basejob/iuBaseProcesstypeLi', form);
 		return data;
 	},
+	// 라우트관리
+	async duplicateRouteCheck(ctx, { c_route, value }) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.get(`/api/basejob/duplicateRouteCheck/${c_item}/${value}`);		
+		return data;
+    },
+	async iuBaseRoute( { commit }, form) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/basejob/iuBaseRoute', form);
+		return data;
+	},
+	async iuBaseRouteProc( { commit }, form) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/basejob/iuBaseRouteProc', form);
+		return data;
+	},
 
 };

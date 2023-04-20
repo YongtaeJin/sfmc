@@ -12,7 +12,6 @@
         <v-col col="12" sm="4" md="4">
             <v-data-table :headers="headers" :items="routes" @click:row="rowSelect" @dblclick:row="showRowInfo" 
                 item-key="c_item" single-select
-                v-model="selected1"
                 :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                 class="elevation-1" height="600px">  
 
@@ -38,44 +37,35 @@
                     <v-spacer/>                       
                     <tooltip-btn label="공정추가" @click="addDetail" fab x-small><v-icon>mdi-plus</v-icon></tooltip-btn>            
                     <tooltip-btn label="공정삭제" @click="delDetail" fab x-small><v-icon>mdi-minus</v-icon></tooltip-btn>
-                </v-toolbar>                
-                <!-- @dblclick:row="showRowInfoDetail" -->
-                <v-data-table :headers="headersDetail" :items="routesProc" @click:row="rowSelectDetial" 
-                    item-key="i_ser" single-select 
-                    v-model="selected2"
+                </v-toolbar>
+                <!-- @dblclick:row="showRowInfoDetail"  -->
+                <v-data-table :headers="headersDetail" :items="routesProc" @click:row="rowSelectDetial"                 
+                    item-key="i_ser" single-select
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1" height="560px">  
-
-                    <template v-slot:[`item.s_sort`]="{ item }">
-                        <div @dblclick="showRowInfoDetail()"> {{ item.s_sort }} </div>
+                    class="elevation-1" height="600px">  
+                    <template v-slot:body="props">
+                        <draggable :list="props.items" tag="tbody" @end="onSort">
+                            <tr v-for="(item, index) in props.items" :key="index">
+                                <!-- <td><v-icon x-small class="page__grab-icon">mdi-arrow-all</v-icon></td> -->
+                                <td align="center"> {{ item.s_sort }} </td>
+                                <td align="center"> {{ item.c_process }} </td>
+                                <td> {{ item.n_process }} </td>
+                                <td align="center"> {{ item.m_whour }} </td>
+                                <td align="center" @dblclick="handleDoubleClick(item, 'f_jobs')">                   
+                                    <v-icon v-if="item.f_jobs=='Y'" small color=#008000> mdi-check </v-icon>
+                                    <v-icon v-else x-small >mdi-minus</v-icon>                   
+                                </td>
+                                <td align="center" @dblclick="handleDoubleClick(item, 'f_jobf')">                        
+                                    <v-icon v-if="item.f_jobf=='Y'" small color=#008000> mdi-check </v-icon>
+                                    <v-icon v-else x-small >mdi-minus</v-icon>                                    
+                                </td> 
+                                <td align="center" @dblclick="handleDoubleClick(item, 'f_jobo')">                                    
+                                    <v-icon v-if="item.f_jobo=='Y'" small color=#008000> mdi-check </v-icon>
+                                    <v-icon v-else x-small >mdi-minus</v-icon>
+                                </td>
+                            </tr>
+                        </draggable>
                     </template>
-                    <template v-slot:[`item.c_process`]="{ item }">
-                        <div @dblclick="showRowInfoDetail()"> {{ item.c_process }} </div>
-                    </template>
-                    <template v-slot:[`item.n_process`]="{ item }">
-                        <div @dblclick="showRowInfoDetail()"> {{getProccessName(item.c_process)}} </div>
-                    </template>
-                    <template v-slot:[`item.m_whour`]="{ item }">
-                        <div @dblclick="showRowInfoDetail()"> {{ item.m_whour }} </div>                     
-                    </template>
-                    <template v-slot:[`item.f_jobs`]="{ item }">
-                        <div @dblclick="handleDoubleClick(item, 'f_jobs')">
-                        <v-icon v-if="item.f_jobs=='Y'" small color=#008000> mdi-check </v-icon>
-                        <v-icon v-else x-small >mdi-minus</v-icon>
-                        </div>                       
-                    </template>
-                    <template v-slot:[`item.f_jobf`]="{ item }">
-                        <div @dblclick="handleDoubleClick(item, 'f_jobf')">
-                        <v-icon v-if="item.f_jobf=='Y'" small color=#008000> mdi-check </v-icon>
-                        <v-icon v-else x-small >mdi-minus</v-icon>
-                        </div>
-                    </template> 
-                    <template v-slot:[`item.f_jobo`]="{ item }">
-                        <div @dblclick="handleDoubleClick(item, 'f_jobo')">
-                        <v-icon v-if="item.f_jobo=='Y'" small color=#008000> mdi-check </v-icon>
-                        <v-icon v-else x-small >mdi-minus</v-icon>                        
-                        </div>
-                    </template>                    
                 </v-data-table>
             </v-card>
         </v-col>
@@ -88,14 +78,12 @@
         </basejobroute-form>
     </ez-dialog>
     
-    <ez-dialog ref="dialogLi" label="라우팅 품목 추가/삭제" persistent @onClose="closeLi" width="400px">
+    <ez-dialog ref="dialogLi" label="라우팅 품목 추가/삭제" persistent @onClose="closeLi" width="460px">
         <!-- <basejobprtypeli-from :data="typeliitem" :keyCheckItem="keyCheckItemLi" :isLoad="isLoad" 
             :c_ptype="c_ptype" :s_sort=getMaxNo2 :proclist="proclist"
             @onSave="saveLiType">
         </basejobprtypeli-from>   -->
-        <basejobrouteli-from :data="procDetail" :isLoad="isLoad" :s_sort=getMaxNo 
-            :prcoess="prcoess" :route="route" @onSave="saveRouterProc">
-        </basejobrouteli-from>
+        
     </ez-dialog>
 
     </v-container>
@@ -108,9 +96,9 @@ import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import BasejobrouteForm from './JobComponent/BasejobrouteForm.vue';
 import BasejobrouteliFrom from './JobComponent/BasejobrouteliFrom.vue';
-
+import draggable from 'vuedraggable';
 export default {
-    components: { TooltipBtn, EzDialog, BasejobrouteForm, BasejobrouteliFrom },
+    components: { TooltipBtn, EzDialog, BasejobrouteForm, BasejobrouteliFrom, draggable },
     name: "BasejobRoute",
     mounted() {
         this.init();
@@ -128,60 +116,47 @@ export default {
             route: [],
             search: '',
             isLoad: false,
-            itemLists: [],
-            prcoess: [],    
+            itemLists: [],    
             procLists: [],
-            headersDetail: [
+            headersDetail: [                
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "50px"},                
-                {text: '공정코드',  value: 'c_process', sortable: false, align:'center', },
+                {text: '공정코드',  value: 'c_process', sortable: false, align:'left', },
                 {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
                 {text: '작업시간',  value: 'm_whour', sortable: false, align:'center', },
                 {text: '첫공정',  value: 'f_jobs', sortable: false, align:'center', },
                 {text: '마지막공정',  value: 'f_jobf', sortable: false, align:'center', },
-                {text: '외주',  value: 'f_jobo', sortable: false, align:'center', },                 
+                {text: '외주',  value: 'f_jobo', sortable: false, align:'center', }, 
+               
             ],
             routesProcs: [],
             routesProc: [],
             procDetail: [],
-            temp: [],
 
-            selected1: [],
-            selected2: [],
         }
     },
     watch: {
     },
     computed: {
-        getMaxNo() {            
-            const max = Math.max(...this.routesProc.map((item) => item.s_sort));
+         getMaxNo() {            
+            const max = Math.max(...this.routes.map((item) => item.s_sort));
             return isFinite(max) ? max : 0;
-        },       
+        },
     },
     methods: {
-        ...mapActions("basejob", ["duplicateRouteCheck", "iuBaseRoute", "iuBaseRouteProc"]),
+        ...mapActions("basejob", ["duplicateRouteCheck", "iuBaseRoute"]),
         getColor (yn) {            
             return yn == "N" ? 'red' : 'green';
         },
-        getProccessName(data) {
-            var find = this.prcoess.find(e => e.c_process === data);
-            return find.n_process;
-        },
         async init() {
             this.fetch();
-            this.prcoess = await this.$axios.get(`/api/basejob/getUseProcess`); 
-            this.procLists = await this.$axios.get(`/api/basejob/getUseProcessList`); 
+            this.procLists = await this.$axios.get(`/api/basejob/getUseProcessList`);    
+                     
         },
         async fetch() {
             const where = { search: this.search.trim() };
             const query = qs.stringify(where);
 
             if (this.routesProcs) this.routesProcs.splice(0); 
-            if (this.routesProc) this.routesProc.splice(0); 
-            if (this.itemLists) this.itemLists.splice(0); 
-            if (this.routes) this.routes.splice(0); 
-
-            this.selected1 = [];
-            this.selected2 = [];            
 
             this.itemLists = await this.$axios.get(`/api/basejob/getNotItemList`);
             this.routes = await this.$axios.get(`/api/basejob/getBaseRoute?${query}`);
@@ -189,7 +164,8 @@ export default {
         },        
         rowSelect :function (item, row) {            
             row.select(true);            
-            this.route = item;            
+            this.route = item;
+            console.log(item.c_item)
             this.routesProc = this.routesProcs.filter((item) => {
                 return item.c_item == this.route.c_item && item.c_com == this.route.c_com;
             }); 
@@ -225,17 +201,11 @@ export default {
                 idx = this.itemLists.findIndex(e => e.c_item == data.c_item);                
                 if (idx >= 0 ) this.itemLists.splice(idx, 1);
 
-                // routesProcs 갱신작업                
-                for (var i = this.routesProcs.length - 1; i >= 0; i--) {
-                    if (this.routesProcs[i].c_item == data.c_item) this.routesProcs.splice(i, 1);
-                }
-                this.temp = await this.$axios.get(`/api/basejob/getBaseRouteProc/${data.c_com}/${data.c_item}`);                
-                this.temp.forEach(item => {this.routesProcs.push(item);});    
-                this.routesProc = this.routesProcs.filter((item) => {
-                    return item.c_item == data.c_item && item.c_com == data.c_com;
-                });    
+                // routesProcs 갱신작업
+
             }
-            this.$refs.dialog.close();            
+            this.$refs.dialog.close();
+            //this.routesProcs = await this.$axios.get(`/api/basejob/getBaseRouteProc/${this.route.c_com}/${this.route.c_item}`);
         },
         async addRouter() {
             this.isLoad = true;
@@ -250,28 +220,25 @@ export default {
         },
 
         async addDetail() {
-            this.isLoad = true;
-            this.procDetail = null;
-            this.$refs.dialogLi.open();
+            const c_item = "P002";            
         },
         async delDetail() {
-            this.isLoad = false;            
+
         },
-        
-        async showRowInfoDetail() {
+        async showRowInfoDetail(event, { item }) {
             this.isLoad = true;
-            this.$refs.dialogLi.open();
         },
         rowSelectDetial :function (item, row) { 
-            row.select(true);            
+            // row.select(true);            
             this.procDetail = item;
+
         },
         
         close() { this.isLoad = false },
         closeLi() { this.isLoad = false },
 
         async handleDoubleClick(item, col) {
-            var idx = this.routesProcs.indexOf(item);                
+            var idx = this.routesProcs.indexOf(item);
             switch (col) {
                 case 'f_jobs' :
                     item.f_jobs = item.f_jobs == 'Y' ? 'N' : 'Y';
@@ -283,24 +250,13 @@ export default {
                     item.f_jobo = item.f_jobo == 'Y' ? 'N' : 'Y';
                     break;
             } 
-            // 변경내용 저장            
+            // 변경내용 저장
             if (idx >= 0 ) this.routesProcs.splice(idx, 1, item);
-            await this.iuBaseRouteProc(item);
-            this.procDetail = item;
         },
-        async saveRouterProc(form) {
-            this.isLoading = true;
-            const data = await this.iuBaseRouteProc(form);
-            this.isLoading = false;
-            if (data) {
-                this.$toast.info(`저장 하였습니다.`);
-                var idx = this.routesProcs.indexOf(this.procDetail); 
-                if (idx >= 0 ) this.routesProcs.splice(idx, 1, data);
-                var idx = this.routesProc.indexOf(this.procDetail); 
-                if (idx >= 0 ) this.routesProc.splice(idx, 1, data);
-            }
-            this.$refs.dialogLi.close();
-        }    
+
+        async onSort() {
+            console.log("onSrot")  ;
+        },
     },    
 }
 </script>

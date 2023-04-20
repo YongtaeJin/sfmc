@@ -11,6 +11,8 @@ const TABLE = {
 	PROCESS: 'tb_process',
 	PROCESSTYPE: 'tb_ptype',
 	PROCESSTYPELIST: 'tb_ptypeli',
+	ROUTE: 'tb_route',
+	ROUTEPROC: 'tb_routeproc',
 
 };
 
