@@ -13,6 +13,7 @@ const TABLE = {
 	PROCESSTYPELIST: 'tb_ptypeli',
 	ROUTE: 'tb_route',
 	ROUTEPROC: 'tb_routeproc',
+	ESTIMATE: 'tb_estimate',
 
 };
 

@@ -14,6 +14,10 @@
                 :readonly="!!data"
                 :rules="[rules.require({ label: 'Code' }), rules.alphaNum()]" />
             <v-text-field label="명칭" v-model="form.n_code" />
+            <v-text-field label="문자열 1" v-model="form.s_buf1" />
+            <v-text-field label="문자열 2" v-model="form.s_buf2" />
+            <v-text-field label="숫자열 1" v-model="form.m_buf1" :rules="[rules.Numbuer()]"/>
+            <v-text-field label="숫자열 2" v-model="form.m_buf2" :rules="[rules.Numbuer()]"/>
             <v-textarea label="설명" v-model="form.t_remark" />
             <v-btn type="submit" color="primary" block>저장</v-btn>
         </v-form>

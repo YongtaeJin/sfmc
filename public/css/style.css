@@ -45,13 +45,21 @@
   }
 } */
 tr.v-data-table__selected {
-	background: hwb(144 76% 2%) !important;
+	background: #c2fad8 !important;
 }
 .text-input-blue .v-text-field__slot input {
-	color: #00f !important;
+	color: #00f !important;	
 }
 .text-input-red .v-text-field__slot input {
 	color: red !important;
+}
+.text-input-bluebrg .v-text-field__slot input {
+	color: #00f !important;
+	background-color: rgba(234, 235, 220, 0.937) !important;
+}
+.text-input-redbrg .v-text-field__slot input {
+	color: red !important;
+	background-color: rgba(234, 235, 220, 0.937) !important;
 }
 /* .text-input-white .v-text-field__slot input, label {
 	color: white !important;		
@@ -116,3 +124,20 @@ table.type07 {
 	display: flex;
 	flex-direction: row;
 }
+.my-text-field {
+	height: 24px !important;
+}
+.my-text-fieldend {
+	height: 8px !important;
+}
+.my-text-field input {
+	font-size: 0.7rem !important;	
+}
+
+
+
+/* .my-text-field label  {
+	font-size: 8px !important;
+	height: 16px !important;
+	
+} */

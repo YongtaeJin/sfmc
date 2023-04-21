@@ -62,7 +62,7 @@ const store = new Vuex.Store({
 						{
 							title : "거래처관리",
 							icon : "",
-							to : '/base/basejobvend',
+							to : '/base/vend',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -70,7 +70,7 @@ const store = new Vuex.Store({
 						{
 							title : "품목관리",
 							icon : "",
-							to : '/base/basejobitem',
+							to : '/base/item',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -78,7 +78,7 @@ const store = new Vuex.Store({
 						{
 							title : "공정관리",
 							icon : "",
-							to : '/base/basejobprocess',
+							to : '/base/process',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -86,7 +86,7 @@ const store = new Vuex.Store({
 						{
 							title : "공정유형관리",
 							icon : "",
-							to : '/base/basejobprtype',
+							to : '/base/prtype',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -94,7 +94,7 @@ const store = new Vuex.Store({
 						{
 							title : "라우팅관리",
 							icon : "",
-							to : '/base/basejobroute',
+							to : '/base/route',
 							grant : 8, 
 							newTab : false,
 							subItems : []
@@ -111,7 +111,7 @@ const store = new Vuex.Store({
 						{
 							title : "견적관리",
 							icon : "",
-							to : '',
+							to : '/sales/estimate',
 							grant : 7, 
 							newTab : false,
 							subItems : []
@@ -119,7 +119,7 @@ const store = new Vuex.Store({
 						{
 							title : "수주관리",
 							icon : "",
-							to : '',
+							to : '/sales/orders',
 							grant : 7, 
 							newTab : false,
 							subItems : []

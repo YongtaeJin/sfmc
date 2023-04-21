@@ -5,7 +5,6 @@ const jwt = require('../../plugins/jwt');
 const moment = require('../../../util/moment');
 const { LV, isGrant } = require('../../../util/level');
 const { extractNumber } = require('../../../util/lib');
-const { query } = require('express');
 
 async function getDefaultMemberLevel() {
 	const sql = "select replace(now(3)+0, '.', '') tstamp";

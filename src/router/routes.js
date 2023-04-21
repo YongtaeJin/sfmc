@@ -51,29 +51,39 @@ const routes = [
 	},
 	// 기준정보
 	{
-		path: '/base/basejobvend',
+		path: '/base/vend',
 		name: 'Basejobvend',
 		component: () => import(/* webpackChunkName: "Basejobvend" */ '../views/basejob/BasejobVend.vue')
 	},	
 	{
-		path: '/base/basejobitem',
+		path: '/base/item',
 		name: 'Basejobitem',
 		component: () => import(/* webpackChunkName: "Basejobitem" */ '../views/basejob/BasejobItem.vue')
 	},
 	{
-		path: '/base/basejobprocess',
+		path: '/base/process',
 		name: 'Basejobprocess',
 		component: () => import(/* webpackChunkName: "Basejobprocess" */ '../views/basejob/BasejobProcess.vue')
 	},
 	{
-		path: '/base/basejobprtype',
+		path: '/base/prtype',
 		name: 'Basejobprtype',
 		component: () => import(/* webpackChunkName: "Basejobprtype" */ '../views/basejob/BasejobPrType.vue')
 	},
 	{
-		path: '/base/basejobroute',
+		path: '/base/route',
 		name: 'Basejobroute',
 		component: () => import(/* webpackChunkName: "Basejobroute" */ '../views/basejob/BasejobRoute.vue')
+	},
+	{
+		path: '/sales/estimate',
+		name: 'Salesestimate',
+		component: () => import(/* webpackChunkName: "Salesestimate" */ '../views/sales/SalesEstimate.vue')
+	},
+	{
+		path: '/sales/orders',
+		name: 'Salesorders',
+		component: () => import(/* webpackChunkName: "Salesorders" */ '../views/sales/SalesOrders.vue')
 	},
 
 

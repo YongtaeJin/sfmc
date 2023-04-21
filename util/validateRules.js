@@ -2,11 +2,20 @@ const rules = {
 	require({label}) {
 		return v => !!v || `[${label}] 필수 입력입니다.`;
 	},
+	require2() {
+		return v => !!v || false;
+	},
 	min({label, len=3}){
 		return v => !!v ? v.length >= len || `[${label}] ${len}자 이상 입력하세요.` : true;
 	},
 	Num() {
 		return v => !!v ? /^[0-9_]+$/.test(v) || `숫자만 입력하세요.` : true; 
+	},
+	Num2() {
+		return v => !!v ? /^[0-9_]+$/.test(v) || false : true; 
+	},
+	Numbuer() {
+		return v => !!v ? /^[\d-.]+$/.test(v) || `수에 관련 문자만 입력하세요.` : true; 
 	},
 	alphaNum() {
 		return v => !!v ? /^[a-zA-Z0-9_]+$/.test(v) || `영어와 숫자만 입력하세요.` : true; 
