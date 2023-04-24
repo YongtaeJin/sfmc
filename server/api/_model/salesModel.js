@@ -10,6 +10,8 @@ const salesModel = {
     async getSaleEstimate(req) {     
         // 권한 확인
         if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
+
+        console.log(req.body);
         
         const { c_com } = req.user;
         // const { search } = req.query;

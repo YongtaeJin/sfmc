@@ -21,7 +21,7 @@ const level = {
 		{ label: "BUSINESS", lv: 7 },
 		{ label: "ADMIN", lv: 8 },
 		{ label: "SYSTEM", lv: 9 },
-	],
+	],	
 	LV_LABEL: (lv) => {
 		if (lv >= level.LV.SUPER) {
 			return '프로그램관리자';
@@ -62,7 +62,9 @@ const level = {
 	},
 	isGrant(req, lv) {
 		return req.user && req.user.i_level >= lv ? true : false;
-	}
+	},
+
+	
 };
 
 module.exports = level;

@@ -14,8 +14,7 @@
                         :readonly="!!form.c_ptype"
                         :items="prcoess" item-text="n_process" item-value="c_process" 
                         :rules="[rules.require({ label: '공정코드' })]" >
-                        <template v-slot:item="{ item }">{{ getText(item) }}</template>
-                        <template v-slot:selection="{ item }">{{ getText(item) }}</template>
+                       
                     </v-select>
                 </v-col>
                 <v-col col="12" sm="3" md="3">

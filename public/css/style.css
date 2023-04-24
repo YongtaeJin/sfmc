@@ -55,11 +55,13 @@ tr.v-data-table__selected {
 }
 .text-input-bluebrg .v-text-field__slot input {
 	color: #00f !important;
+	margin-top: 3px; margin-bottom: -2px;
 	background-color: rgba(234, 235, 220, 0.937) !important;
 }
 .text-input-redbrg .v-text-field__slot input {
 	color: red !important;
-	background-color: rgba(234, 235, 220, 0.937) !important;
+	margin-top: 3px; margin-bottom: -2px;
+	background-color: rgba(234, 235, 220, 0.937) !important;	
 }
 /* .text-input-white .v-text-field__slot input, label {
 	color: white !important;		
@@ -134,10 +136,30 @@ table.type07 {
 	font-size: 0.7rem !important;	
 }
 
+.v-subheader {
+	font-size: 0.7rem !important;	
+}
+.my-text-field-label label {
+	font-size: 0.7rem !important;	
+}
 
+.my-custom-class .v-label {
+	margin-bottom: 1px; /* label 아래쪽 간격 조정 */
+	line-height: 30px;
+	font-size: 0.7rem; /* label 글자 크기 조정 */
+}
 
-/* .my-text-field label  {
-	font-size: 8px !important;
-	height: 16px !important;
-	
-} */
+.my-custom-class .v-input__control {
+	padding-top: 0x; /* input 위쪽 간격 조정 */
+	padding-bottom: 0px; /* input 아래쪽 간격 조정 */
+	margin-top: -2px;	
+}
+
+.my-card {
+	background-color: rgba(234, 235, 220, 0.937) !important;	
+	margin-top: 0px; /* 카드의 위쪽 여백을 10px로 지정합니다 */	
+}
+
+.my-text-field .v-select {
+	font-size: 0.7rem !important;
+}
