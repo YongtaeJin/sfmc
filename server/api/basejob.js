@@ -141,5 +141,10 @@ router.delete('/delBaseRouteProc/:c_com/:c_item/:i_ser', async(req, res)=>{
 	const result = await modelCall(basejobModel.delBaseRouteProc, req);
 	res.json(result);
 });
+// 영업 외 실제 사용
+router.get('/getItemList', async (req, res) => {
+    const result = await modelCall(basejobModel.getItemList, req);
+	res.json(result);
+});
 
 module.exports = router;

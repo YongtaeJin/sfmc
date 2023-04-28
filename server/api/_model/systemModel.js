@@ -290,6 +290,23 @@ const systemModel = {
         const sql = sqlHelper.SelectSimple(TABLE.COMCODE, { c_com, c_gcode }, [ 'c_code', 'n_code', 's_sort' ], sort);
         const [rows] = await db.execute(sql.query, sql.values);    
         return rows;
+    },
+
+    async getUnitPop(req) {
+        if (req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
+		const { c_com } = req.user;
+        
+        var query = `SELECT a.c_item, a.n_item, a.t_size, a.i_unit, c1.n_code n_unit, a.i_type, c2.n_code n_type, a.a_sell ` +
+                    `    FROM tb_item a ` +
+                    `         left outer join tb_comcode c1 on a.c_com = c1.c_com and a.i_unit = c1.c_code and c1.c_gcode = 'UNIT' ` +
+                    `         left outer join tb_comcode c2 on a.c_com = c2.c_com and a.i_type = c2.c_code and c2.c_gcode = 'ITEMTYPE' ` +
+                    ` WHERE a.c_com = ? ` +
+                    `   AND a.f_use = 'Y' ` +
+                    ` ORDER BY a.s_sort  `;
+        var values = new Array();
+        values.push(c_com);
+        const [rows] = await db.execute(query, values);    
+        return rows;
     }
  
 };

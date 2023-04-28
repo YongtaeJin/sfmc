@@ -10,6 +10,25 @@ router.post('/getSaleEstimate', async (req, res) => {
 	res.json(result);
 });
 
+router.get('/getSaleEstimateInit', async (req, res) => {
+    const result = await modelCall(salesModel.getSaleEstimateInit, req);
+	res.json(result);    
+});
+router.get('/getSaleEstimateInit/:c_com/:c_gcode', async (req, res) => {
+    console.log("sadf");
+    const result = await modelCall(salesModel.getSaleEstimateInit, req);
+	res.json(result);
+});
+
+router.post('/getSaleEstimateLi', async (req, res) => {
+    const result = await modelCall(salesModel.getSaleEstimateLi, req);
+	res.json(result);
+});
+// router.get('/getSaleEstimateInit/c_com/:value1/:c_gcode/:value2/c_code:value3', async (req, res) => {
+//     const result = await modelCall(salesModel.getSaleEstimateInit, req);
+// 	res.json(result);
+// });
+
 module.exports = router;
 
 

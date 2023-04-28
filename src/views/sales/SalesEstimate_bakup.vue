@@ -37,7 +37,7 @@
                 <v-data-table ref="table" :headers="master" :items="estimates" @click:row="rowSelectMaster" 
                     item-key="i_ser" single-select v-model="selectedM"
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1" height="500px" max-height="500px" > 
+                    class="elevation-1" max-height="600px" > 
 
                     <template v-slot:[`item.f_status`]="{ item }">
                         {{getStatus(item.f_status)}} 
@@ -104,35 +104,30 @@
                     <tooltip-btn label="추가" @click="addDetail" fab x-small><v-icon>mdi-plus</v-icon></tooltip-btn>            
                     <tooltip-btn label="삭제" @click="delDetail" fab x-small><v-icon>mdi-minus</v-icon></tooltip-btn>
                 </v-toolbar>
-                <v-data-table :headers="detail" :items="itmelitFilter" 
-                    :custom-filter="filterSer"
-                    @click:row="rowSelectDetail" 
-                    item-key="i_serno" single-select v-model="selectedD"                    
+                <v-data-table :headers="detail" :items="itmelits" @click:row="rowSelectDetail" 
+                    item-key="i_ser" single-select v-model="selectedD"
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1" height="290px" max-height="290px">
+                    class="elevation-1" max-height="425px">
                     
-                    <template v-slot:[`item.s_sort`]="{ item }">
-                        <v-text-field v-model="item.s_sort" hide-details dense single-line  v-if="item.i_serno === itmelit.i_serno" class="my-text-field"></v-text-field>
-                        <span v-else>{{item.s_sort}}</span>
-                    </template>
-                    <template v-slot:[`item.c_item`]="{ item }">
-                        <v-text-field v-model="item.c_item" hide-details dense single-line readonly v-if="item.i_serno === itmelit.i_serno" class="my-text-field">
-                            <template v-slot:append>
-                                <v-btn icon x-small tabindex="-1" @click="clickItem">
-                                    <v-icon> mdi-dialpad </v-icon>
-                                </v-btn>
+                    <!-- <template v-slot:item.s_sort="props"> -->
+                    <template v-slot:[`item.s_sort`]="props">
+                        <v-edit-dialog :return-value.sync="props.item.s_sort" >
+                            {{ props.item.s_sort }}
+                            <template v-slot:input>
+                                <v-text-field
+                                    v-model="props.item.s_sort"                                    
+                                    label="Edit"
+                                    single-line
+                                    hide-details=""
+                                    class="text-input-bluebrgs"
+                                ></v-text-field>
                             </template>
-                        </v-text-field>
-                        <span v-else>{{item.c_item}}</span>
+                        </v-edit-dialog>
                     </template>
-                    
                 </v-data-table>
             </v-col>           
             
         </v-row>
-        <ez-dialog ref="dialog_Item" label="항목/품목" persistent @onClose="close_item" width="460px" >            
-            <item-pop @onSelect="selectItem"></item-pop>
-        </ez-dialog>
     </v-container>
 </template>
 
@@ -144,11 +139,10 @@ import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import validateRules from "../../../util/validateRules";
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
-import { getDate, deepCopy } from '../../../util/lib';
-import ItemPop from '../codelist/ItemPop.vue';
+import { getDate } from '../../../util/lib';
 
 export default {
-    components: { TooltipBtn, EzDialog, InputDate2, ItemPop },    
+    components: { TooltipBtn, EzDialog, InputDate2 },    
     
     name: "Salesestimate",
     mounted() {
@@ -166,41 +160,21 @@ export default {
             ],
             estimates:[], estimate:[], selectedM: [],
             detail: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "20px"},
-                {text: '항목(품목)',  value: 'c_item', sortable: false, align:'left',},
+                {text: 'No',  value: 's_sort', sortable: false},
+                {text: '항목(품목)',  value: 'c_item', sortable: false, align:'center',},
                 {text: '규격',  value: 't_size', sortable: false},
-                {text: '단위',  value: 'i_unit', sortable: false, align:'center', width: "70px"},
-                {text: '수량',  value: 'm_cnt', sortable: false, align:'center', width: "60px"},
-                {text: '단가',  value: 'a_unit', sortable: false, align:'right', width: "60px"},
-                {text: '금액',  value: 'a_amt', sortable: false, align:'right', width: "65px"},
+                {text: '단위',  value: 'i_unit', sortable: false},
+                {text: '수량',  value: 'm_cnt', sortable: false},
+                {text: '단가',  value: 'a_unit', sortable: false},
+                {text: '금액',  value: 'a_amt', sortable: false},
                 // {text: '통화',  value: 'f_status', sortable: false, align:'center'},
-                {text: '납기일',  value: 's_duedate', sortable: false, align:'center', width: "70px"},
-                // { text: 'Actions', value: 'actions', sortable: false , width: "50px"},
+                {text: '납기일',  value: 's_duedate', sortable: false, align:'center'},
             ],
-            itmelits: [], itmelit: [], itmelitFilter: [],selectedD: [],
+            itmelits: [], itmelit: [], selectedD: [],
             form : {
                 sDate1:"", sDate2:"", sEsimate:"", sVend:"", sStatus:"",
             },
             estDayFt: 15,
-
-            editedIndex: -1,
-            editedItem: {
-                i_ser: '',
-                i_serno: '',
-                c_com: '',
-                i_estno: '',
-                s_sort: 1,
-                c_item: '',
-                n_item: '',
-                t_size: '',
-                i_unit: '',
-                i_type: '',
-                m_cnt: 1,
-                a_unit: 0,
-                a_amt: 0,
-                s_duedate: '',
-                f_edit: "1",
-                },
         }
     },
     watch: {
@@ -209,23 +183,10 @@ export default {
         }
     },
     computed: {
-        rules: () => validateRules,
-        getMaxNo() {            
-            const max = Math.max(...this.itmelitFilter.map((item) => item.s_sort));
-            return isFinite(max) ? max : 0;
-        },         
+         rules: () => validateRules,
     },
     methods: {
         ...mapActions("sales", ["getSaleEstimate"]),
-        filterOnlyCapsText (value, query, item) {
-            return value != null &&
-            query != null &&
-            typeof value === 'string' &&
-            value.toString().toLocaleUpperCase().indexOf(query) !== -1
-        },
-        filterSer(i_ser,  item) {
-            return i_ser == this.estimate.i_ser;
-        },
         async init() {  
             // estDayFt = await this.$axios.post(`/api/sales/getSaleEstimate`);   
             var query = qs.stringify({c_com: this.$store.state.user.member.c_com, c_gcode: "BUSINESS", c_code: "ESTIMATE01", col: "m_buf1"});
@@ -238,17 +199,14 @@ export default {
             this.selectedM = []; this.selectedD = [];
             this.estimate = [];
             if (this.itmelit) this.itmelit.splice(0);            
-            if (this.itmelitFilter) this.itmelitFilter.splice(0);
 
             this.estimates = await this.$axios.post(`/api/sales/getSaleEstimate`, this.form); 
             this.itmelits =  await this.$axios.post(`/api/sales/getSaleEstimateli`, this.form); 
+           
         },
         rowSelectMaster :function (item, row) {            
             row.select(true);            
-            this.estimate = item;  
-            this.itmelitFilter = this.itmelits.filter((r) => {
-                return r.i_ser == item.i_ser && r.c_com == item.c_com;
-            });                         
+            this.estimate = item;            
         },
         async addEstimates() {   
             const ms = Date.now();         
@@ -266,14 +224,13 @@ export default {
             this.$refs.form.validate();
             await this.$nextTick();
             if (!this.valid) return; 
-            
+            console.log('aaa');
         },
         async printEstimates() {
 
         },
         rowSelectDetail:function (item, row) {            
-            row.select(true);
-            this.itmelit = item;
+            row.select(true);                                
             
             // this.typeitem = item;
             // this.c_ptype = this.typeitem.c_ptype;
@@ -288,69 +245,22 @@ export default {
         },
 
         async addDetail() {
+            const ms = Date.now();         
             this.selectedD = [];
-            this.itmelit = [];
-
-            this.$refs.dialog_Item.open();
+            this.itmelit = {i_ser: this.estimate.i_ser, i_serno: ms, c_com: this.estimate.c_com, i_estno: this.estimate.i_estno,
+                            s_sort:1
+                             };
+            const idx = this.itmelits.push(this.itmelit) ;
+            // itmelits: [], itmelit: [], selectedD: [],
         },
-        clickItem() {
-            this.$refs.dialog_Item.open();
-        }, 
-        async delDetail() {            
+        async delDetail() {
+
         },
 
         getStatus(item) {
             var find = this.ESTI001.find(e => e.value === item);
             return find !== undefined ? find.label : '';
         },
-
-        async showRowInfo(event, { item }) {
-                // window.open("../codelist/UnitPop.vue", "_blank")
-        //     this.editedIndex = this.itmelits.indexOf(item);
-        //     this.editedItem = Object.assign({}, item);
-        //     console.log(this.editedItem)
-        },
-        selectItem(item) {            
-            
-            const idx1 = this.itmelitFilter.indexOf(this.itmelit);
-            const idx2 = this.itmelits.indexOf(this.itmelit);
-
-            this.editedItem.c_com = this.estimate.c_com; 
-            this.editedItem.i_ser = this.estimate.i_ser;
-            this.editedItem.i_estno = this.estimate.i_estno;
-            this.editedItem.c_item  = item.c_item;
-            this.editedItem.n_item  = item.n_item;
-            this.editedItem.t_size  = item.t_size;
-            this.editedItem.i_unit  = item.i_unit;
-            this.editedItem.i_type  = item.i_type;
-            this.editedItem.a_unit  = item.a_unit;
-            this.editedItem.f_edit = "1";
-
-            if (idx1 >=0 ) {
-                this.editedItem.i_serno = this.itmelit.i_ser;
-                this.editedItem.s_sort  = this.itmelit.s_sort;
-                this.editedItem.m_cnt   = this.itmelit.m_cnt;
-                this.editedItem.s_duedate = this.itmelit.s_duedate;
-
-                this.itmelitFilter.splice(idx1, 1, this.editedItem);
-                this.itmelits.splice(idx2, 1, this.editedItem);
-                
-            } else {this.editedItem.a_amt
-                this.editedItem.i_serno = Date.now();
-                this.editedItem.s_sort  = this.getMaxNo;
-                this.editedItem.m_cnt   = 1;
-                this.editedItem.s_duedate = this.estimate.s_duedate;
-
-                this.itmelitFilter.push(this.editedItem) ;
-                this.itmelits.push(this.editedItem) ;                
-            }
-            
-            this.$refs.dialog_Item.close();            
-        },
-        close_item() {
-
-        },
-
     }
 
 }

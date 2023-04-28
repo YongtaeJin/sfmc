@@ -50,6 +50,15 @@ const lib = {
 	},
 	priceToString(price)  {
 		return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	},
+	getDate(dayAf) {		
+		const now = new Date(Date.now());
+		now.setDate(now.getDate() + (dayAf !== undefined ? dayAf || 0 : 0));
+		const year = now.getFullYear();
+		const month = String(now.getMonth() + 1).padStart(2, '0');
+		const day = String(now.getDate()).padStart(2, '0');
+		const dateString = `${year}-${month}-${day}`;
+		return dateString;
 	}
 }
 

@@ -80,4 +80,11 @@ router.get('/getCodeList', async (req, res) => {
 	const result = await modelCall(systemModel.getCodeList, req);
 	res.json(result);
 });
+
+// 단위 팝업 선택 창 List
+router.get('/getUnitPop', async (req, res) => {
+	const result = await modelCall(systemModel.getUnitPop, req);
+	res.json(result);
+});
+
 module.exports = router;

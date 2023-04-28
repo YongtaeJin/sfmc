@@ -15,8 +15,8 @@ const sqlHelper = {
 			}
 		}
 
-		if (cols.length > 0) {
-			query = query.replace('*', cols.join(', '));
+		if (cols.length > 0) {			
+			if (cols[0] !== undefined) query = query.replace('*', cols.join(', '));
 		}
 
 		if (sort) {

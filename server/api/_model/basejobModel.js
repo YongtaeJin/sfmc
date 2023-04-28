@@ -581,5 +581,22 @@ const basejobModel = {
 	},
 
     //console.log('at', extractNumber(moment().format('LTM')));
+    // 영업 외 실사용 조회
+    async getItemList(req) {
+        
+        if (!req.user.c_com || req.user.c_com == undefined) { throw new Error('권한이 없습니다.'); }  
+        const { c_com } = req.params;
+        var values = new Array();
+        let query = `SELECT a.c_com, a.c_item, a.n_item, a.t_size, a.i_unit, c1.n_code n_unit, a.i_type, c2.n_code n_type, a.a_sell \n ` +
+                    `  FROM tb_item a \n` +
+                    `       left outer join tb_comcode c1 on a.c_com = c1.c_com and a.i_unit = c1.c_code and c1.c_gcode = 'UNIT' \n` +
+                    `       left outer join tb_comcode c2 on a.c_com = c2.c_com and a.i_type = c2.c_code and c2.c_gcode = 'ITEMTYPE' \n` +
+                    ` WHERE a.f_use = 'Y' AND a.c_com = ? \n` +
+                    ` ORDER BY a.s_sort `;
+        values.push(req.user.c_com);
+        console.log("getItemList sql\n", query)
+        const [rows] = await db.execute(query, values);        
+        return rows;                     
+    }
 }
 module.exports = basejobModel;

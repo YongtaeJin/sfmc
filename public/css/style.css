@@ -29,11 +29,18 @@
 	background-color: #0d54fa;
 	/* border-bottom: none !important; */
 }
+
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
   font-size: 0.7rem;  
-  height: 24px;   
-}
+  height: 24px; /* 원하는 높이로 변경하세요 */
+  line-height: 24px; /* 높이와 같은 값을 사용하세요 */
+  }
 
+.v-data-table .v-data-table__wrapper .v-data-table__cell {
+	height: 24px; /* 원하는 높이로 변경하세요 */
+	line-height: 24px; /* 높이와 같은 값을 사용하세요 */
+}
+  
 .v-toolbar__title {
 	font-size: 1.0rem !important;
 }
