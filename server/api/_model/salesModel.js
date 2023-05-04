@@ -9,9 +9,24 @@ const { extractNumber } = require('../../../util/lib');
 
 function addEditCol(data) {	
 	data.f_edit = '0';	
+    data.f_editold = '0';	
 	return data;
 }
-
+function objectSplit(data, f) {	
+    const obj = {};
+    if ( f === 'M' || f === 'm' ) {
+        const objKeys = Object.keys(data).filter((key) => isNaN(key));
+        const values = objKeys.map((key) => data[key]);
+        for (let i = 0; i < objKeys.length; i++) {
+            obj[objKeys[i]] = values[i];
+        }
+        return obj;
+    } else {        
+        const objKeys = Object.keys(data).filter((key) => !isNaN(key));
+        const objValues = objKeys.map((key) => data[key]);
+        return objValues;
+    }    
+}
 const salesModel = {
     async getSaleEstimateInit(req) {
         if (req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
@@ -60,6 +75,25 @@ const salesModel = {
         })
         return rows;
     },
+    async iuSaleEstimate(req) {
+        const payload = {
+			...req.body,
+        }
+        // f_edit =  0:변경없음, 1:수정, 2:삭제
+        const master = objectSplit(req.body, 'm');
+        const detail = objectSplit(req.body, 'd');
+
+        detail.forEach((row) => {            
+            const sql = sqlHelper.Insert(TABLE.ESTIMATELI, row);    
+            console.log(sql)        
+        })
+
+
+        
+        return 1;
+    },
 }
+
+
 
 module.exports = salesModel;

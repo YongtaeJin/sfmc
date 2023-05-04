@@ -6,10 +6,11 @@
         hide-details
         v-bind="{ ...$attrs, ...attrs }"
         :value="value"
-        @input="onInput"        
+        :readonly="readonly"
+        @input="onInput"
         class="my-custom-class my-text-field"
       >
-        <template v-slot:append>
+        <template v-if="!readonly"  v-slot:append>
           <v-btn icon small tabindex="-1" @click="open">
             <v-icon>mdi-calendar-today</v-icon>
           </v-btn>
@@ -43,6 +44,7 @@ export default {
   },
   props: {
     value: String,
+    readonly: Boolean
   },
   data() {
     return {

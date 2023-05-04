@@ -24,6 +24,12 @@ router.post('/getSaleEstimateLi', async (req, res) => {
     const result = await modelCall(salesModel.getSaleEstimateLi, req);
 	res.json(result);
 });
+
+router.post('/iuSaleEstimate', async (req, res) => {
+    const result = await modelCall(salesModel.iuSaleEstimate, req);
+	res.json(result);
+});
+
 // router.get('/getSaleEstimateInit/c_com/:value1/:c_gcode/:value2/c_code:value3', async (req, res) => {
 //     const result = await modelCall(salesModel.getSaleEstimateInit, req);
 // 	res.json(result);
