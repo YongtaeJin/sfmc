@@ -6,7 +6,7 @@
             <tooltip-btn label="추가" @click="addUser" fab x-small><v-icon>mdi-plus</v-icon></tooltip-btn>            
             <tooltip-btn label="삭제" @click="delUser" fab x-small><v-icon>mdi-minus</v-icon></tooltip-btn>
         </v-toolbar>
-        <v-data-table :headers="headers" :items="data" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1" 
+        <v-data-table :headers="headers" :items="data" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1 text-no-wrap" 
             item-key="c_code" single-select
             :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" >
         </v-data-table>

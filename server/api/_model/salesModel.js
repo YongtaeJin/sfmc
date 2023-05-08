@@ -45,14 +45,39 @@ const salesModel = {
         // 권한 확인
         if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
 
-        console.log(req.body);
-        
         const { c_com } = req.user;
-        // const { search } = req.query;
-        const sql = sqlHelper.SelectSimple(TABLE.ESTIMATE, { c_com, f_use:'Y' });     
-        const [rows] = await db.execute(sql.query, sql.values);        
+        const { sDate1, sDate2, sEsimate, sVend, sStatus} = req.body;
+        let where = `SELECT * FROM tb_estimate \n WHERE c_com = ? and f_use = 'Y' \n `
+        var values = new Array();
+        values.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            where += ` and s_date between ? and ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            where += ` and s_date >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            where += ` and s_date <= ? \n `
+            values.push(sDate2);
+        }
+        if (sEsimate.length > 0) {
+            where += ` and i_estno like ? \n `
+            values.push(sEsimate + '%');
+        }
+        if (sVend.length > 0) {
+            where += ` and n_vend like ? \n `
+            values.push(sVend + '%');
+        }
+        if (sStatus.length > 0) {
+            where += ` and f_status = ? \n `
+            values.push(sStatus);
+        }
+        
+        console.log(where, values);
+        // const sql = sqlHelper.SelectSimple(TABLE.ESTIMATE, { c_com, f_use:'Y' });     
+        const [rows] = await db.execute(where, values);        
 
-        console.log(sql);
         rows.forEach((row) => {
             addEditCol(row);
         });        
@@ -63,7 +88,7 @@ const salesModel = {
         if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
         
         const { c_com } = req.user;
-        // const { search } = req.query;
+        // const { search } = req.query;        
         const sql = sqlHelper.SelectSimple(TABLE.ESTIMATELI, { c_com });     
         // ${TABLE.SEND_MAIL}
         sql.query = sql.query + ` AND EXISTS (SELECT * FROM tb_estimate t WHERE t.c_com = tb_estimateli.c_com and t.f_use = 'Y') `
@@ -79,21 +104,68 @@ const salesModel = {
         const payload = {
 			...req.body,
         }
+        const at = moment().format('LT'); 
         // f_edit =  0:변경없음, 1:수정, 2:삭제
         const master = objectSplit(req.body, 'm');
-        const detail = objectSplit(req.body, 'd');
-
-        detail.forEach((row) => {            
-            const sql = sqlHelper.Insert(TABLE.ESTIMATELI, row);    
-            console.log(sql)        
-        })
-
-
+        const detail = objectSplit(req.body, 'd');        
         
-        return 1;
+        const {c_com, i_ser } = master;
+        
+        if (master.f_edit !== "0" || master.f_editold !== "0") {                        
+            const newdata = master.f_editold !== "0" ? true : false;
+            delete master.f_edit;
+            delete master.f_editold;
+
+            if (!master.n_crnm) {
+                delete master.d_create_at;
+                delete master.n_crnm;
+                master.d_update_at = at;
+                master.n_upnm = req.user.n_name;
+            } else {
+                master.d_create_at = at;
+                master.n_crnm = req.user.n_name;
+                delete master.d_update_at;
+                delete master.n_upnm;
+            }
+            const sql = newdata ? sqlHelper.Insert(TABLE.ESTIMATE, master) : sqlHelper.Update(TABLE.ESTIMATE, master, {c_com, i_ser});
+
+            // console.log("master", sql)      
+            const [row] = await db.execute(sql.query, sql.values);
+            if (row.affectedRows < 1) return -1;            
+        }
+        
+        detail.forEach((row, index) => {
+            if(row.f_edit !== "0" || row.f_editold !== "0") {
+                const {i_serno} = row;
+                const newdata = row.f_editold !== "0" ? true : false;
+                delete row.f_edit;
+                delete row.f_editold;
+                if (!row.n_crnm) {
+                    delete row.d_create_at;
+                    delete row.n_crnm;
+                    row.d_update_at = at;
+                    row.n_upnm = req.user.n_name;
+                } else {
+                    row.d_create_at = at;
+                    row.n_crnm = req.user.n_name;
+                    delete row.d_update_at;
+                    delete row.n_upnm;
+                }
+                const sql = newdata ? sqlHelper.Insert(TABLE.ESTIMATELI, row) : sqlHelper.Update(TABLE.ESTIMATELI, row, {c_com, i_ser, i_serno});
+                
+                console.log("detial", sql);
+                // const [row] = await db.execute(sql.query, sql.values);
+                const res = iuSaleEstimate_dt(sql)    
+                if (res.affectedRows < 1) return index + 1;
+            }
+        })
+        return 0;
     },
 }
 
-
+async function iuSaleEstimate_dt(sql) {	    
+    const [row] = await db.execute(sql.query, sql.values);
+    return row;
+}
 
 module.exports = salesModel;

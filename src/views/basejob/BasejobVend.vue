@@ -11,7 +11,7 @@
         <v-data-table :headers="headers" :items="vends" @click:row="rowSelect" @dblclick:row="showRowInfo" 
             item-key="c_vend" single-select
             :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-            class="elevation-1" height="600px">  
+            class="elevation-1 text-no-wrap" height="600px">  
 
             <!-- <template v-slot:item.s_sort="{ item }"> -->
             <template v-slot:[`item.s_sort`]="{ item }">

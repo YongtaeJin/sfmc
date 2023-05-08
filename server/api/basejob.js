@@ -146,5 +146,9 @@ router.get('/getItemList', async (req, res) => {
     const result = await modelCall(basejobModel.getItemList, req);
 	res.json(result);
 });
+router.get('/getVendList', async (req, res) => {
+    const result = await modelCall(basejobModel.getVendList, req);
+	res.json(result);
+});
 
 module.exports = router;

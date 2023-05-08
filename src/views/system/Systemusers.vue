@@ -8,7 +8,7 @@
             <tooltip-btn label="삭제" @click="delUser"><v-icon>mdi-minus</v-icon></tooltip-btn>
         </v-toolbar>
         
-        <v-data-table :headers="headers" :items="items" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1" 
+        <v-data-table :headers="headers" :items="items" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1 text-no-wrap" 
             item-key="i_id" single-select
             :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" >
         <!-- <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo

@@ -582,8 +582,7 @@ const basejobModel = {
 
     //console.log('at', extractNumber(moment().format('LTM')));
     // 영업 외 실사용 조회
-    async getItemList(req) {
-        
+    async getItemList(req) {        
         if (!req.user.c_com || req.user.c_com == undefined) { throw new Error('권한이 없습니다.'); }  
         const { c_com } = req.params;
         var values = new Array();
@@ -597,6 +596,19 @@ const basejobModel = {
         console.log("getItemList sql\n", query)
         const [rows] = await db.execute(query, values);        
         return rows;                     
+    },
+    async getVendList(req) {        
+        if (!req.user.c_com || req.user.c_com == undefined) { throw new Error('권한이 없습니다.'); }  
+        const { c_com } = req.params;
+        var values = new Array();
+        let query = `SELECT c_com, c_vend, n_vend, n_compnay, f_use, n_mag, t_magtel, t_magmail, t_remark \n ` +
+                    `     FROM tb_vend \n ` +
+                    ` WHERE c_com = ? \n` +
+                    ` ORDER BY s_sort ` 
+        values.push(req.user.c_com);
+        const [rows] = await db.execute(query, values);        
+        return rows;                     
     }
+
 }
 module.exports = basejobModel;

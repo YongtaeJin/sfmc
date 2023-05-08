@@ -1,13 +1,12 @@
 <template>
     <v-data-table
-        :headers="headers" :items="items" height="270px" max-height="350px"
+        :headers="headers" :items="items" height="270px" max-height="350px" class="text-no-wrap"
         item-key="c_item" single-select @click:row="rowSelect"  @dblclick:row="itemSelect" 
         >
     </v-data-table>
 </template>
 
 <script>
-import qs from "qs";
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 
 export default {

@@ -1,9 +1,13 @@
 <template>
-  
+    <v-data-table
+        :headers="headers" :items="items" height="270px" max-height="350px" class="text-no-wrap"
+        item-key="c_vend" single-select @click:row="rowSelect"  @dblclick:row="itemSelect" 
+        >
+    </v-data-table>
 </template>
 
 <script>
-import TooltipBtn from '../../../components/etc/TooltipBtn.vue'
+import TooltipBtn from '../../components/etc/TooltipBtn.vue'
 export default {
     components: { TooltipBtn },
     name: "VendPop",    
@@ -11,9 +15,11 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'Code',  value: 'c_code', sortable: false, align:'center', width:"5px"  },
-                {text: '명칭',  value: 'n_code', sortable: false,  },              
+                {text: '약칭',  value: 'n_vend', sortable: false, align:'center', width:"45px"  },
+                {text: '명칭',  value: 'n_compnay', sortable: false,  },                
+                {text: '비고',  value: 't_remark', sortable: false,  },
                 ],
+            items: [],
         }
     },
     created() {
@@ -25,8 +31,15 @@ export default {
     },
     methods: {
         async init() {
-
-        }
+            this.items = await this.$axios.get(`/api/basejob/getVendList`);
+        },
+        rowSelect :function (item, row) {            
+            row.select(true);                           
+        },        
+        async itemSelect(event, { item }) {            
+            this.$emit('onSelect', item);
+            
+        },
     },
 }
 </script>

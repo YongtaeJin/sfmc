@@ -13,7 +13,7 @@
             <v-data-table :headers="headers" :items="progresstype" @click:row="rowSelect" @dblclick:row="showRowInfo" 
                 item-key="c_ptype" single-select
                 :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                class="elevation-1" height="600px">  
+                class="elevation-1 text-no-wrap" height="600px">  
 
                 <template v-slot:[`item.f_use`]="{ item }">
                     <v-chip x-small :color="getColor(item.f_use)" dark>
@@ -33,7 +33,7 @@
             <v-data-table :headers="headersDT" :items="progresstypeli" @click:row="rowSelectLI" @dblclick:row="showRowInfoLI" 
                 item-key="c_id" single-select
                 :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                class="elevation-1" height="600px"> 
+                class="elevation-1 text-no-wrap" height="600px"> 
 
                 <template v-slot:[`item.f_jobs`]="{ item }">
                     <v-icon small v-if="item.f_jobs=='Y'" :color="getColor(item.f_jobs)"> mdi-check </v-icon>

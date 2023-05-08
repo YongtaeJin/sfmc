@@ -14,7 +14,7 @@
                 item-key="c_item" single-select
                 v-model="selected1"
                 :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                class="elevation-1" height="600px">  
+                class="elevation-1 text-no-wrap" height="600px">  
 
                 <template v-slot:[`item.f_use`]="{ item }">
                     <v-chip x-small :color="getColor(item.f_use)" dark>
@@ -44,7 +44,7 @@
                     item-key="i_ser" single-select 
                     v-model="selected2"
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1" height="560px">  
+                    class="elevation-1 text-no-wrap" height="560px">  
 
                     <template v-slot:[`item.s_sort`]="{ item }">
                         <div @dblclick="showRowInfoDetail()"> {{ item.s_sort }} </div>
