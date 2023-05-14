@@ -20,13 +20,13 @@
 .config-list-group .comment {font-size: 0.9em;}
 .config-list-group .handle {cursor: grab;}
 
-
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > th, .v-data-table > .v-data-table__wrapper > table > thead > tr > th, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > th 
 {
     /* font-size: 1.0rem;     */
     height: 30px;   
 	color: white !important;		
 	background-color: #0d54fa;
+	
 	/* border-bottom: none !important; */
 }
 
@@ -175,11 +175,32 @@ table.type07 {
 .inputPrice input::-webkit-inner-spin-button {
     -webkit-appearance: none;	
 }
-
 .inputPrice .v-text-field__slot input {
 	text-align: right;
 }
 .inputPrice .v-select__selection {
 	width: 100%;
 	justify-content: flex-end;
+}
+
+.inputNumber .v-text-field__slot input {
+	text-align: center;
+	/* text-align: right; */
+}
+.inputNumber .v-select__selection {
+	width: 100%;
+	justify-content: flex-end;
+}
+.inputNumber input::-webkit-outer-spin-button,
+.inputNumber input::-webkit-inner-spin-button {
+    -webkit-appearance: none;	
+}
+
+.orange {
+	background-color: orange;
+	color: white;
+}
+
+.right-align {
+	text-align: justify;
 }

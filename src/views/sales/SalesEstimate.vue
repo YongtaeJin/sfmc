@@ -180,6 +180,8 @@
 
 <script>
 import qs from "qs";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import { mapActions } from "vuex";
 import { ESTI001 } from '../../../util/constval';
 import { getDate, deepCopy } from '../../../util/lib';
@@ -191,7 +193,7 @@ import InputAmt from '../../components/InputForms/InputAmt.vue';
 import InputNumber from '../../components/InputForms/InputNumber.vue';
 import ItemPop from '../codelist/ItemPop.vue';
 import VendPop from '../codelist/VendPop.vue';
-
+import { _fonts }  from'../../font/fonts.js';
 
 
 export default {
@@ -221,8 +223,7 @@ export default {
                 {text: '단가',  value: 'a_unit', sortable: false, align:'right', width: "90px"},
                 {text: '금액',  value: 'a_amt', sortable: false, align:'right', width: "90px"},
                 // {text: '통화',  value: 'f_status', sortable: false, align:'center'},
-                {text: '납기일',  value: 's_duedate', sortable: false, align:'center', width: "90px"},
-                // { text: 'Actions', value: 'actions', sortable: false , width: "50px"},
+                {text: '납기일',  value: 's_duedate', sortable: false, align:'center', width: "90px"},                
             ],
             itmelits: [], itmelit: [], itmelitFilter: [],selectedD: [],
             form : {
@@ -284,7 +285,6 @@ export default {
             }
         },
         async init() {  
-            // estDayFt = await this.$axios.post(`/api/sales/getSaleEstimate`);   
             var query = qs.stringify({c_com: this.$store.state.user.member.c_com, c_gcode: "BUSINESS", c_code: "ESTIMATE01", col: "m_buf1"});
             
             var data = await this.$axios.get(`/api/sales/getSaleEstimateInit?${query}`);
@@ -310,15 +310,16 @@ export default {
             
             row.select(true);            
             this.estimate = item;  
-            this.rowFilter(item);
-            // this.itmelitFilter = this.itmelits.filter((r) => {
-            //     return r.i_ser == item.i_ser && r.c_com == item.c_com;
-            // });                         
+            this.rowFilter(item);                                
         },
-        rowFilter(item) {            
-            this.itmelitFilter = this.itmelits.filter((r) => {
-                return r.i_ser == item.i_ser && r.c_com == item.c_com;
-            }); 
+        rowFilter(item) {      
+            if (this.itmelits.length > 0) {
+                this.itmelitFilter = this.itmelits.filter((r) => {
+                    return r.i_ser == item.i_ser && r.c_com == item.c_com;
+                }); 
+            } else {
+                this.itmelitFilter = [];
+            }
         },
         async addEstimates() {   
              if (this.editJob) {
@@ -373,15 +374,33 @@ export default {
             }
         },
         async printEstimates() {
+            // 견적서 인쇄 ????
+            const doc = new jsPDF();
+            doc.addFileToVFS("malgun.ttf", _fonts);
+            doc.addFont("malgun.ttf", "malgun", "normal");
+             doc.setFont("malgun");
+             // 텍스트 출력
+            doc.setFontSize(16);
+            doc.text('한글 텍스트', 20, 10);
+            doc.setFontSize(20);
+            doc.text('한글 텍스트', 60, 10);
+
+            const data = this.itmelitFilter.map(obj => [obj.s_sort, obj.n_item, obj.t_size]);
+           doc.autoTable({
+                 styles: { font: "malgun", fontStyle: "normal",  fontSize:5}, //폰트적용
+
+                head: [this.detail.map(h => h.text)],
+                body: data,
+            });
+
+            // PDF 저장
+            doc.save('example.pdf');
+            
 
         },
         rowSelectDetail:function (item, row) {                
             row.select(true);
             this.itmelit = item;
-        },
-
-        async openVend(){
-
         },
 
         async addDetail() {
@@ -430,9 +449,7 @@ export default {
                 this.itmelitFilter[idx1].a_amt   = this.itmelitFilter[idx1].m_cnt * item.a_sell;
 
             } else {             
-                // const obj = Object.assign({}, this.editedItem);
-                const obj = {};
-                
+                const obj = {};                
                 obj.c_com = this.estimate.c_com; 
                 obj.i_ser = this.estimate.i_ser;
                 obj.i_serno = Date.now();
@@ -522,8 +539,6 @@ export default {
             this.estimate.a_estamt = a_estamt;
             this.estimate.f_edit = "1";
         }
-
-
     }
 
 }

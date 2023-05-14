@@ -88,13 +88,41 @@ const salesModel = {
         if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
         
         const { c_com } = req.user;
-        // const { search } = req.query;        
-        const sql = sqlHelper.SelectSimple(TABLE.ESTIMATELI, { c_com });     
-        // ${TABLE.SEND_MAIL}
-        sql.query = sql.query + ` AND EXISTS (SELECT * FROM tb_estimate t WHERE t.c_com = tb_estimateli.c_com and t.f_use = 'Y') `
-        const [rows] = await db.execute(sql.query, sql.values);        
+        const { sDate1, sDate2, sEsimate, sVend, sStatus} = req.body;
+        var values = new Array();
+        let where = "";
+        values.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            where += ` and t.s_date between ? and ? `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            where += ` and t.s_date >= ? `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            where += ` and t.s_date <= ? `
+            values.push(sDate2);
+        }
+        if (sEsimate.length > 0) {
+            where += ` and t.i_estno like ? `
+            values.push(sEsimate + '%');
+        }
+        if (sVend.length > 0) {
+            where += ` and t.n_vend like ? `
+            values.push(sVend + '%');
+        }
+        if (sStatus.length > 0) {
+            where += ` and t.f_status = ? `
+            values.push(sStatus);
+        }
 
-        console.log("getSaleEstimateLi", sql);
+        // const sql = sqlHelper.SelectSimple(TABLE.ESTIMATELI, { c_com });
+        // sql.query = sql.query + ` AND EXISTS (SELECT * FROM tb_estimate t WHERE t.c_com = tb_estimateli.c_com and t.f_use = 'Y') `
+        let query = `SELECT * FROM tb_estimateli \n ` +
+                    ` WHERE c_com = ? \n ` +
+                    `   AND EXISTS (SELECT * FROM tb_estimate t WHERE tb_estimateli.c_com = t.c_com and t.f_use = 'Y' ${where})` 
+        console.log("getSaleEstimateLi\n", query , values);
+        const [rows] = await db.execute(query, values);
         rows.forEach((row) => {
             addEditCol(row);
         })
@@ -129,7 +157,7 @@ const salesModel = {
             }
             const sql = newdata ? sqlHelper.Insert(TABLE.ESTIMATE, master) : sqlHelper.Update(TABLE.ESTIMATE, master, {c_com, i_ser});
 
-            // console.log("master", sql)      
+            console.log("master", sql)      
             const [row] = await db.execute(sql.query, sql.values);
             if (row.affectedRows < 1) return -1;            
         }
