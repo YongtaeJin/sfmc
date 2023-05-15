@@ -375,28 +375,94 @@ export default {
         },
         async printEstimates() {
             // 견적서 인쇄 ????
-            const doc = new jsPDF();
+            let vaule = "";
+            let textWidth = 0;
+            let text = ""
+            const doc = new jsPDF('p', 'mm', 'a4');
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
-             doc.setFont("malgun");
-             // 텍스트 출력
-            doc.setFontSize(16);
-            doc.text('한글 텍스트', 20, 10);
-            doc.setFontSize(20);
-            doc.text('한글 텍스트', 60, 10);
+            doc.setFont("malgun");
+            // 텍스트 출력
+            doc.setFontSize(30);
+            doc.text('견  적  서', 80, 30);
+            
+            doc.setFontSize(9);
+            
+            doc.setLineWidth(0.1); // 선 두께를 0.1로 설정합니다
+            doc.rect(10, 50, 190, 230);
+            // doc.rect(10, 50, 80, 7);  
+            doc.text('2023년  05월  15일', 35, 55);            
+            // doc.rect(10, 57, 80, 7);
+            // doc.rect(10, 64, 80, 7);
+            // doc.rect(10, 78, 80, 7);            
+            // doc.text('아래와 같이 견적합니다', 33, 82);
+            // doc.text('아     같이 견적합  다', 33, 80);
 
-            const data = this.itmelitFilter.map(obj => [obj.s_sort, obj.n_item, obj.t_size]);
-           doc.autoTable({
-                 styles: { font: "malgun", fontStyle: "normal",  fontSize:5}, //폰트적용
+            // 가운데 정렬 공식
+            text = "아래와 같이 견적합니다"
+             textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+            var textX = 10 + (80 - textWidth) / 2;
+            var textY = 85 + (7 / 2) - (doc.internal.getFontSize() / 2);
+            //doc.text(textX, textY, text);
+            this.doctext(doc, text, 10, 78, 7, 80, 0);
+            this.doctext(doc, text, 10, 85, 7, 80, 1);
+            this.doctext(doc, text, 10, 72, 7, 80, 2);
 
-                head: [this.detail.map(h => h.text)],
-                body: data,
-            });
+            // 오른쪽 정렬 공식
+             text = 'Hello World!';
+             textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+            var textX = 10 + 80 - textWidth -1;
+            var textY = 90 + 7 / 2 + doc.internal.getFontSize() / 3;
+            doc.text(textX, textY, text);
+            
+   
 
-            // PDF 저장
+            doc.rect(90, 50, 10, 35);
+            doc.rect(100, 50, 16, 35);
+            doc.rect(100, 50, 100, 7);            
+            doc.rect(100, 57, 100, 7);
+            doc.rect(150, 57, 16, 7);
+            doc.rect(100, 64, 100, 7);
+            doc.rect(100, 71, 100, 7);
+            doc.rect(150, 71, 16, 7);
+            doc.rect(100, 78, 100, 7);
+            doc.rect(150, 78, 16, 7);
+
+            doc.rect(10, 85, 190, 7);
+
+            for (let i = 0; i < 23; i++) {
+                doc.rect(10, 92 + (i * 7), 190, 7);
+            }
+
+
+
+        //     const data = this.itmelitFilter.map(obj => [obj.s_sort, obj.n_item, obj.t_size]);
+        //    doc.autoTable({
+        //          styles: { font: "malgun", fontStyle: "normal",  fontSize:5}, //폰트적용
+
+        //         head: [this.detail.map(h => h.text)],
+        //         body: data,
+        //     });
+
+
+
+            // PDF 저장            
             doc.save('example.pdf');
             
 
+        },
+
+        doctext(doc, text, x, y, h, w, a) {
+            // a => 0:왼쪽, 1:가운데, 2:오른쪽 정렬
+            let tx = x, ty = y, tw = 0;            
+            tw = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+            ty = y + (h / 2) - (doc.internal.getFontSize() / 2);                    
+            if (a == 1) {
+                tx = x + (y - tw) / 2;                              
+            } else if (a == 2) {
+                tx = x + w - tw;
+            }
+            doc.text(tx, ty, text);
         },
         rowSelectDetail:function (item, row) {                
             row.select(true);
