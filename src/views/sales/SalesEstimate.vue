@@ -184,7 +184,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { mapActions } from "vuex";
 import { ESTI001 } from '../../../util/constval';
-import { getDate, deepCopy } from '../../../util/lib';
+import { getDate, deepCopy, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
 import validateRules from "../../../util/validateRules";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
@@ -375,9 +375,9 @@ export default {
         },
         async printEstimates() {
             // 견적서 인쇄 ????
-            let vaule = "";
-            let textWidth = 0;
-            let text = ""
+            const query = qs.stringify({c_com: this.$store.state.user.member.c_com});
+            const company = await this.$axios.get(`/api/system/getCompany?${query}`);
+
             const doc = new jsPDF('p', 'mm', 'a4');
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
@@ -386,70 +386,80 @@ export default {
             doc.setFontSize(30);
             doc.text('견  적  서', 80, 30);
             
-            doc.setFontSize(9);
-            
+            doc.setFontSize(9);            
             doc.setLineWidth(0.1); // 선 두께를 0.1로 설정합니다
             doc.rect(10, 50, 190, 230);
             // doc.rect(10, 50, 80, 7);  
-            doc.text('2023년  05월  15일', 35, 55);            
-            // doc.rect(10, 57, 80, 7);
-            // doc.rect(10, 64, 80, 7);
-            // doc.rect(10, 78, 80, 7);            
-            // doc.text('아래와 같이 견적합니다', 33, 82);
-            // doc.text('아     같이 견적합  다', 33, 80);
-
-            // 가운데 정렬 공식
-            text = "아래와 같이 견적합니다"
-             textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-            var textX = 10 + (80 - textWidth) / 2;
-            var textY = 85 + (7 / 2) - (doc.internal.getFontSize() / 2);
-            //doc.text(textX, textY, text);
-            this.doctext(doc, text, 10, 78, 7, 80, 0);
-            this.doctext(doc, text, 10, 85, 7, 80, 1);
-            this.doctext(doc, text, 10, 72, 7, 80, 2);
-
-            // 오른쪽 정렬 공식
-             text = 'Hello World!';
-             textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-            var textX = 10 + 80 - textWidth -1;
-            var textY = 90 + 7 / 2 + doc.internal.getFontSize() / 3;
-            doc.text(textX, textY, text);
             
-   
+            this.doctext(doc, dateToKorean(this.estimate.s_date), 10, 55, 7, 80, 1);  
+            doc.setFontSize(15);
+            this.doctext(doc, `${this.estimate.n_vend} 귀하`, 10, 75, 7, 80, 1);  
+            doc.setFontSize(9);
+            this.doctext(doc, `아래와 같이 견적합니다`, 10, 85, 7, 80, 1);
 
             doc.rect(90, 50, 10, 35);
-            doc.rect(100, 50, 16, 35);
-            doc.rect(100, 50, 100, 7);            
-            doc.rect(100, 57, 100, 7);
-            doc.rect(150, 57, 16, 7);
-            doc.rect(100, 64, 100, 7);
-            doc.rect(100, 71, 100, 7);
-            doc.rect(150, 71, 16, 7);
-            doc.rect(100, 78, 100, 7);
-            doc.rect(150, 78, 16, 7);
+            doc.text(93, 60, '공'); doc.text(93, 68, '급'); doc.text(93, 77, '자');
+            doc.rect(100, 50, 16, 35); 
+            doc.rect(100, 50, 100, 7); this.doctext(doc, "등록번호", 105, 56, 7, 7, 1);  this.doctext(doc, company[0].c1, 116, 56, 7, 84, 1);
+            doc.rect(100, 57, 100, 7); this.doctext(doc, "상 호 명", 105, 63, 7, 7, 1);  this.doctext(doc, company[0].c2, 116, 63, 7, 33, 1);
+            doc.rect(150, 57, 16, 7);  this.doctext(doc, "대 표 자", 155, 63, 7, 7, 1);  this.doctext(doc, company[0].c3, 167, 63, 7, 33, 1);
+            doc.rect(100, 64, 100, 7); this.doctext(doc, "주    소", 105, 70, 7, 7, 1);  this.doctext(doc, company[0].c4, 116, 70, 7, 84, 1);
+            doc.rect(100, 71, 100, 7); this.doctext(doc, "업    태", 105, 77, 7, 7, 1);  this.doctext(doc, company[0].c5, 116, 77, 7, 33, 1);
+            doc.rect(150, 71, 16, 7);  this.doctext(doc, "업    종", 155, 77, 7, 7, 1);  this.doctext(doc, company[0].c6, 167, 77, 7, 33, 1);
+            doc.rect(100, 78, 100, 7); this.doctext(doc, "전화번호", 105, 84, 7, 7, 1);  this.doctext(doc, company[0].c7, 116, 84, 7, 33, 1);
+            doc.rect(150, 78, 16, 7);  this.doctext(doc, "FAX번호", 155, 84, 7, 7, 1);   this.doctext(doc, company[0].c8, 167, 84, 7, 33, 1);
 
-            doc.rect(10, 85, 190, 7);
+            doc.rect(10, 85, 190, 7); doc.text( 32, 90, ` 견적금액 : 일금 ${numberToKorean(this.estimate.a_estamt)}(￦${amtToKorean(this.estimate.a_estamt)})원정 (부가세별도)`)
 
             for (let i = 0; i < 23; i++) {
-                doc.rect(10, 92 + (i * 7), 190, 7);
+                if ( i == 0 || i == 22 ) {
+                    doc.setFillColor(192, 192, 192);   
+                    doc.rect(10, 92 + (i * 7), 190, 7, 'FD');
+                    doc.setFillColor(255, 255, 255); 
+                } else {
+                    doc.rect(10, 92 + (i * 7), 190, 7);
+                }
             }
+            
+            doc.line(16, 92, 16, 253); doc.text(11,97, 'No');
+            doc.line(60, 92, 60, 253); doc.text(35,97, '품명');
+            doc.line(100, 92, 100, 253); doc.text(75,97, '규격');
+            doc.line(120, 92, 120, 253); doc.text(106,97, '단위');
+            doc.line(130, 92, 130, 253); doc.text(122,97, '수량');
+            doc.line(150, 92, 150, 253); doc.text(137,97, '단가');
+            doc.line(172, 92, 172, 253); doc.text(158,97, '금액');  doc.text(184,97, '비고');
+
+            let y = 0;
+            let amt = 0;
+            this.itmelitFilter.forEach((row, index) => {
+                y = 91 + ((index + 2) * 7);
+                this.doctext(doc, (index + 1).toString(), 10,y,7,6, 1)
+                this.doctext(doc, row.n_item, 16,y,7,6, 0)
+                this.doctext(doc, row.t_size, 60,y,7,6, 0)
+                this.doctext(doc, row.i_unit, 100,y,7,20, 1)
+                this.doctext(doc, row.m_cnt.toString(), 120,y,7,10, 1)
+                this.doctext(doc, this.comma(row.a_unit), 130,y,7,20, 2)
+                this.doctext(doc, this.comma(row.a_amt), 150,y,7,22, 2)
+                amt = amt + (row.a_amt * 1);
+            });
 
 
-
-        //     const data = this.itmelitFilter.map(obj => [obj.s_sort, obj.n_item, obj.t_size]);
-        //    doc.autoTable({
-        //          styles: { font: "malgun", fontStyle: "normal",  fontSize:5}, //폰트적용
-
-        //         head: [this.detail.map(h => h.text)],
-        //         body: data,
-        //     });
-
-
+           
+           y = 91 + ((this.itmelitFilter.length + 2) * 7);
+           this.doctext(doc,'- 이 하 여 백 -', 60,y,7,40, 1);
+           doc.setFontSize(10);
+           y = 91 + (23 * 7) ;
+           this.doctext(doc, '합 계', 100,y,7,20, 1);
+           this.doctext(doc, this.comma(amt), 150,y,7,22, 2);
+           doc.setFontSize(9);
+           
+            y = y + 91
+            doc.text(12, 260, `견적유효일 : ${dateToKorean(this.estimate.s_date2)} 까지` )   ;
+            if (this.estimate.n_rname) doc.text(100, 260, `견적담당자 : ${this.estimate.n_rname}` )   ;
+            if (this.estimate.t_remark) doc.text(12, 270, `특 이 사 항 : ${this.estimate.t_remark}` )   ;
 
             // PDF 저장            
             doc.save('example.pdf');
-            
-
         },
 
         doctext(doc, text, x, y, h, w, a) {
@@ -458,7 +468,7 @@ export default {
             tw = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
             ty = y + (h / 2) - (doc.internal.getFontSize() / 2);                    
             if (a == 1) {
-                tx = x + (y - tw) / 2;                              
+                tx = x + (w - tw) / 2;                              
             } else if (a == 2) {
                 tx = x + w - tw;
             }

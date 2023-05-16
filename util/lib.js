@@ -59,7 +59,54 @@ const lib = {
 		const day = String(now.getDate()).padStart(2, '0');
 		const dateString = `${year}-${month}-${day}`;
 		return dateString;
-	}
+	},
+	numberToKorean(number) {
+		const units = ['', '만', '억', '조', '경', '해'];
+		const digits = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
+		const decimals = ['', '십', '백', '천'];
+	  
+		if (number === 0) {
+		  return '영';
+		}
+	  
+		let result = '';
+		let num = Math.abs(number);
+	  
+		for (let i = 0; num > 0; i++) {
+		  const unit = units[i % 6];
+		  let segment = '';
+		  let segmentNotEmpty = false;
+	  
+		  for (let j = 0; j < 4 && num > 0; j++) {
+			const digit = num % 10;
+			if (digit > 0) {
+			  segment = digits[digit] + decimals[j] + segment;
+			  segmentNotEmpty = true;
+			}
+			num = Math.floor(num / 10);
+		  }	  
+		  if (segmentNotEmpty) {
+			result = segment + unit + result;
+		  }
+		}	  
+		if (number < 0) {
+		  result = '마이너스 ' + result;
+		}	  
+		return result;
+	  },
+	  dateToKorean(dateStr) {
+		// 입력된 날짜를 Date 객체로 변환
+		var date = new Date(dateStr);
+
+		// 원하는 형식으로 날짜를 변환
+		var options = { year: 'numeric', month: 'long', day: 'numeric' };
+		var dateFormatter = new Intl.DateTimeFormat('ko-KR', options);
+
+		return dateFormatter.format(date);		 
+	  },
+	  amtToKorean(amount) {
+		return amount.toLocaleString('ko-KR');
+	  }
 }
 
 module.exports = lib;

@@ -81,6 +81,12 @@ router.get('/getCodeList', async (req, res) => {
 	res.json(result);
 });
 
+// 사업자정보조회
+router.get('/getCompany', async (req, res) => {
+	const result = await modelCall(systemModel.getCompany, req);
+	res.json(result);
+});
+
 // 단위 팝업 선택 창 List
 router.get('/getUnitPop', async (req, res) => {
 	const result = await modelCall(systemModel.getUnitPop, req);
