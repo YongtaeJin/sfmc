@@ -608,6 +608,19 @@ const basejobModel = {
         values.push(req.user.c_com);
         const [rows] = await db.execute(query, values);        
         return rows;                     
+    },
+    async getVendInfo(req) {
+        if (!req.user.c_com || req.user.c_com == undefined) { throw new Error('권한이 없습니다.'); }  
+        const { c_com, c_vend } = req.query;    
+        var values = new Array();
+        let query = `SELECT c_com, c_vend, n_vend, n_compnay, f_use, n_mag, t_magtel, t_magmail, t_remark \n ` +
+                    `     FROM tb_vend \n ` +
+                    ` WHERE c_com = ? AND c_vend = ? \n` +
+                    ` ORDER BY s_sort ` 
+        values.push(c_com, c_vend );
+        const [rows] = await db.execute(query, values);        
+        return rows;                     
+
     }
 
 }

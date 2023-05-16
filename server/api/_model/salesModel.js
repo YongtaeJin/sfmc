@@ -73,6 +73,7 @@ const salesModel = {
             where += ` and f_status = ? \n `
             values.push(sStatus);
         }
+        where += ` ORDER BY c_com, i_ser `;
         
         console.log(where, values);
         // const sql = sqlHelper.SelectSimple(TABLE.ESTIMATE, { c_com, f_use:'Y' });     
@@ -189,6 +190,27 @@ const salesModel = {
         })
         return 0;
     },
+    async delSaleEstimate(req) {
+		if (!isGrant(req, LV.BUSINESS))  throw new Error('권한이 없습니다.');
+		const { c_com, i_ser } = req.params;
+             
+        // f_use = 'N' 처리 과거 이력 확인을 위해 서
+        var query = "UPDATE tb_estimate SET f_use = 'N' WHERE c_com = ? AND i_ser = ?";
+        var values = new Array();
+        values.push(c_com, i_ser);
+        const [row] = await db.execute(query, values);
+
+        // const sql = sqlHelper.DeleteSimple(TABLE.ESTIMATE, { c_com, i_ser });
+        // const [row] = await db.execute(sql.query, sql.values);
+
+        // 견적 폼목 List 삭제
+        // if (row.affectedRows > 0) {
+        //     const sqldt = sqlHelper.DeleteSimple(TABLE.ESTIMATELI, { c_com, i_ser });
+        //     await db.execute(sqldt.query, sqldt.values);
+        // }
+
+		return row.affectedRows == 1;
+	},
 }
 
 async function iuSaleEstimate_dt(sql) {	    

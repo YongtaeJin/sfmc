@@ -96,6 +96,8 @@ const lib = {
 	  },
 	  dateToKorean(dateStr) {
 		// 입력된 날짜를 Date 객체로 변환
+
+		if (!dateStr) return '';
 		var date = new Date(dateStr);
 
 		// 원하는 형식으로 날짜를 변환

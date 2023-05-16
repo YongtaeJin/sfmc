@@ -106,7 +106,7 @@
                 </v-row>
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="담당자" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_rname" @input="onChangeMaster" dense hide-details /> </v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_magname" @input="onChangeMaster" dense hide-details /> </v-col>
                     <v-col col="8" sm="3" md="3"></v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="견적금액" readonly dense hide-details class="text-input-redbrg"/> </v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="comma(estimate.a_estamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice"/> </v-col>
@@ -164,6 +164,10 @@
                     <template v-slot:[`item.s_duedate`]="{ item }">
                         <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" v-if="edit && item.i_serno === itmelit.i_serno" :rules="rules.date({required: false})" />
                         <span v-else>{{item.s_duedate}}</span>
+                    </template>
+                    <template v-slot:[`item.t_remark`]="{ item }">
+                        <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="edit && item.i_serno === itmelit.i_serno" dense hide-details class="my-text-field" />
+                        <span v-else>{{item.t_remark}}</span>
                     </template>
                 </v-data-table>
                 </v-form>
@@ -223,7 +227,9 @@ export default {
                 {text: '단가',  value: 'a_unit', sortable: false, align:'right', width: "90px"},
                 {text: '금액',  value: 'a_amt', sortable: false, align:'right', width: "90px"},
                 // {text: '통화',  value: 'f_status', sortable: false, align:'center'},
-                {text: '납기일',  value: 's_duedate', sortable: false, align:'center', width: "90px"},                
+                {text: '납기일',  value: 's_duedate', sortable: false, align:'center', width: "90px"},     
+                {text: '비고',  value: 't_remark', sortable: false, align:'center', width: "90px"},                     
+                
             ],
             itmelits: [], itmelit: [], itmelitFilter: [],selectedD: [],
             form : {
@@ -322,7 +328,7 @@ export default {
             }
         },
         async addEstimates() {   
-             if (this.editJob) {
+            if (this.editJob) {
                 await this.$ezNotify.alert("</br>수정내용이 존재 합니다. </br>저장 후 작업가능 합니다. ", "견적수정", {icon: "mdi-message-bulleted-off", width: 400,});
                 return
             }
@@ -336,8 +342,24 @@ export default {
         async delEstimates() {
             if (!this.edit) {
                 await this.$ezNotify.alert("견적서 작성상태만 삭제 가능 합니다.", "삭제불가", {icon: "mdi-message-bulleted-off", width: 250,});
+                return
             }
             // DB 삭제 작업 ....
+            // 신규 입력 삭제 (저장전 자료)
+            if (this.estimate.f_editold != '1') {
+                // 저장 후 삭제 
+                const res = await this.$ezNotify.confirm("선택한 견적서를 삭제 하시겠습니까 ?", "삭제", {icon: "mdi-message-bulleted-off", width: 350,});
+                if(!res) return;
+                const data = await this.$axios.delete(`/api/sales/delSaleEstimate/${this.estimate.c_com}/${this.estimate.i_ser}`);
+            }
+
+            this.itmelitFilter = [];
+            const idx = this.estimates.indexOf(this.estimate) ;
+            if (idx >= 0) this.estimates.splice(idx, 1);
+            this.estimate = [];
+
+            this.$toast.info(`삭제 하였습니다.`);
+
         },
         async saveEstimates() {
             if (!this.edit) return;
@@ -345,6 +367,11 @@ export default {
             this.$refs.form.validate();
             await this.$nextTick();
             if (!this.valid) return; 
+
+            if (this.estimate.i_estno == null) {
+                this.$toast.error("견적번호 입력 필수 입니다.");
+                return
+            }
 
             this.$refs.form2.validate();
             await this.$nextTick();
@@ -373,11 +400,20 @@ export default {
                 await this.$ezNotify.alert("저장 중 오류가 발생 하였습니다...", "오류", {icon: "mdi-message-bulleted",});
             }
         },
-        async printEstimates() {
-            // 견적서 인쇄 ????
-            const query = qs.stringify({c_com: this.$store.state.user.member.c_com});
-            const company = await this.$axios.get(`/api/system/getCompany?${query}`);
+        async printEstimates() {            
+            if(this.estimate.i_ser == undefined) return;
 
+            if (this.editJob) {
+                await this.$ezNotify.alert("</br>수정내용이 존재 합니다. </br>저장 후 작업가능 합니다. ", "견적수정", {icon: "mdi-message-bulleted-off", width: 400,});
+                return
+            }
+
+            // 견적서 인쇄 ????
+            let query = qs.stringify({c_com: this.$store.state.user.member.c_com});
+            const company = await this.$axios.get(`/api/system/getCompany?${query}`);
+            query = qs.stringify({c_com: this.$store.state.user.member.c_com, c_vend: this.estimate.c_vend});
+            const vend = await this.$axios.get(`/api/basejob/getVendInfo?${query}`);
+            
             const doc = new jsPDF('p', 'mm', 'a4');
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
@@ -390,10 +426,10 @@ export default {
             doc.setLineWidth(0.1); // 선 두께를 0.1로 설정합니다
             doc.rect(10, 50, 190, 230);
             // doc.rect(10, 50, 80, 7);  
-            
+            // this.estimate.n_vend
             this.doctext(doc, dateToKorean(this.estimate.s_date), 10, 55, 7, 80, 1);  
             doc.setFontSize(15);
-            this.doctext(doc, `${this.estimate.n_vend} 귀하`, 10, 75, 7, 80, 1);  
+            this.doctext(doc, `${ vend.length > 0 ? vend[0].n_compnay : this.estimate.n_vend } 귀하`, 10, 75, 7, 80, 1);  
             doc.setFontSize(9);
             this.doctext(doc, `아래와 같이 견적합니다`, 10, 85, 7, 80, 1);
 
@@ -440,7 +476,8 @@ export default {
                 this.doctext(doc, row.m_cnt.toString(), 120,y,7,10, 1)
                 this.doctext(doc, this.comma(row.a_unit), 130,y,7,20, 2)
                 this.doctext(doc, this.comma(row.a_amt), 150,y,7,22, 2)
-                amt = amt + (row.a_amt * 1);
+                this.doctext(doc, row.t_remark, 172,y,7,28, 0)
+                if (row.a_amt) amt = amt + (row.a_amt * 1);
             });
 
 
@@ -455,15 +492,17 @@ export default {
            
             y = y + 91
             doc.text(12, 260, `견적유효일 : ${dateToKorean(this.estimate.s_date2)} 까지` )   ;
-            if (this.estimate.n_rname) doc.text(100, 260, `견적담당자 : ${this.estimate.n_rname}` )   ;
+            if (this.estimate.n_magname) doc.text(100, 260, `견적담당자 : ${this.estimate.n_magname}` )   ;
             if (this.estimate.t_remark) doc.text(12, 270, `특 이 사 항 : ${this.estimate.t_remark}` )   ;
 
             // PDF 저장            
-            doc.save('example.pdf');
+            doc.save(`견적서_${this.estimate.i_estno}.pdf`);
+            this.$toast.success(`다운로드 폴더에 PDF문서생성 하였습니다.`);
         },
 
         doctext(doc, text, x, y, h, w, a) {
             // a => 0:왼쪽, 1:가운데, 2:오른쪽 정렬
+            if (!text) return;
             let tx = x, ty = y, tw = 0;            
             tw = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
             ty = y + (h / 2) - (doc.internal.getFontSize() / 2);                    
