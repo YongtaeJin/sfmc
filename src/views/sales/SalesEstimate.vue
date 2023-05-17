@@ -7,7 +7,7 @@
             <tooltip-btn label="견적 작성" @click="addEstimates"><v-icon>mdi-plus</v-icon></tooltip-btn>
             <tooltip-btn label="견적 삭제" @click="delEstimates"><v-icon>mdi-minus</v-icon></tooltip-btn>
             <tooltip-btn label="견적 저장" @click="saveEstimates"><v-icon>mdi-content-save-outline</v-icon></tooltip-btn>
-            <tooltip-btn label="견적 저장" @click="printEstimates"><v-icon>mdi-printer</v-icon></tooltip-btn>
+            <tooltip-btn label="견적 출력" @click="printEstimates"><v-icon>mdi-printer</v-icon></tooltip-btn>
         </v-toolbar>      
         <v-card class="my-card">
             <v-row no-gutters class="my-text-field">
