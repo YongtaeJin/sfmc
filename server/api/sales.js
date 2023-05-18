@@ -40,6 +40,22 @@ router.delete('/delSaleEstimate/:c_com/:i_ser', async(req, res)=>{
 // 	res.json(result);
 // });
 
+
+router.post('/getSaleOrder', async (req, res) => {
+    const result = await modelCall(salesModel.getSaleOrder, req);
+	res.json(result);
+});
+
+router.post('/getSaleOrderLi', async (req, res) => {
+    const result = await modelCall(salesModel.getSaleOrderLi, req);
+	res.json(result);
+});
+
+router.post('/iuSaleOrder', async (req, res) => {
+    const result = await modelCall(salesModel.iuSaleOrder, req);
+	res.json(result);
+});
+
 module.exports = router;
 
 

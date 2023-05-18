@@ -601,11 +601,12 @@ const basejobModel = {
         if (!req.user.c_com || req.user.c_com == undefined) { throw new Error('권한이 없습니다.'); }  
         const { c_com } = req.params;
         var values = new Array();
-        let query = `SELECT c_com, c_vend, n_vend, n_compnay, f_use, n_mag, t_magtel, t_magmail, t_remark \n ` +
+        let query = `SELECT c_com, c_vend, n_vend, n_compnay, i_company, n_ceo, t_job1, t_job2, f_use, t_tel, t_fax, e_mail, t_addr, n_mag, t_magtel, t_magmail, t_remark \n ` +
                     `     FROM tb_vend \n ` +
                     ` WHERE c_com = ? \n` +
                     ` ORDER BY s_sort ` 
         values.push(req.user.c_com);
+        console.log(query);
         const [rows] = await db.execute(query, values);        
         return rows;                     
     },

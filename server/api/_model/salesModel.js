@@ -121,7 +121,7 @@ const salesModel = {
         // sql.query = sql.query + ` AND EXISTS (SELECT * FROM tb_estimate t WHERE t.c_com = tb_estimateli.c_com and t.f_use = 'Y') `
         let query = `SELECT * FROM tb_estimateli \n ` +
                     ` WHERE c_com = ? \n ` +
-                    `   AND EXISTS (SELECT * FROM tb_estimate t WHERE tb_estimateli.c_com = t.c_com and t.f_use = 'Y' ${where})` 
+                    `   AND EXISTS (SELECT * FROM tb_estimate t WHERE tb_estimateli.c_com = t.c_com and tb_estimateli.i_ser = t.i_ser and t.f_use = 'Y' ${where})` 
         console.log("getSaleEstimateLi\n", query , values);
         const [rows] = await db.execute(query, values);
         rows.forEach((row) => {
@@ -184,7 +184,7 @@ const salesModel = {
                 
                 console.log("detial", sql);
                 // const [row] = await db.execute(sql.query, sql.values);
-                const res = iuSaleEstimate_dt(sql)    
+                const res = sqlDbExecute(sql)    
                 if (res.affectedRows < 1) return index + 1;
             }
         })
@@ -211,9 +211,149 @@ const salesModel = {
 
 		return row.affectedRows == 1;
 	},
+
+    async getSaleOrder(req) {     
+        // 권한 확인
+        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
+
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sOrder, sVend } = req.body;
+        let where = `SELECT * FROM tb_order \n WHERE c_com = ? \n `
+        var values = new Array();
+        values.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            where += ` and s_date between ? and ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            where += ` and s_date >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            where += ` and s_date <= ? \n `
+            values.push(sDate2);
+        }
+        if (sOrder.length > 0) {
+            where += ` and i_orderno like ? \n `
+            values.push(sOrder + '%');
+        }
+        if (sVend.length > 0) {
+            where += ` and n_vend like ? \n `
+            values.push(sVend + '%');
+        }
+        where += ` ORDER BY c_com, i_order `;
+        
+        console.log(where, values);        
+        const [rows] = await db.execute(where, values);        
+
+        rows.forEach((row) => {
+            addEditCol(row);
+        });        
+        return rows;         
+    },
+    async getSaleOrderLi(req) {     
+        // 권한 확인
+        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
+        
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sOrder, sVend } = req.body;
+        var values = new Array();
+        let where = "";
+        values.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            where += ` and t.s_date between ? and ? `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            where += ` and t.s_date >= ? `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            where += ` and t.s_date <= ? `
+            values.push(sDate2);
+        }
+        if (sOrder.length > 0) {
+            where += ` and t.i_order like ? `
+            values.push(sOrder + '%');
+        }
+        if (sVend.length > 0) {
+            where += ` and t.n_vend like ? `
+            values.push(sVend + '%');
+        }
+      
+        let query = `SELECT * FROM tb_orderli \n ` +
+                    ` WHERE c_com = ? \n ` +
+                    `   AND EXISTS (SELECT * FROM tb_order t WHERE tb_orderli.c_com = t.c_com and tb_orderli.i_order = t.i_order ${where})` 
+        console.log("getSaleOrderLi\n", query , values);
+        const [rows] = await db.execute(query, values);
+        rows.forEach((row) => {
+            addEditCol(row);
+        })
+        return rows;
+    },
+    async iuSaleOrder(req) {
+        const payload = {
+			...req.body,
+        }
+        const at = moment().format('LT'); 
+        // f_edit =  0:변경없음, 1:수정, 2:삭제
+        const master = objectSplit(req.body, 'm');
+        const detail = objectSplit(req.body, 'd');        
+        
+        const {c_com, i_order } = master;
+        
+        if (master.f_edit !== "0" || master.f_editold !== "0") {                        
+            const newdata = master.f_editold !== "0" ? true : false;
+            delete master.f_edit;
+            delete master.f_editold;
+
+            if (!master.n_crnm) {
+                delete master.d_create_at;
+                delete master.n_crnm;
+                master.f_status = 'S';
+                master.d_update_at = at;
+                master.n_upnm = req.user.n_name;
+            } else {
+                master.d_create_at = at;
+                master.n_crnm = req.user.n_name;
+                delete master.d_update_at;
+                delete master.n_upnm;
+            }
+            const sql = newdata ? sqlHelper.Insert(TABLE.ORDER, master) : sqlHelper.Update(TABLE.ORDER, master, {c_com, i_order});
+
+            console.log("master", sql)      
+            const [row] = await db.execute(sql.query, sql.values);
+            if (row.affectedRows < 1) return -1;            
+        }
+        
+        detail.forEach((row, index) => {
+            if(row.f_edit !== "0" || row.f_editold !== "0") {
+                const {i_orderser} = row;
+                const newdata = row.f_editold !== "0" ? true : false;
+                delete row.f_edit;
+                delete row.f_editold;
+                if (!row.n_crnm) {
+                    delete row.d_create_at;
+                    delete row.n_crnm;
+                    row.d_update_at = at;
+                    row.n_upnm = req.user.n_name;
+                } else {
+                    row.d_create_at = at;
+                    row.n_crnm = req.user.n_name;
+                    delete row.d_update_at;
+                    delete row.n_upnm;
+                }
+                const sql = newdata ? sqlHelper.Insert(TABLE.ORDERLI, row) : sqlHelper.Update(TABLE.ORDERLI, row, {c_com, i_order, i_orderser});
+                
+                console.log("detial", sql);                
+                const res = sqlDbExecute(sql);  ///       
+                if (res.affectedRows < 1) return index + 1;
+            }
+        })
+        return 0;
+    },
+
 }
 
-async function iuSaleEstimate_dt(sql) {	    
+async function sqlDbExecute(sql) {	    
     const [row] = await db.execute(sql.query, sql.values);
     return row;
 }

@@ -15,6 +15,9 @@ const TABLE = {
 	ROUTEPROC: 'tb_routeproc',
 	ESTIMATE: 'tb_estimate',
 	ESTIMATELI: 'tb_estimateli',
+	ORDER: 'tb_order',
+	ORDERLI: 'tb_orderli',
+
 
 };
 
