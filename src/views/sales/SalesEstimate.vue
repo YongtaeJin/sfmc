@@ -379,7 +379,12 @@ export default {
 
             const est = Object.assign({}, this.estimate, this.itmelitFilter);
             const data = await this.iuSaleEstimate(est);
-            if (data == 0) {
+            for (let i = this.itmelitFilter.length - 1; i >= 0; i--) {
+                if (this.itmelitFilter[i].f_edit == "2" ) {
+                    this.itmelitFilter.splice(i, 1);
+                }
+            }
+            if (data == 0) {                 
                 this.itmelitFilter.forEach((row) => { 
                     row.f_edit = "0";
                     row.f_editold = "0";
@@ -639,7 +644,7 @@ export default {
             // 발주 총 금액
             let a_estamt = 0;
             this.itmelitFilter.forEach((row) => {                 
-                a_estamt = a_estamt + (row.a_amt * 1);
+                if (row.f_edit !== "2" ) a_estamt = a_estamt + (row.a_amt * 1);
             });            
             this.estimate.a_estamt = a_estamt;
             this.estimate.f_edit = "1";
@@ -649,7 +654,7 @@ export default {
             // 발주 총 금액
             let a_estamt = 0;
             this.itmelitFilter.forEach((row) => {                 
-                a_estamt = a_estamt + (row.a_amt * 1)
+                if (row.f_edit !== "2" ) a_estamt = a_estamt + (row.a_amt * 1)
             });            
             this.estimate.a_estamt = a_estamt;
             this.estimate.f_edit = "1";

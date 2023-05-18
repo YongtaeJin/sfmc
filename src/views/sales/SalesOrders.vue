@@ -40,19 +40,19 @@
                 <v-card color="grey lighten-4">
                 <v-row no-gutters class="my-text-field" >
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주번호" readonly dense hide-details class="text-input-redbrg"/></v-col>
-                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="edit" @input="onChangeMaster" dense hide-details /></v-col>
+                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="!edit" @input="onChangeMaster" dense hide-details /></v-col>
                     <v-col col="8" sm="2" md="2"></v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주상태" readonly dense hide-details class="text-input-bluebrg"/></v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="getOrderStatus(masterinfo.f_status)" readonly dense hide-details class="text-input-redbrg inputPrice"/></v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="수 주 명" readonly dense hide-details class="text-input-bluebrg"/></v-col>
-                    <v-col col="8" sm="5" md="5"><v-text-field v-model="masterinfo.n_order" :readonly="edit" @input="onChangeMaster" dense hide-details /></v-col>
+                    <v-col col="8" sm="5" md="5"><v-text-field v-model="masterinfo.n_order" :readonly="!edit" @input="onChangeMaster" dense hide-details /></v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
                     <v-col col="8" sm="5" md="5">
-                        <v-text-field v-if="!edit" v-model="masterinfo.n_vend" dense hide-details>
+                        <v-text-field v-if="edit" v-model="masterinfo.n_vend" dense hide-details>
                             <template v-slot:append>
                                 <v-btn icon x-small tabindex="-1" @click="clickVend"><v-icon> mdi-dialpad </v-icon></v-btn>
                             </template>
@@ -63,15 +63,15 @@
                 </v-row>                
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주일" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date" :readonly="edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>                                        
+                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>                                        
                     <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date2" :readonly="edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>                    
+                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date2" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>                    
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주금액" readonly dense hide-details class="text-input-redbrg"/> </v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="comma(masterinfo.a_orderamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice"/> </v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="메모" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="12" sm="8" md="8"><v-text-field v-model="masterinfo.t_remark" :readonly="edit" @input="onChangeMaster" dense hide-details /> </v-col>
+                    <v-col col="12" sm="8" md="8"><v-text-field v-model="masterinfo.t_remark" :readonly="!edit" @input="onChangeMaster" dense hide-details /> </v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-fieldend" />
                 </v-card>
@@ -201,19 +201,22 @@ export default {
             const max = Math.max(...this.itemListFilter.map((item) => item.s_sort));
             return isFinite(max) ? max : 0;
         },
-        edit() {            
-            if (this.masterinfo.f_status == "I" || this.masterinfo.f_status == "S") return false;
-            return true;
+        edit() {          
+            // 수정 가능여 부  
+            return (this.masterinfo.f_status == "I" || this.masterinfo.f_status == "S") ? true : false;
         },
         editDetail() {
             if (!this.edit) return false;
-            if (this.itemInfo.i_serno == undefined) return false;            
+            if (this.itemInfo.i_orderser == undefined) return false;            
             return true;
         },
         editJob() {            
             if (this.masterinfo.f_edit == "1") return true;
-                this.itemListFilter.forEach((row) => {
-                if (row.f_edit == "1" || row.f_edit == "2") return true
+
+            this.itemLists.forEach((row) => {
+                if (row.f_edit == '1' || row.f_edit == '2') {
+                    return true;
+                }
             });
             return false;
         },       
@@ -254,13 +257,14 @@ export default {
 
         },
         async addOrd() {
-
+            console.log( 1 == 2 ? 'a' : 1 == 1 ? 'b':'c')
         },
         async delOrd() {
 
         },
         async saveOrd() {
-            if (this.edit) return;
+            if (!this.edit) return;
+            if (!this.editJob) return;
 
             if (this.masterinfo.i_orderno == null) {
                 this.$toast.error("수주번호 입력 필수 입니다.");
@@ -269,6 +273,11 @@ export default {
 
             const order = Object.assign({}, this.masterinfo, this.itemListFilter);
             const data = await this.iuSaleOrder(order);
+            for (let i = this.itemListFilter.length - 1; i >= 0; i--) {
+                if (this.itemListFilter[i].f_edit == "2" ) {
+                    this.itemListFilter.splice(i, 1);
+                }
+            }
             if (data == 0) {
                 this.itemListFilter.forEach((row) => { 
                     row.f_edit = "0";
@@ -353,14 +362,26 @@ export default {
             this.itemInfo = item;
         },
         async addItem() {
-            if (this.edit) return
+            if (!this.edit) return
 
             this.selectedD = [];
             this.itemInfo = [];
             this.$refs.dialog_Item.open();
         },
         async delItem() {
+            if (!this.editDetail) return;            
 
+            const idx = this.itemLists.indexOf(this.itemInfo);
+            if (idx > -1) {
+                if (this.itemLists[idx].f_editold == "0") {
+                    this.itemLists[idx].f_edit = this.itemInfo.f_edit === "2" ? "0": "2";
+                } else {
+                    this.itemLists.splice(idx, 1)
+                    const idx1 = this.itemListFilter.indexOf(this.itemInfo)
+                    if (idx1 > -1) this.itemListFilter.splice(idx1, 1);
+                }
+            }
+            this.onChangeAmt2();
         },
         clickItem() {
             this.$refs.dialog_Item.open();
@@ -409,7 +430,7 @@ export default {
         onChangeDetail() {            
             const idx = this.itemLists.indexOf(this.itemInfo);
             if (idx > -1) {
-                this.itemLists[idx].f_edit = '1';                
+                if (this.itemInfo.f_edit == "0" ) this.itemLists[idx].f_edit = '1';                
             };            
         },
         onChangeAmt() {            
@@ -422,7 +443,7 @@ export default {
             // 수주 총 금액
             let a_amt = 0;
             this.itemListFilter.forEach((row) => {
-                a_amt = a_amt + (row.a_amt * 1);
+                if (row.f_edit !== "2" ) a_amt = a_amt + (row.a_amt * 1);
             });            
             this.masterinfo.a_orderamt = a_amt;
             this.masterinfo.f_edit = "1";
@@ -431,8 +452,8 @@ export default {
             this.onChangeDetail();
             // 수주 총 금액
             let a_amt = 0;
-            this.itmelitFilter.forEach((row) => {                 
-                a_amt = a_amt + (row.a_amt * 1)
+            this.itemListFilter.forEach((row) => {                 
+               if (row.f_edit !== "2" ) a_amt = a_amt + (row.a_amt * 1);
             });            
             this.masterinfo.a_orderamt = a_amt;
             this.masterinfo.f_edit = "1";

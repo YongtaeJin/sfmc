@@ -167,6 +167,7 @@ const salesModel = {
             if(row.f_edit !== "0" || row.f_editold !== "0") {
                 const {i_serno} = row;
                 const newdata = row.f_editold !== "0" ? true : false;
+                const deldata = row.f_edit == "2" ? true : false;
                 delete row.f_edit;
                 delete row.f_editold;
                 if (!row.n_crnm) {
@@ -180,7 +181,7 @@ const salesModel = {
                     delete row.d_update_at;
                     delete row.n_upnm;
                 }
-                const sql = newdata ? sqlHelper.Insert(TABLE.ESTIMATELI, row) : sqlHelper.Update(TABLE.ESTIMATELI, row, {c_com, i_ser, i_serno});
+                const sql = deldata ? sqlHelper.DeleteSimple(TABLE.ESTIMATELI, {c_com, i_ser, i_serno}) :  newdata ? sqlHelper.Insert(TABLE.ESTIMATELI, row) : sqlHelper.Update(TABLE.ESTIMATELI, row, {c_com, i_ser, i_serno});
                 
                 console.log("detial", sql);
                 // const [row] = await db.execute(sql.query, sql.values);
@@ -301,7 +302,7 @@ const salesModel = {
         const {c_com, i_order } = master;
         
         if (master.f_edit !== "0" || master.f_editold !== "0") {                        
-            const newdata = master.f_editold !== "0" ? true : false;
+            const newdata = master.f_editold !== "0" ? true : false;            
             delete master.f_edit;
             delete master.f_editold;
 
@@ -328,6 +329,7 @@ const salesModel = {
             if(row.f_edit !== "0" || row.f_editold !== "0") {
                 const {i_orderser} = row;
                 const newdata = row.f_editold !== "0" ? true : false;
+                const deldata = row.f_edit == "2" ? true : false;
                 delete row.f_edit;
                 delete row.f_editold;
                 if (!row.n_crnm) {
@@ -341,7 +343,7 @@ const salesModel = {
                     delete row.d_update_at;
                     delete row.n_upnm;
                 }
-                const sql = newdata ? sqlHelper.Insert(TABLE.ORDERLI, row) : sqlHelper.Update(TABLE.ORDERLI, row, {c_com, i_order, i_orderser});
+                const sql = deldata ? sqlHelper.DeleteSimple(TABLE.ORDERLI, {c_com, i_order, i_orderser}) : newdata ? sqlHelper.Insert(TABLE.ORDERLI, row) : sqlHelper.Update(TABLE.ORDERLI, row, {c_com, i_order, i_orderser});
                 
                 console.log("detial", sql);                
                 const res = sqlDbExecute(sql);  ///       
