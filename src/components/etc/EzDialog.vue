@@ -4,6 +4,7 @@
       <v-toolbar>
         <v-toolbar-title>{{ label }}</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn v-if="obtn" color="primary" small @click="btnClick"> {{ obtn }} </v-btn> 
         <v-btn icon @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -23,6 +24,9 @@ export default {
       type: String,
       required: true,
     },
+    obtn: {
+      type: String,
+    }
   },
   data() {
     return {
@@ -37,6 +41,10 @@ export default {
     open() {
 			this.$emit('onOpen');
       this.dialog = true;
+    },
+    btnClick() {
+      this.dialog = false;
+			this.$emit('btnClick');      
     },
   },
 };

@@ -250,7 +250,8 @@ export default {
             return isFinite(max) ? max : 0;
         },
         edit() {            
-            if (this.estimate.i_ser == undefined || this.estimate.f_status == "A" || this.estimate.f_status == "S") return false;
+            // if (this.estimate.i_ser == undefined || ((this.estimate.f_status == "S" || this.estimate.f_status == "A") && this.estimate.f_edit !== "1")) return false;
+            if (this.estimate.i_ser == undefined || this.estimate.f_status == "A" || (this.estimate.f_status == "S"  && this.estimate.f_edit !== "1")) return false;
             return true;
         },
         editStatus() {
@@ -334,7 +335,7 @@ export default {
             }
             const ms = Date.now();                     
             this.selectedM = [];
-            this.estimate = {c_com:this.$store.state.user.member.c_com,  i_ser: ms, f_status: "I", s_date: getDate(), s_date2: getDate(this.estDayFt), f_edit: "1", f_editold:"1"};
+            this.estimate = {c_com:this.$store.state.user.member.c_com,  i_ser: ms, f_status: "I", s_date: getDate(), s_date2: getDate(this.estDayFt), f_use: "Y", f_edit: "1", f_editold:"1"};
             const idx = this.estimates.push(this.estimate) ;
             this.selectedM.push(this.estimate);  
             this.rowFilter(this.estimate);     
@@ -362,20 +363,22 @@ export default {
 
         },
         async saveEstimates() {
-            if (!this.edit) return;
+            if (!this.edit && this.estimate.f_edit == '0' ) {
+                return;
+            }
             
-            this.$refs.form.validate();
-            await this.$nextTick();
-            if (!this.valid) return; 
+            // this.$refs.form.validate();
+            // await this.$nextTick();
+            // if (!this.valid) return; 
 
             if (this.estimate.i_estno == null) {
                 this.$toast.error("견적번호 입력 필수 입니다.");
                 return
             }
 
-            this.$refs.form2.validate();
-            await this.$nextTick();
-            if (!this.valid) return; 
+            // this.$refs.form2.validate();
+            // await this.$nextTick();
+            // if (!this.valid) return; 
 
             const est = Object.assign({}, this.estimate, this.itmelitFilter);
             const data = await this.iuSaleEstimate(est);
@@ -579,7 +582,7 @@ export default {
                 obj.n_item  = item.n_item;
                 obj.t_size  = item.t_size;
                 obj.i_unit  = item.i_unit;
-                obj.i_type  = item.i_type;
+                obj.i_type  = item.i_type;                
                 obj.m_cnt   = 1;
                 obj.a_unit  = item.a_sell;
                 obj.a_amt   = item.a_sell;

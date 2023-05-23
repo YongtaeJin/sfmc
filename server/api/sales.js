@@ -56,6 +56,17 @@ router.post('/iuSaleOrder', async (req, res) => {
 	res.json(result);
 });
 
+router.delete('/delSaleOrder/:c_com/:i_order', async(req, res)=>{
+	const result = await modelCall(salesModel.delSaleOrder, req);
+	res.json(result);
+});
+router.post('/getSaleNotInsertOrder', async (req, res) => {
+    const result = await modelCall(salesModel.getSaleNotInsertOrder, req);
+	res.json(result);
+});
+
+
+
 module.exports = router;
 
 

@@ -54,6 +54,11 @@
 tr.v-data-table__selected {
 	background: #c2fad8 !important;
 }
+.v-data-footer .v-data-footer__select {
+	height: 24px; /* 원하는 폭으로 조정 */
+}
+
+
 .text-input-blue .v-text-field__slot input {
 	color: #00f !important;	
 }
@@ -204,3 +209,10 @@ table.type07 {
 .right-align {
 	text-align: justify;
 }
+.v-tabs { height: 26px; }
+.v-tab {
+	font-size: 0.8rem;
+	height: 20px; 	
+}
+
+

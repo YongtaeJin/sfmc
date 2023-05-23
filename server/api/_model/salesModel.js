@@ -152,7 +152,7 @@ const salesModel = {
                 master.n_upnm = req.user.n_name;
             } else {
                 master.d_create_at = at;
-                master.n_crnm = req.user.n_name;
+                master.n_crnm = req.user.n_name;                
                 delete master.d_update_at;
                 delete master.n_upnm;
             }
@@ -352,6 +352,41 @@ const salesModel = {
         })
         return 0;
     },
+    async delSaleOrder(req) {
+		if (!isGrant(req, LV.BUSINESS))  throw new Error('권한이 없습니다.');
+		const { c_com, i_order } = req.params;
+
+        const sql = sqlHelper.DeleteSimple(TABLE.ORDER, { c_com, i_order });
+        const [row] = await db.execute(sql.query, sql.values);
+
+        // 수주 폼목 List 삭제
+        if (row.affectedRows > 0) {
+            const sqldt = sqlHelper.DeleteSimple(TABLE.ORDERLI, { c_com, i_order });
+            await db.execute(sqldt.query, sqldt.values);
+        }
+
+		return row.affectedRows == 1;
+	},
+
+    async getSaleNotInsertOrder(req) {     
+        // 권한 확인
+        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
+
+        const { c_com } = req.user;
+        let where = `SELECT a.i_ser, a.c_com, a.i_estno, a.c_vend, a.n_vend, a.n_estnm, a.s_date, a.s_date3, a.a_estamt, \n ` +
+                    `       c.n_compnay, c.n_ceo, c.i_company, c.t_job1, c.t_job2, c.t_tel, c.t_fax, c.e_mail, c.t_addr, \n ` +
+                    `       b.i_serno, b.c_item, b.n_item, b.t_size, b.i_unit, b.i_type, b.m_cnt, b.a_unit, b.a_amt, b.s_duedate, b.t_remark \n ` +
+                    `  FROM tb_estimate a \n ` +
+                    `        join tb_estimateli b on a.i_ser = b.i_ser AND a.c_com = b.c_com \n ` +
+                    `        join tb_vend c on a.c_com = c.c_com and a.c_vend = c.c_vend \n ` +
+                    ` WHERE a.c_com = ? AND a.f_status = 'A' AND a.f_use = 'Y' \n ` +
+                    `  AND NOT EXISTS (SELECT * FROM tb_order t where t.i_estno = a.i_ser) \n ` +
+                    ` ORDER BY b.s_sort   \n `;
+        let values = new Array();
+        values.push(c_com);
+        const [rows] = await db.execute(where, values);
+        return rows;
+    }
 
 }
 

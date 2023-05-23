@@ -89,14 +89,14 @@
                     single-select v-model="selectedD"                    
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
-                    class="elevation-1 text-no-wrap" height="290px" max-height="290px">
+                    class="elevation-1 text-no-wrap" height="372px" max-height="372px">
 
                     <template v-slot:[`item.s_sort`]="{ item }">                        
-                        <input-number v-model="item.s_sort" :maxlength="2" @input="onChangeDetail" v-if="!edit && item.i_orderser === itemInfo.i_orderser" ></input-number>                        
+                        <input-number v-model="item.s_sort" :maxlength="2" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-number>                        
                         <span v-else>{{item.s_sort}}</span>
                     </template>
                     <template v-slot:[`item.n_item`]="{ item }">
-                        <v-text-field v-model="item.n_item" hide-details dense single-line readonly v-if="!edit && item.i_orderser === itemInfo.i_orderser" class="my-text-field">
+                        <v-text-field v-model="item.n_item" hide-details dense single-line readonly v-if="edit && item.i_orderser === itemInfo.i_orderser" class="my-text-field">
                             <template v-slot:append>
                                 <v-btn icon x-small tabindex="-1" @click="clickItem">
                                     <v-icon> mdi-dialpad </v-icon>
@@ -106,23 +106,23 @@
                         <span v-else>{{item.n_item }}</span>
                     </template>
                     <template v-slot:[`item.m_cnt`]="{ item }">
-                        <input-amt v-model="item.m_cnt" @input="onChangeAmt" v-if="!edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
+                        <input-amt v-model="item.m_cnt" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
                         <span v-else>{{comma(item.m_cnt)}}</span>
                     </template>
                     <template v-slot:[`item.a_unit`]="{ item }">
-                        <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="!edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
+                        <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
                         <span v-else>{{comma(item.a_unit)}}</span>
                     </template>
                     <template v-slot:[`item.a_amt`]="{ item }">
-                        <input-amt v-model="item.a_amt" @input="onChangeAmt2" v-if="!edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
+                        <input-amt v-model="item.a_amt" @input="onChangeAmt2" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
                         <span v-else>{{comma(item.a_amt)}}</span>
                     </template>
                     <template v-slot:[`item.s_duedate`]="{ item }">
-                        <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" v-if="!edit && item.i_orderser === itemInfo.i_orderser" :rules="rules.date({required: false})" />
+                        <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" :rules="rules.date({required: false})" />
                         <span v-else>{{item.s_duedate}}</span>
                     </template>
                     <template v-slot:[`item.t_remark`]="{ item }">
-                        <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="!edit && item.i_orderser === itemInfo.i_orderser" dense hide-details class="my-text-field" />
+                        <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" dense hide-details class="my-text-field" />
                         <span v-else>{{item.t_remark}}</span>
                     </template>
 
@@ -134,6 +134,9 @@
         </ez-dialog>
         <ez-dialog ref="dialog_Item" label="항목/품목" persistent @onClose="close_item" width="460px" >            
             <item-pop @onSelect="selectItem"></item-pop>
+        </ez-dialog>
+        <ez-dialog ref="dialog_Insert" label="견적서 추가" obtn="미견적작성" persistent @onClose="close_item" @btnClick="newAdd2" width="500px" >
+            <sales-notestimate :data="est" @onEnter="newAdd1" ></sales-notestimate>
         </ez-dialog>
 
     </v-container>
@@ -152,10 +155,10 @@ import { ORDER001 } from '../../../util/constval';
 import validateRules from "../../../util/validateRules";
 import ItemPop from '../codelist/ItemPop.vue';
 import VendPop from '../codelist/VendPop.vue';
-
+import SalesNotestimate from './SalesNotestimate.vue';
 
 export default {
-    components: { TooltipBtn, EzDialog, InputDate2, InputAmt, InputNumber, ItemPop, VendPop },
+    components: { TooltipBtn, EzDialog, InputDate2, InputAmt, InputNumber, ItemPop, VendPop, SalesNotestimate },
     name: "Salesorders",
     mounted() {
         this.init();
@@ -186,6 +189,8 @@ export default {
             form : {
                 sDate1:"", sDate2:"", sOrder:"", sVend:"", 
             },
+            estlist:[], est:[],
+         
         }
     },
     watch: {
@@ -254,13 +259,156 @@ export default {
             if (this.masters.length > 0 ) {
                 this.itemLists =  await this.$axios.post(`/api/sales/getSaleOrderLi`, this.form); 
             }
-
         },
         async addOrd() {
-            console.log( 1 == 2 ? 'a' : 1 == 1 ? 'b':'c')
-        },
-        async delOrd() {
 
+            this.estlist = await this.$axios.post(`/api/sales/getSaleNotInsertOrder`);
+            // const uniqueValues = [...new Set(this.estlist.map(obj => obj.i_ser))];
+            this.est = Array.from(new Set(this.estlist.map(obj => 
+                    JSON.stringify({ i_ser: obj.i_ser, 
+                                     i_estno: obj.i_estno ,
+                                     n_vend: obj.n_vend ,
+                                     n_estnm: obj.n_estnm, 
+                                     a_estamt: obj.a_estamt,
+                                     s_date: obj.s_date,
+                                     s_date3: obj.s_date3,
+                                     }))), 
+                    JSON.parse);
+
+            this.$refs.dialog_Insert.open();
+
+        },
+        async newAdd1(item) {
+            this.$refs.dialog_Insert.close();
+            if (!item) {
+                this.newAdd2();
+                return
+            }
+            const data = this.estlist.filter(obj => obj.i_ser === item.i_ser);
+            const ms = Date.now(); 
+            let idx = 0;
+            data.forEach((row, i) => {
+                const obj = {};
+                obj.i_order     = ms;
+                obj.i_orderser  = row.i_serno;
+                obj.c_com       = row.c_com;
+                obj.s_sort      = i + 1;
+                obj.i_orderno   = ";"
+                obj.c_item      = row.c_item
+                obj.n_item      = row.n_item
+                obj.t_size      = row.t_size
+                obj.i_unit      = row.i_unit
+                obj.i_type      = row.i_type
+                obj.m_cnt       = row.m_cnt;
+                obj.a_unit      = row.a_unit;
+                obj.a_amt       = row.a_amt;
+                obj.s_duedate   = row.s_duedate;
+                obj.i_estno     = row.i_ser;
+                obj.i_sernoser  = row.i_serno;
+                obj.f_edit      = "1";
+                obj.f_editold   = "1";                
+                this.itemLists.push(obj);
+
+                if (i == 0 ) {                    
+                    const objm = {};
+                    objm.i_order     = ms;
+                    objm.c_com       = row.c_com;
+                    objm.i_orderno   = "";
+                    objm.s_date      = getDate();
+                    objm.f_use       = "Y";
+                    objm.f_status    = "I";
+                    objm.c_vend      = row.c_vend;
+                    objm.n_order     = row.n_estnm;
+                    objm.a_orderamt  = row.a_estamt;
+                    objm.i_estno     = row.i_ser;
+                    objm.n_magname   = "";
+                    objm.s_date2     = "";
+                    objm.t_remark    = "";
+                    objm.n_vend      = row.n_vend;
+                    objm.n_compnay   = row.n_compnay;
+                    objm.n_ceo       = row.n_ceo;
+                    objm.i_company   = row.i_company ;
+                    objm.t_job1      = row.t_job1;
+                    objm.t_job2      = row.t_job2;
+                    objm.t_tel       = row.t_tel;
+                    objm.t_fax       = row.t_fax;
+                    objm.e_mail      = row.e_mail;
+                    objm.t_addr      = row.t_addr;
+                    objm.f_edit      = "1";
+                    objm.f_editold   = "1";
+                    
+                    idx = this.masters.push(objm);                    
+                }
+            })
+
+            const dataTable = this.$refs.table;
+            if (dataTable) {
+                const item = this.masters[idx -1];               
+                dataTable.$emit("click:row", item);
+            }
+            
+        },
+        async newAdd2() {
+            const ms = Date.now(); 
+            let idx = 0;
+
+            const objm = {};
+            objm.i_order     = ms;
+            objm.c_com       =  this.$store.state.user.member.c_com;
+            objm.i_orderno   = "";
+            objm.s_date      = getDate();
+            objm.f_use       = "Y";
+            objm.f_status    = "I";
+            // objm.c_vend      = row.c_vend;
+            // objm.n_order     = row.n_estnm;
+            // objm.a_orderamt  = row.a_estamt;
+            // objm.i_estno     = row.i_ser;
+            // objm.n_magname   = "";
+            // objm.s_date2     = "";
+            // objm.t_remark    = "";
+            // objm.n_vend      = row.n_vend;
+            // objm.n_compnay   = row.n_compnay;
+            // objm.n_ceo       = row.n_ceo;
+            // objm.i_company   = row.i_company ;
+            // objm.t_job1      = row.t_job1;
+            // objm.t_job2      = row.t_job2;
+            // objm.t_tel       = row.t_tel;
+            // objm.t_fax       = row.t_fax;
+            // objm.e_mail      = row.e_mail;
+            // objm.t_addr      = row.t_addr;
+            objm.f_edit      = "1";
+            objm.f_editold   = "1";
+            
+            idx = this.masters.push(objm);   
+            
+            const dataTable = this.$refs.table;
+            if (dataTable && idx) {
+                const item = this.masters[idx -1];               
+                dataTable.$emit("click:row", item);
+            }
+        },
+
+
+        async delOrd() {
+            if (!this.edit) {
+                await this.$ezNotify.alert("작성, 등록 상태만 삭제 가능 합니다.", "삭제불가", {icon: "mdi-message-bulleted-off", width: 250,});
+                return
+            }
+            // DB 삭제 작업 ....
+            // 신규 입력 삭제 (저장전 자료)
+            if (this.masterinfo.f_editold != '1') {
+                // 저장 후 삭제 
+                const res = await this.$ezNotify.confirm("삭제 하시겠습니까 ?", "삭제", {icon: "mdi-message-bulleted-off", width: 350,});
+                if(!res) return;
+                const data = await this.$axios.delete(`/api/sales/delSaleOrder/${this.masterinfo.c_com}/${this.masterinfo.i_order}`);
+            }
+
+            this.itemInfo = [];
+            const idx = this.masters.indexOf(this.masterinfo) ;
+            if (idx >= 0) this.masters.splice(idx, 1);
+            this.masterinfo = [];
+
+            this.$toast.info(`삭제 하였습니다.`);
         },
         async saveOrd() {
             if (!this.edit) return;
@@ -303,10 +451,14 @@ export default {
         },
         rowSelectMaster :function (item, row) {       
             if (this.editJob) return;
-            
-            row.select(true);            
             this.masterinfo = item;  
             this.rowFilter(item);
+
+            if (row) {
+                row.select(true) 
+            } else {
+                this.selectedM = [item]
+            }
         },
         rowFilter(item) {
             if (this.itemLists.length > 0) {
