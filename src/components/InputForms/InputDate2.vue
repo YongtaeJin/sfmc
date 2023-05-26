@@ -63,6 +63,7 @@ export default {
 		},
 		close() {
 			this.modal = false;
+      this.modal2 = false;
 		},
 		picker() {
 			this.onInput(this.date);

@@ -55,6 +55,7 @@ tr.v-data-table__selected {
 	background: #c2fad8 !important;
 }
 .v-data-footer .v-data-footer__select {
+	font-size: 0.5rem !important;
 	height: 24px; /* 원하는 폭으로 조정 */
 }
 
@@ -145,6 +146,9 @@ table.type07 {
 	height: 8px !important;
 }
 .my-text-field input {
+	font-size: 0.7rem !important;	
+}
+.my-text-fontsize input {
 	font-size: 0.7rem !important;	
 }
 

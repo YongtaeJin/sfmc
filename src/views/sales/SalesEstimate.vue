@@ -55,7 +55,7 @@
                 <v-card color="grey lighten-4">
                 <v-row no-gutters class="my-text-field" >
                     <v-col col="8" sm="1" md="1"><v-text-field value="견적번호" readonly dense hide-details class="text-input-redbrg"/></v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.i_estno" :readonly="!edit" @input="onChangeMaster" dense hide-details /></v-col>                    
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.i_estno" :readonly="!edit" @input="onChangeEstno" dense hide-details /></v-col>                    
                     <v-col col="8" sm="1" md="1"><v-text-field value="견적상태" readonly dense hide-details class="text-input-redbrg"/></v-col>
                     <v-col col="8" sm="2" md="2">
                         <v-select v-if="editStatus" v-model="estimate.f_status"
@@ -628,6 +628,14 @@ export default {
                     row.s_duedate = this.estimate.s_date3;
                     row.f_edit = "1";
                 }
+            });
+        },
+        onChangeEstno() {
+            const idx = this.estimates.indexOf(this.estimate);
+            if (idx > -1) this.estimates[idx].f_edit = '1';
+            this.itmelitFilter.forEach((row) => {               
+                row.i_estno = this.estimate.i_estno;
+                row.f_edit = "1";
             });
         },
         onChangeDetail() {            

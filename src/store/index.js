@@ -136,7 +136,7 @@ const store = new Vuex.Store({
 						{
 							title : "생산계획",
 							icon : "",
-							to : '',
+							to : '/prod/plan',
 							grant : 6, 
 							newTab : false,
 							subItems : []
@@ -144,7 +144,7 @@ const store = new Vuex.Store({
 						{
 							title : "작업시지",
 							icon : "",
-							to : '',
+							to : '/prod/work',
 							grant : 6, 
 							newTab : false,
 							subItems : []

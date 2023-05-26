@@ -40,7 +40,7 @@
                 <v-card color="grey lighten-4">
                 <v-row no-gutters class="my-text-field" >
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주번호" readonly dense hide-details class="text-input-redbrg"/></v-col>
-                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="!edit" @input="onChangeMaster" dense hide-details /></v-col>
+                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="!edit" @input="onChangeOrdno" dense hide-details /></v-col>
                     <v-col col="8" sm="2" md="2"></v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주상태" readonly dense hide-details class="text-input-bluebrg"/></v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="getOrderStatus(masterinfo.f_status)" readonly dense hide-details class="text-input-redbrg inputPrice"/></v-col>
@@ -83,14 +83,14 @@
                     <tooltip-btn label="추가" @click="addItem" fab x-small><v-icon>mdi-plus</v-icon></tooltip-btn>            
                     <tooltip-btn label="삭제" @click="delItem" fab x-small><v-icon>mdi-minus</v-icon></tooltip-btn>
                 </v-toolbar>
-                <v-data-table :headers="itemHead" :items="itemListFilter"
+                <v-data-table :headers="itemHead" :items="itemListFilter" 
                     @click:row="rowSelectDetail" 
                     item-key="i_orderser" 
                     single-select v-model="selectedD"                    
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
                     class="elevation-1 text-no-wrap" height="372px" max-height="372px">
-
+                    
                     <template v-slot:[`item.s_sort`]="{ item }">                        
                         <input-number v-model="item.s_sort" :maxlength="2" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-number>                        
                         <span v-else>{{item.s_sort}}</span>
@@ -293,7 +293,7 @@ export default {
                 obj.i_orderser  = row.i_serno;
                 obj.c_com       = row.c_com;
                 obj.s_sort      = i + 1;
-                obj.i_orderno   = ";"
+                obj.i_orderno   = "";
                 obj.c_item      = row.c_item
                 obj.n_item      = row.n_item
                 obj.t_size      = row.t_size
@@ -412,9 +412,8 @@ export default {
         },
         async saveOrd() {
             if (!this.edit) return;
-            if (!this.editJob) return;
-
-            if (this.masterinfo.i_orderno == null) {
+            if (!this.editJob) return;            
+            if (this.masterinfo.i_orderno == null || this.masterinfo.i_orderno.length < 1) {
                 this.$toast.error("수주번호 입력 필수 입니다.");
                 return;
             }
@@ -506,6 +505,15 @@ export default {
                     row.s_duedate = this.masterinfo.s_date2;
                     row.f_edit = "1";
                 }
+            });
+        },
+        onChangeOrdno() {
+            const idx = this.masters.indexOf(this.masterinfo);
+            if (idx > -1) this.masters[idx].f_edit = '1';
+            this.itemListFilter.forEach((row) => {
+                row.i_orderno = this.masterinfo.i_orderno;
+                row.f_edit = "1";
+               
             });
         },
 
