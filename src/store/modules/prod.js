@@ -3,11 +3,11 @@ import qs from 'qs';
 import { LV } from '../../../util/level';
 
 export const actions = {
-    // async getSaleEstimate( { commit }, form) {	
-	// 	const { $axios } = Vue.prototype;
-	// 	const data = await $axios.post(`/api/prod/getSaleEstimate`, form);
-	// 	return data;
-	// },
+    async getProdPlanlist( { commit }, form) {	
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post(`/api/prod/getProdPlanlist`, form);
+		return data;
+	},
 	// async iuSaleEstimate( { commit }, est) {
 	// 	const { $axios } = Vue.prototype;
 		

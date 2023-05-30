@@ -25,8 +25,10 @@
     /* font-size: 1.0rem;     */
     height: 30px;   
 	color: white !important;		
-	background-color: #0d54fa;
-	
+	/* background-color: #0d54fa; */
+	background: linear-gradient(to bottom, #0d54fa, #6894ff); /* 그라데이션 색상 설정 */
+	border-right: 1px solid #f0f0f0 ; /* 세로 선 스타일 설정 */
+	border-bottom: 1px solid #f0f0f0 ; /* 이래 선 스타일 설정 */
 	/* border-bottom: none !important; */
 }
 
@@ -34,6 +36,8 @@
   font-size: 0.7rem;  
   height: 24px; /* 원하는 높이로 변경하세요 */
   line-height: 24px; /* 높이와 같은 값을 사용하세요 */
+  border-right: 1px solid #f0f0f0 ; /* 세로 선 스타일 설정 */
+  border-bottom: 1px solid #f0f0f0 ; /* 아래 선 스타일 설정 */
   }
 
 .v-data-table .v-data-table__wrapper .v-data-table__cell {
@@ -44,13 +48,7 @@
 .v-toolbar__title {
 	font-size: 1.0rem !important;
 }
-/* .v-data-table > .v-data-table-header {
-	color: white;		v-text-field label left.label-end .v-label {
-	right: 0 !important;
-	text-align: end;
-	left: 100px !important;
-  }
-} */
+
 tr.v-data-table__selected {
 	background: #c2fad8 !important;
 }
@@ -59,6 +57,7 @@ tr.v-data-table__selected {
 	height: 24px; /* 원하는 폭으로 조정 */
 }
 
+.blue_background {	background: linear-gradient(to bottom, #0d54fa, #6894ff) }
 
 .text-input-blue .v-text-field__slot input {
 	color: #00f !important;	

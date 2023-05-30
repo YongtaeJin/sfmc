@@ -37,7 +37,6 @@ const salesModel = {
         const [rows] = await db.execute(sql.query, sql.values);        
 
         console.log("getSaleEstimateInit", sql);
-        console.log(rows);
         return rows;
 
     },

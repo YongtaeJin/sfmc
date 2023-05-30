@@ -90,6 +90,8 @@
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
                     class="elevation-1 text-no-wrap" height="372px" max-height="372px">
+
+                    
                     
                     <template v-slot:[`item.s_sort`]="{ item }">                        
                         <input-number v-model="item.s_sort" :maxlength="2" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-number>                        

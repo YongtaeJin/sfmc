@@ -5,10 +5,10 @@ const passport = require('passport');
 const jwt = require('../plugins/jwt');
 
 
-// router.post('/getSaleEstimate', async (req, res) => {
-//     const result = await modelCall(salesModel.getSaleEstimate, req);
-// 	res.json(result);
-// });
+router.post('/getProdPlanlist', async (req, res) => {
+    const result = await modelCall(salesModel.getProdPlanlist, req);
+	res.json(result);
+});
 
 // router.get('/getSaleEstimateInit', async (req, res) => {
 //     const result = await modelCall(salesModel.getSaleEstimateInit, req);

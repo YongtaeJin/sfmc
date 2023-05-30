@@ -28,7 +28,42 @@ function objectSplit(data, f) {
     }    
 }
 const prodModel = {
-    
+    async getProdPlanlist(req) {
+        // if (req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
+        
+        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;  
+
+        let where = `SELECT * FROM tb_prodplan \n WHERE c_com = ? \n`;
+        var values = new Array();
+        values.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            where += ` and s_duedate between ? and ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            where += ` and s_duedate >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            where += ` and s_duedate <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            where += ` and n_vend like ? \n `
+            values.push(sVend + '%');
+        }
+        where += ` ORDER BY c_com, i_prod, s_sort `;
+        
+        console.log(where, values);            
+        const [rows] = await db.execute(where, values);        
+
+        rows.forEach((row) => {
+            addEditCol(row);
+        });
+        return rows;
+    },
 
     
 }
