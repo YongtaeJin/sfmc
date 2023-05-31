@@ -218,7 +218,7 @@ const salesModel = {
 
         const { c_com } = req.user;
         const { sDate1, sDate2, sOrder, sVend } = req.body;
-        let where = `SELECT * FROM tb_order \n WHERE c_com = ? \n `
+        let where = `SELECT * FROM tb_order \n WHERE c_com = ? and f_order = 'O' \n `
         var values = new Array();
         values.push(c_com);
         if (sDate1.length > 0 && sDate2.length > 0 ) {
@@ -281,7 +281,7 @@ const salesModel = {
       
         let query = `SELECT * FROM tb_orderli \n ` +
                     ` WHERE c_com = ? \n ` +
-                    `   AND EXISTS (SELECT * FROM tb_order t WHERE tb_orderli.c_com = t.c_com and tb_orderli.i_order = t.i_order ${where})` 
+                    `   AND EXISTS (SELECT * FROM tb_order t WHERE tb_orderli.c_com = t.c_com and t.f_order = 'O' and tb_orderli.i_order = t.i_order ${where})` 
         console.log("getSaleOrderLi\n", query , values);
         const [rows] = await db.execute(query, values);
         rows.forEach((row) => {
@@ -304,18 +304,19 @@ const salesModel = {
             const newdata = master.f_editold !== "0" ? true : false;            
             delete master.f_edit;
             delete master.f_editold;
-
-            if (!master.n_crnm) {
-                delete master.d_create_at;
-                delete master.n_crnm;
-                master.f_status = 'S';
-                master.d_update_at = at;
-                master.n_upnm = req.user.n_name;
-            } else {
-                master.d_create_at = at;
-                master.n_crnm = req.user.n_name;
+            
+            if (newdata) {                
                 delete master.d_update_at;
                 delete master.n_upnm;
+                master.d_create_at = at;
+                master.n_crnm = req.user.n_name;
+                master.f_status = 'S';                
+            } else {
+                console.log('수정')
+                master.d_update_at = at;
+                master.n_upnm = req.user.n_name;
+                delete master.d_create_at;
+                delete master.n_crnm;
             }
             const sql = newdata ? sqlHelper.Insert(TABLE.ORDER, master) : sqlHelper.Update(TABLE.ORDER, master, {c_com, i_order});
 
@@ -331,16 +332,16 @@ const salesModel = {
                 const deldata = row.f_edit == "2" ? true : false;
                 delete row.f_edit;
                 delete row.f_editold;
-                if (!row.n_crnm) {
-                    delete row.d_create_at;
-                    delete row.n_crnm;
-                    row.d_update_at = at;
-                    row.n_upnm = req.user.n_name;
-                } else {
-                    row.d_create_at = at;
-                    row.n_crnm = req.user.n_name;
+                if (newdata) {
                     delete row.d_update_at;
                     delete row.n_upnm;
+                    row.d_create_at = at;
+                    row.n_crnm = req.user.n_name;
+                } else {
+                    row.d_update_at = at;
+                    row.n_upnm = req.user.n_name;
+                    delete row.d_create_at;
+                    delete row.n_crnm;
                 }
                 const sql = deldata ? sqlHelper.DeleteSimple(TABLE.ORDERLI, {c_com, i_order, i_orderser}) : newdata ? sqlHelper.Insert(TABLE.ORDERLI, row) : sqlHelper.Update(TABLE.ORDERLI, row, {c_com, i_order, i_orderser});
                 

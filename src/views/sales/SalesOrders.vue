@@ -52,7 +52,7 @@
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
                     <v-col col="8" sm="5" md="5">
-                        <v-text-field v-if="edit" v-model="masterinfo.n_vend" dense hide-details>
+                        <v-text-field v-if="edit" readonly  v-model="masterinfo.n_vend" dense hide-details>
                             <template v-slot:append>
                                 <v-btn icon x-small tabindex="-1" @click="clickVend"><v-icon> mdi-dialpad </v-icon></v-btn>
                             </template>
@@ -263,6 +263,7 @@ export default {
             }
         },
         async addOrd() {
+            if (this.editJob) return;
 
             this.estlist = await this.$axios.post(`/api/sales/getSaleNotInsertOrder`);
             // const uniqueValues = [...new Set(this.estlist.map(obj => obj.i_ser))];
@@ -307,6 +308,7 @@ export default {
                 obj.s_duedate   = row.s_duedate;
                 obj.i_estno     = row.i_ser;
                 obj.i_sernoser  = row.i_serno;
+                obj.f_work      = "1";
                 obj.f_edit      = "1";
                 obj.f_editold   = "1";                
                 this.itemLists.push(obj);
@@ -318,6 +320,7 @@ export default {
                     objm.i_orderno   = "";
                     objm.s_date      = getDate();
                     objm.f_use       = "Y";
+                    objm.f_order     = "O";    // O:수주등록, P:생산계획(수주미등록)
                     objm.f_status    = "I";
                     objm.c_vend      = row.c_vend;
                     objm.n_order     = row.n_estnm;
@@ -360,6 +363,7 @@ export default {
             objm.i_orderno   = "";
             objm.s_date      = getDate();
             objm.f_use       = "Y";
+            objm.f_order     = "O";    // O:수주등록, P:생산계획(수주미등록)
             objm.f_status    = "I";
             // objm.c_vend      = row.c_vend;
             // objm.n_order     = row.n_estnm;
@@ -409,6 +413,7 @@ export default {
             const idx = this.masters.indexOf(this.masterinfo) ;
             if (idx >= 0) this.masters.splice(idx, 1);
             this.masterinfo = [];
+            this.itemListFilter= [];
 
             this.$toast.info(`삭제 하였습니다.`);
         },
@@ -576,7 +581,8 @@ export default {
                 obj.m_cnt      = 1;
                 obj.a_unit     = item.a_sell;
                 obj.a_amt      = item.a_sell;
-                obj.s_duedate  = this.masterinfo.s_date3;                
+                obj.s_duedate  = this.masterinfo.s_date3;  
+                obj.f_work     = "1";              
                 obj.f_edit     = "1";        
                 obj.f_editold  = "1";
 

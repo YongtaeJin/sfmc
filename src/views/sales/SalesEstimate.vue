@@ -77,7 +77,7 @@
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
                     <v-col col="8" sm="4" md="4">
-                        <v-text-field v-if="edit" v-model="estimate.n_vend" dense hide-details>
+                        <v-text-field v-if="edit" readonly v-model="estimate.n_vend" dense hide-details>
                             <template v-slot:append>
                                 <v-btn icon x-small tabindex="-1" @click="clickVend"><v-icon> mdi-dialpad </v-icon></v-btn>
                             </template>
