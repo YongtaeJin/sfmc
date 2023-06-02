@@ -31,7 +31,7 @@ const prodModel = {
     async getProdPlanlist(req) {
         // if (req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
         
-        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         
         const { c_com } = req.user;
         const { sDate1, sDate2, sVend } = req.body;  

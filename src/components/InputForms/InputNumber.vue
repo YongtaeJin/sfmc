@@ -9,7 +9,7 @@
         single-line
         oninput="javascript: this.value = this.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '' );"        
         @input="onInput"        
-        class="my-text-field inputNumber text-xs-right">
+        class="my-text-field inputNumber text-xs-right no-padding">
     </v-text-field>
 </template>
 

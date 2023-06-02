@@ -30,19 +30,26 @@
 	border-right: 1px solid #f0f0f0 ; /* 세로 선 스타일 설정 */
 	border-bottom: 1px solid #f0f0f0 ; /* 이래 선 스타일 설정 */
 	/* border-bottom: none !important; */
+	padding: 0;
+	margin: 0;
+	
 }
 
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
-  font-size: 0.7rem;  
-  height: 24px; /* 원하는 높이로 변경하세요 */
-  line-height: 24px; /* 높이와 같은 값을 사용하세요 */
-  border-right: 1px solid #f0f0f0 ; /* 세로 선 스타일 설정 */
-  border-bottom: 1px solid #f0f0f0 ; /* 아래 선 스타일 설정 */
-  }
+	font-size: 0.7rem;  
+	height: 24px; /* 원하는 높이로 변경하세요 */
+	line-height: 24px; /* 높이와 같은 값을 사용하세요 */
+	border-right: 1px solid #f0f0f0 ; /* 세로 선 스타일 설정 */
+	border-bottom: 1px solid #f0f0f0 ; /* 아래 선 스타일 설정 */
+	padding: 0;
+	margin: 0;
+}
 
 .v-data-table .v-data-table__wrapper .v-data-table__cell {
 	height: 24px; /* 원하는 높이로 변경하세요 */
 	line-height: 24px; /* 높이와 같은 값을 사용하세요 */
+	padding: 0;
+    margin: 0;
 }
   
 .v-toolbar__title {
@@ -51,42 +58,54 @@
 
 tr.v-data-table__selected {
 	background: #c2fad8 !important;
+	padding: 0;
+    margin: 0;
 }
 .v-data-footer .v-data-footer__select {
 	font-size: 0.5rem !important;
 	height: 24px; /* 원하는 폭으로 조정 */
+	padding: 0;
+    margin: 0;
 }
 
 .blue_background {	background: linear-gradient(to bottom, #0d54fa, #6894ff) }
 
 .text-input-blue .v-text-field__slot input {
+	padding: 0;    margin: 0; 
 	color: #00f !important;	
 }
 .text-input-red .v-text-field__slot input {
+	padding: 0;    margin: 0; 
 	color: red !important;
 }
 .text-input-bluebrg .v-text-field__slot input {
 	color: #00f !important;
-	margin-top: 3px; margin-bottom: -2px;
+	/* margin-top: 3px; margin-bottom: -2px; */
+	padding: 0;    margin: 0;
 	background-color: rgba(234, 235, 220, 0.937) !important;
+
 }
 .text-input-redbrg .v-text-field__slot input {
 	color: red !important;
-	margin-top: 3px; margin-bottom: -2px;
+	/* margin-top: 3px; margin-bottom: -2px; */
+	padding: 0;    margin: 0; 
 	background-color: rgba(234, 235, 220, 0.937) !important;	
 }
 /* .text-input-white .v-text-field__slot input, label {
 	color: white !important;		
 } */
 .text-input-bluewhite .v-text-field__slot input {
+	padding: 0;    margin: 0; 
 	color: white !important;
 	background: #00f !important;
 }
 .text-input-redwhite .v-text-field__slot input {	
+	padding: 0;    margin: 0; 
 	color: white !important;
 	background: red !important;
 }
 .label-end .v-label {
+	padding: 0;    margin: 0; 
 	right: 0 !important;
 	text-align: end;
 	left: 100px !important;
@@ -139,9 +158,11 @@ table.type07 {
 	flex-direction: row;
 }
 .my-text-field {
+	padding: 0;    margin: 0; 
 	height: 24px !important;
 }
 .my-text-fieldend {
+	padding: 0;    margin: 0; 
 	height: 8px !important;
 }
 .my-text-field input {
@@ -184,6 +205,7 @@ table.type07 {
     -webkit-appearance: none;	
 }
 .inputPrice .v-text-field__slot input {
+	padding: 0;    margin: 0; 
 	text-align: right;
 }
 .inputPrice .v-select__selection {
@@ -218,4 +240,23 @@ table.type07 {
 	height: 20px; 	
 }
 
+.no-padding {
+    padding: 0;
+    margin: 0;
+  }
+.no-margin {
+    padding: 0;
+    margin: 0;
+  }
+.no_padmar0 {
+    padding: 0;
+    margin: 0;
+  }
 
+  .no_padmar1 {
+    padding: 1;
+    margin: 0;
+  }
+.underline {
+	text-decoration: underline;
+}

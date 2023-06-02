@@ -14,7 +14,7 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'Code',  value: 'c_code', sortable: false, align:'center', width:"5px"  },
+                {text: 'Code',  value: 'c_code', sortable: false, align:'center', width:"50px"  },
                 {text: '명칭',  value: 'n_code', sortable: false,  },              
                 ],
             items: [],

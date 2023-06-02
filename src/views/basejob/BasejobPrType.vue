@@ -84,7 +84,7 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "10px"},
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
                 {text: '공정유형코드',  value: 'c_ptype', sortable: false, align:'left', },
                 {text: '공정유형명',  value: 'n_ptype', sortable: false, align:'left', },
                 // {text: '설명',  value: 't_remark', sortable: false, align:'left', },                
@@ -97,7 +97,7 @@ export default {
             typeTitle: "Code",
             c_ptype: "", 
             headersDT: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "10px"},
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'left', },
                 {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
                 {text: '작업시간',  value: 'm_whour', sortable: false, align:'center', },

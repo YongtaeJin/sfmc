@@ -11,12 +11,12 @@
         </v-toolbar>      
         <v-card class="my-card">
             <v-row no-gutters class="my-text-field">
-                <v-col col="12" sm="1" md="1"><v-text-field value="견적기간" readonly dense hide-details class="text-input-blue"/></v-col>
+                <v-col col="12" sm="1" md="1"><v-text-field value="견적기간" readonly dense hide-details class="text-input-blue no-padding"/></v-col>
                 <v-col col="12" sm="2" md="2"><input-date-2 v-model="form.sDate1" /></v-col>
                 <v-col col="12" sm="2" md="2"><input-date-2 v-model="form.sDate2" /></v-col>
-                <v-col col="12" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-blue"/></v-col>
-                <v-col col="12" sm="3" md="3"><v-text-field v-model="form.sVend" dense hide-detailsclass="text-input-blue" /></v-col>
-                <v-col col="12" sm="1" md="1"><v-text-field value="견적상태" readonly dense hide-details class="text-input-blue"/> </v-col>
+                <v-col col="12" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-blue no-padding"/></v-col>
+                <v-col col="12" sm="3" md="3"><v-text-field v-model="form.sVend" dense hide-details class="text-input-blue no-padding" /></v-col>
+                <v-col col="12" sm="1" md="1"><v-text-field value="견적상태" readonly dense hide-details class="text-input-blue no-padding"/> </v-col>
                 <v-col col="12" sm="2" md="2">
                     <v-select v-model="form.sStatus"
                         :items="ESTI001" item-text="label" item-value="value"                        
@@ -26,11 +26,11 @@
                     </v-select></v-col>
             </v-row>
             <v-row no-gutters class="my-text-field">
-                <v-col col="12" sm="1" md="1"><v-text-field value="견적번호" readonly dense hide-details class="text-input-blue"/></v-col>
-                <v-col col="12" sm="4" md="4"><v-text-field v-model="form.sEsimate" dense hide-details class="my-text-field" /></v-col>
+                <v-col col="12" sm="1" md="1"><v-text-field value="견적번호" readonly dense hide-details class="text-input-blue no-padding"/></v-col>
+                <v-col col="12" sm="4" md="4"><v-text-field v-model="form.sEsimate" dense hide-details class="my-text-field no-padding" /></v-col>
             </v-row>
             <v-row no-gutters class="my-text-fieldend"><v-col></v-col></v-row>
-            <v-row no-gutters class="my-text-fieldend"><v-col></v-col></v-row>
+           
         </v-card>  
 
         <v-row >
@@ -53,68 +53,70 @@
             <v-col col="12" sm="8" md="8">
                 <v-form @submit.prevent="save" ref="form" v-model="valid" lazy-validation>
                 <v-card color="grey lighten-4">
-                <v-row no-gutters class="my-text-field" >
-                    <v-col col="8" sm="1" md="1"><v-text-field value="견적번호" readonly dense hide-details class="text-input-redbrg"/></v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.i_estno" :readonly="!edit" @input="onChangeEstno" dense hide-details /></v-col>                    
-                    <v-col col="8" sm="1" md="1"><v-text-field value="견적상태" readonly dense hide-details class="text-input-redbrg"/></v-col>
+                <v-row no-gutters class="my-text-field"  >
+                    <v-col col="8" sm="1" md="1"><v-text-field value="견적번호" readonly dense hide-details class="text-input-redbrg no-padding"/></v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.i_estno" :readonly="!edit" @input="onChangeEstno" dense hide-details class="no-padding" /></v-col>                    
+                    <v-col col="8" sm="1" md="1"><v-text-field value="견적상태" readonly dense hide-details class="text-input-redbrg no-padding"/></v-col>
                     <v-col col="8" sm="2" md="2">
                         <v-select v-if="editStatus" v-model="estimate.f_status"
                             @input="onChangeMaster"
                             :items="ESTI001" item-text="label" item-value="value" 
                             :rules="[rules.require({ label: '견적상태' })]"     
                             :readonly="!editStatus"                    
-                            class="my-text-field" dense >                       
+                            class="my-text-field no-padding" dense >                       
                         </v-select>
-                        <v-text-field v-else :value="getStatus(estimate.f_status)" readonly dense hide-details/>
+                        <v-text-field v-else :value="getStatus(estimate.f_status)" readonly dense hide-details class="no-padding"/>
                         </v-col>                    
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="견적명" readonly dense hide-details class="text-input-redbrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="견적명" readonly dense hide-details class="text-input-redbrg no-padding"/> </v-col>
                     <v-col col="8" sm="6" md="6">
-                        <v-text-field v-model="estimate.n_estnm" :readonly="!edit" @input="onChangeMaster" dense hide-details /> 
+                        <v-text-field v-model="estimate.n_estnm" :readonly="!edit" @input="onChangeMaster" dense hide-details class="no-padding"/> 
                     </v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="4" md="4">
-                        <v-text-field v-if="edit" readonly v-model="estimate.n_vend" dense hide-details>
+                        <v-text-field v-if="edit" readonly v-model="estimate.n_vend" dense hide-details class="no-padding">
                             <template v-slot:append>
-                                <v-btn icon x-small tabindex="-1" @click="clickVend"><v-icon> mdi-dialpad </v-icon></v-btn>
+                                <div class="no-padding">
+                                <v-btn icon x-small tabindex="-1" @click="clickVend" ><v-icon> mdi-dialpad </v-icon></v-btn>
+                                </div>
                             </template>
                         </v-text-field>
-                        <v-text-field v-else v-model="estimate.n_vend" readonly @input="onChangeMaster" dense hide-details />
+                        <v-text-field v-else v-model="estimate.n_vend" readonly @input="onChangeMaster" dense hide-details class="no-padding"/>
                     </v-col>
                     <v-col col="8" sm="1" md="1"></v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="견적일" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="견적일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="2" md="2"><input-date-2 v-model="estimate.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>                    
-                    <v-col col="8" sm="1" md="1"><v-text-field value="유효일" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="유효일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="2" md="2"><input-date-2 v-model="estimate.s_date2" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>
-                    <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="2" md="2"><input-date-2 v-model="estimate.s_date3" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>
 
                     <!-- :rules="[rules.require({ label: 'Code' }), rules.alphaNum()]" /> -->
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="수신자" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_rname" :readonly="!edit" @input="onChangeMaster" dense hide-details /> </v-col>
-                    <v-col col="8" sm="1" md="1"><v-text-field value="연락처" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.t_rtel" :readonly="!edit" @input="onChangeMaster" placeholder="전화번호" dense hide-details /> </v-col>
-                    <v-col col="8" sm="1" md="1"><v-text-field value="E-Mail" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="8" sm="3" md="3"><v-text-field v-model="estimate.t_remail" :readonly="!edit" @input="onChangeMaster" placeholder="E-Mail" dense hide-details /> </v-col>                    
+                    <v-col col="8" sm="1" md="1"><v-text-field value="수신자" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_rname" :readonly="!edit" @input="onChangeMaster" dense hide-details class="no-padding"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="연락처" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.t_rtel" :readonly="!edit" @input="onChangeMaster" placeholder="전화번호" dense hide-details class="no-padding"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="E-Mail" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
+                    <v-col col="8" sm="3" md="3"><v-text-field v-model="estimate.t_remail" :readonly="!edit" @input="onChangeMaster" placeholder="E-Mail" dense hide-details class="no-padding"/> </v-col>                    
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="담당자" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_magname" @input="onChangeMaster" dense hide-details /> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="담당자" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_magname" @input="onChangeMaster" dense hide-details class="no-padding"/> </v-col>
                     <v-col col="8" sm="3" md="3"></v-col>
-                    <v-col col="8" sm="1" md="1"><v-text-field value="견적금액" readonly dense hide-details class="text-input-redbrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field :value="comma(estimate.a_estamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="견적금액" readonly dense hide-details class="text-input-redbrg no-padding"/> </v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field :value="comma(estimate.a_estamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice no-padding"/> </v-col>
                     
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="메모" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="12" sm="8" md="8"><v-text-field v-model="estimate.t_remark" dense hide-details /> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="메모" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
+                    <v-col col="12" sm="8" md="8"><v-text-field v-model="estimate.t_remark" dense hide-details class="no-padding"/> </v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-fieldend"><v-col></v-col></v-row>
                 </v-card>
@@ -140,7 +142,7 @@
                         <span v-else>{{item.s_sort}}</span>
                     </template>
                     <template v-slot:[`item.n_item`]="{ item }">
-                        <v-text-field v-model="item.n_item" hide-details dense single-line readonly v-if="edit && item.i_serno === itmelit.i_serno" class="my-text-field">
+                        <v-text-field v-model="item.n_item" hide-details dense single-line readonly v-if="edit && item.i_serno === itmelit.i_serno" class="my-text-field no-padding">
                             <template v-slot:append>
                                 <v-btn icon x-small tabindex="-1" @click="clickItem">
                                     <v-icon> mdi-dialpad </v-icon>
@@ -166,7 +168,7 @@
                         <span v-else>{{item.s_duedate}}</span>
                     </template>
                     <template v-slot:[`item.t_remark`]="{ item }">
-                        <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="edit && item.i_serno === itmelit.i_serno" dense hide-details class="my-text-field" />
+                        <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="edit && item.i_serno === itmelit.i_serno" dense hide-details class="my-text-field no-padding" />
                         <span v-else>{{item.t_remark}}</span>
                     </template>
                 </v-data-table>
@@ -219,7 +221,7 @@ export default {
             ],
             estimates:[], estimate:[], selectedM: [],
             detail: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "25px"},
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
                 {text: '항목(품목)',  value: 'n_item', sortable: false, align:'left', width: "130px"},
                 {text: '규격(사양)',  value: 't_size', sortable: false, align:'left', width: "100px"},
                 {text: '단위',  value: 'i_unit', sortable: false, align:'center', width: "90px"},

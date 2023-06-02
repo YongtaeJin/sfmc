@@ -15,7 +15,7 @@ export default {
     data() {
         return {
             headers: [
-                {text: '약칭',  value: 'n_vend', sortable: false, align:'center', width:"45px"  },
+                {text: '약칭',  value: 'n_vend', sortable: false, align:'center', width:"70px"  },
                 {text: '명칭',  value: 'n_compnay', sortable: false,  },                
                 {text: '비고',  value: 't_remark', sortable: false,  },
                 ],

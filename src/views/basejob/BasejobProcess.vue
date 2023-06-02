@@ -48,7 +48,7 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "30px"},
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "50px"},
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'left', },
                 {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
                 {text: '공정설명',  value: 't_remark', sortable: false, align:'left', },

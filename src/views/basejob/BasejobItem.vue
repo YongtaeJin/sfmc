@@ -55,11 +55,11 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "30px"},
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "50px"},
                 {text: '품번',  value: 'c_item', sortable: false, align:'left', width: "100px"},
                 {text: '품명',  value: 'n_item', sortable: false, align:'left', width: "30%"},
                 {text: '사양',  value: 't_size', sortable: false, align:'left', width: "30%"},
-                {text: '단위',  value: 'i_unit', sortable: false, align:'left', width: "100px"},
+                {text: '단위',  value: 'i_unit', sortable: false, align:'left', width: "60px"},
                 {text: '제품타입',  value: 'i_type', sortable: false, align:'left', width: "100px"},
                 {text: '구매단가',  value: 'a_bye', sortable: false, align:'right', width: "80px"},
                 {text: '판매단가',  value: 'a_sell', sortable: false, align:'right', width: "80px"},

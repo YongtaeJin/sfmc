@@ -35,7 +35,7 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width:"5px" },
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width:"30px" },
                 {text: 'Code',  value: 'c_code', sortable: false,  },
                 {text: '명칭',  value: 'n_code', sortable: false,  },
                 {text: '문자1',  value: 's_buf1', sortable: false,  },

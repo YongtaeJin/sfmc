@@ -27,7 +27,7 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width:"5px" },
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width:"40px" },
                 {text: 'Code',  value: 'c_gcode', sortable: false,  },
                 {text: '명칭',  value: 'n_gcode', sortable: false,  },
                 {text: '비고',  value: 't_remark', sortable: false, }, 

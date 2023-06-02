@@ -11,13 +11,13 @@
         </v-toolbar> 
         <v-card class="my-card">
             <v-row no-gutters class="my-text-field">
-                <v-col col="12" sm="1" md="1"><v-text-field value="수주기간" readonly dense hide-details class="text-input-blue"/></v-col>
+                <v-col col="12" sm="1" md="1"><v-text-field value="수주기간" readonly dense hide-details class="text-input-blue no-padding"/></v-col>
                 <v-col col="12" sm="2" md="2"><input-date-2 v-model="form.sDate1" /></v-col>
                 <v-col col="12" sm="2" md="2"><input-date-2 v-model="form.sDate2" /></v-col>
-                <v-col col="12" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-blue"/></v-col>
-                <v-col col="12" sm="3" md="3"><v-text-field v-model="form.sVend" dense hide-detailsclass="text-input-blue" /></v-col>
-                <v-col col="12" sm="1" md="1"><v-text-field value="수주번호" readonly dense hide-details class="text-input-blue"/> </v-col>
-                <v-col col="12" sm="2" md="2"><v-text-field v-model="form.sOrder" dense hide-detailsclass="text-input-blue" /></v-col>
+                <v-col col="12" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-blue no-padding"/></v-col>
+                <v-col col="12" sm="3" md="3"><v-text-field v-model="form.sVend" dense hide-details class="text-input-blue no-padding" /></v-col>
+                <v-col col="12" sm="1" md="1"><v-text-field value="수주번호" readonly dense hide-details class="text-input-blue no-padding"/> </v-col>
+                <v-col col="12" sm="2" md="2"><v-text-field v-model="form.sOrder" dense hide-details class="text-input-blue no-padding" /></v-col>
             </v-row>
             <v-row/>
         </v-card>
@@ -39,20 +39,20 @@
                 <v-form @submit.prevent="save" ref="form" v-model="valid" lazy-validation>
                 <v-card color="grey lighten-4">
                 <v-row no-gutters class="my-text-field" >
-                    <v-col col="8" sm="1" md="1"><v-text-field value="수주번호" readonly dense hide-details class="text-input-redbrg"/></v-col>
-                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="!edit" @input="onChangeOrdno" dense hide-details /></v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="수주번호" readonly dense hide-details class="text-input-redbrg no-padding"/></v-col>
+                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="!edit" @input="onChangeOrdno" dense hide-details class="no-padding"/></v-col>
                     <v-col col="8" sm="2" md="2"></v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주상태" readonly dense hide-details class="text-input-bluebrg"/></v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="getOrderStatus(masterinfo.f_status)" readonly dense hide-details class="text-input-redbrg inputPrice"/></v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="수 주 명" readonly dense hide-details class="text-input-bluebrg"/></v-col>
-                    <v-col col="8" sm="5" md="5"><v-text-field v-model="masterinfo.n_order" :readonly="!edit" @input="onChangeMaster" dense hide-details /></v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="수 주 명" readonly dense hide-details class="text-input-bluebrg no-padding"/></v-col>
+                    <v-col col="8" sm="5" md="5"><v-text-field v-model="masterinfo.n_order" :readonly="!edit" @input="onChangeMaster" dense hide-details class="no-padding" /></v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="5" md="5">
-                        <v-text-field v-if="edit" readonly  v-model="masterinfo.n_vend" dense hide-details>
+                        <v-text-field v-if="edit" readonly  v-model="masterinfo.n_vend" dense hide-details class="no-padding">
                             <template v-slot:append>
                                 <v-btn icon x-small tabindex="-1" @click="clickVend"><v-icon> mdi-dialpad </v-icon></v-btn>
                             </template>
@@ -62,16 +62,16 @@
                     <v-col col="8" sm="1" md="1"></v-col>
                 </v-row>                
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="수주일" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="수주일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>                                        
-                    <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date2" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>                    
-                    <v-col col="8" sm="1" md="1"><v-text-field value="수주금액" readonly dense hide-details class="text-input-redbrg"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field :value="comma(masterinfo.a_orderamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="수주금액" readonly dense hide-details class="text-input-redbrg no-padding "/> </v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field :value="comma(masterinfo.a_orderamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice no-padding"/> </v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-field">
-                    <v-col col="8" sm="1" md="1"><v-text-field value="메모" readonly dense hide-details class="text-input-bluebrg"/> </v-col>
-                    <v-col col="12" sm="8" md="8"><v-text-field v-model="masterinfo.t_remark" :readonly="!edit" @input="onChangeMaster" dense hide-details /> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="메모" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
+                    <v-col col="12" sm="8" md="8"><v-text-field v-model="masterinfo.t_remark" :readonly="!edit" @input="onChangeMaster" dense hide-details class="no-padding"/> </v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-fieldend" />
                 </v-card>
@@ -89,9 +89,7 @@
                     single-select v-model="selectedD"                    
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
-                    class="elevation-1 text-no-wrap" height="372px" max-height="372px">
-
-                    
+                    class="elevation-1 text-no-wrap no-padding" height="372px" max-height="372px">                   
                     
                     <template v-slot:[`item.s_sort`]="{ item }">                        
                         <input-number v-model="item.s_sort" :maxlength="2" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-number>                        
@@ -177,7 +175,7 @@ export default {
             ],
             masters:[], masterinfo:[], selectedM: [],
             itemHead: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "25px"},
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
                 {text: '항목(품목)',  value: 'n_item', sortable: false, align:'left', width: "130px"},
                 {text: '규격(사양)',  value: 't_size', sortable: false, align:'left', width: "100px"},
                 {text: '단위',  value: 'i_unit', sortable: false, align:'center', width: "90px"},

@@ -128,7 +128,7 @@ export default {
             prcoess: [],    
             procLists: [],
             headersDetail: [
-                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "50px"},                
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},                
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'center', },
                 {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
                 {text: '작업시간',  value: 'm_whour', sortable: false, align:'center', },

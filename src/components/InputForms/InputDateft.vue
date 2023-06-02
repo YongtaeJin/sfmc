@@ -18,7 +18,7 @@
         </v-card>
       </v-dialog>
 
-      <v-text-field style="width: 20px; border-bottom: none;" dense hide-details value="∽" :readonly="readonly" @input="onInput" />      
+      <v-text-field style="width: 20px; border-bottom: none;" dense hide-details value="∽" :readonly="readonly" @input="onInput" class="no-padding" />      
     
       <v-dialog v-model="modal2" persistent max-width="290">
         <template v-slot:activator="{ attrs }">

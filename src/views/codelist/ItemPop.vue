@@ -17,10 +17,10 @@ export default {
     data() {
         return {
             headers: [
-                {text: '품번',  value: 'c_item', sortable: false, align:'center', width:"5px"  },
+                {text: '품번',  value: 'c_item', sortable: false, align:'center'},
                 {text: '품명',  value: 'n_item', sortable: false,  },
                 {text: '사양',  value: 't_size', sortable: false,  },
-                {text: '단위',  value: 'n_unit', sortable: false,  },
+                {text: '단위',  value: 'n_unit', sortable: false, align:'center' },
                 {text: '제품타입',  value: 'n_type', sortable: false,  },                
                 ],
             items: [],
