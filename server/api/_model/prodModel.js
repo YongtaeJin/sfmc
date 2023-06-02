@@ -36,25 +36,31 @@ const prodModel = {
         const { c_com } = req.user;
         const { sDate1, sDate2, sVend } = req.body;  
 
-        let where = `SELECT * FROM tb_prodplan \n WHERE c_com = ? \n`;
+        // let where = `SELECT * FROM tb_prodplan \n WHERE c_com = ? \n`;
+        let where = `select a.c_com, a.i_order, b.i_orderser, a.i_orderno, \n` +
+                    `       a.s_date, a.f_status, a.n_vend, b.s_sort, b.n_item, b.t_size, b.i_unit, b.m_cnt, b.s_duedate, b.f_work, b.d_plan1, b.d_plan2, b.t_remark \n` +
+                    `  from tb_order a \n` +
+                    `      join tb_orderli b on a.i_order = b.i_order and a.c_com = b.c_com \n` +
+                    ` where a.c_com = ? and a.f_use = 'Y' \n` ;
+                    
         var values = new Array();
         values.push(c_com);
         if (sDate1.length > 0 && sDate2.length > 0 ) {
-            where += ` and s_duedate between ? and ? \n `
+            where += ` and a.s_date between ? and ? \n `
             values.push(sDate1);
             values.push(sDate2);
         } else if (sDate1.length > 0) {
-            where += ` and s_duedate >= ? \n `
+            where += ` and a.s_date >= ? \n `
             values.push(sDate1);
         } else if (sDate2.length > 0) {
-            where += ` and s_duedate <= ? \n `
+            where += ` and a.s_date <= ? \n `
             values.push(sDate2);
         }
         if (sVend.length > 0) {
-            where += ` and n_vend like ? \n `
+            where += ` and a.n_vend like ? \n `
             values.push(sVend + '%');
         }
-        where += ` ORDER BY c_com, i_prod, s_sort `;
+        where += ` order by a.i_order, b.s_sort, b.i_orderser `;
         
         console.log(where, values);            
         const [rows] = await db.execute(where, values);        

@@ -17,9 +17,9 @@
             </div>
         </v-card>
         <v-data-table ref="data-table" :headers="itemHead" :items="itemList"                     
-                    item-key="i_prodser" single-select v-model="selected" @click:row="rowSelect" 
-                    :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="500px" max-height="500px" 
+                    item-key="i_orderser" single-select v-model="selected" @click:row="rowSelect" 
+                    :item-class= "row_classes" :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap"  max-height="500px" 
                     >
             <template v-slot:header="">
                 <thead align='center'>
@@ -52,27 +52,36 @@ export default {
             },
             itemHead: [
                 {text: '수주번호',  value: 'i_orderno', sortable: false, align:'center', width: "75"},
-                {text: '수주일',    value: 's_orddate', sortable: false, align:'center', width: "60px"},                
+                {text: '수주일',    value: 's_date', sortable: false, align:'center', width: "60px"},                
                 {text: '발주처',    value: 'n_vend', sortable: false, align:'center', width: "120px"},
                 {text: '항목(품목)', value: 'n_item', sortable: false, align:'left', width: "130px"},
                 {text: '규격(사양)', value: 't_size', sortable: false, align:'left', width: "100px"},
-                {text: '단위',      value: 'i_unit', sortable: false, align:'center', width: "90px"},
-                {text: '수량',      value: 'm_cnt', sortable: false, align:'center', width: "60px"},
+                {text: '단위',      value: 'i_unit', sortable: false, align:'center', width: "50px"},
+                {text: '수량',      value: 'm_cnt', sortable: false, align:'center', width: "30px"},
                 {text: '납기일',    value: 's_duedate', sortable: false, align:'center', width: "60px"},
-                {text: '상태',      value: 'f_status', sortable: false, align:'center', width: "60px"},
-                {text: '시작일',    value: 's_date1', sortable: false, align:'center', width: "60px"},
-                {text: '종료일',    value: 's_date2', sortable: false, align:'center', width: "60px"},
+                {text: '상태',      value: 'f_work', sortable: false, align:'center', width: "60px"},
+                {text: '시작일',    value: 'd_plan1', sortable: false, align:'center', width: "60px"},
+                {text: '종료일',    value: 'd_plan2', sortable: false, align:'center', width: "60px"},
                 {text: '비고',      value: 't_remark', sortable: false, align:'center', width: "300px"},
             ],
-
 
             itemList:[], itemInfo:[], selected:[],
            
         }
     },
-    methods: {        
+    mounted() {
+        this.init();
+    },
+    watch: {
+    },
+    computed: {
+    },
+    methods: {     
+        async init() {
+            this.view();
+        },  
         async view() {
-
+            this.itemList = await this.$axios.post(`/api/prod/getProdPlanlist`, this.form); 
         },
         async add() {
 
@@ -83,9 +92,13 @@ export default {
         async save() {
 
         },
-        rowSelectMaster :function (item, row) {       
-            this.itemInfo = item;  
-            this.rowFilter(item);
+        row_classes(item) {
+            if (item.f_edit == "2") {
+                return "orange";
+            } 
+        },
+        rowSelect :function (item, row) {       
+            this.itemInfo = item;              
             if (row) {
                 row.select(true) 
             } else {
