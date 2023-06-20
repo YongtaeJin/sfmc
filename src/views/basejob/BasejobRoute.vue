@@ -115,7 +115,7 @@ export default {
         return {
             headers: [
                 // {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "50px"},
-                {text: '품번',  value: 'c_item', sortable: false, },
+                {text: '품번',  value: 'c_item', sortable: false,  align:'center'},
                 {text: '품명',  value: 'n_item', sortable: false, },
                 {text: '사용',  value: 'f_use', sortable: false, align:'center'},
                 
@@ -131,10 +131,10 @@ export default {
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},                
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'center', },
                 {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
-                {text: '작업시간',  value: 'm_whour', sortable: false, align:'center', },
-                {text: '첫공정',  value: 'f_jobs', sortable: false, align:'center', },
-                {text: '마지막공정',  value: 'f_jobf', sortable: false, align:'center', },
-                {text: '외주',  value: 'f_jobo', sortable: false, align:'center', },                 
+                {text: '작업시간',  value: 'm_whour', sortable: false, align:'center',  width: "70px"},
+                {text: '첫공정',  value: 'f_jobs', sortable: false, align:'center', width: "70px" },
+                {text: '마지막공정',  value: 'f_jobf', sortable: false, align:'center',  width: "70px"},
+                {text: '외주',  value: 'f_jobo', sortable: false, align:'center',  width: "70px"},                 
             ],
             routesProcs: [],
             routesProc: [],

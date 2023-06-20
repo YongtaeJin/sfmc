@@ -57,15 +57,15 @@
                                 <v-btn icon x-small tabindex="-1" @click="clickVend"><v-icon> mdi-dialpad </v-icon></v-btn>
                             </template>
                         </v-text-field>
-                        <v-text-field v-else v-model="masterinfo.n_vend" readonly @input="onChangeMaster" dense hide-details />
+                        <v-text-field v-else v-model="masterinfo.n_vend" readonly @input="onChangeMaster" dense hide-details class="no-padding" />
                     </v-col>
                     <v-col col="8" sm="1" md="1"></v-col>
                 </v-row>                
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>                                        
+                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date2" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>                    
+                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="masterinfo.s_date2" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주금액" readonly dense hide-details class="text-input-redbrg no-padding "/> </v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="comma(masterinfo.a_orderamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice no-padding"/> </v-col>
                 </v-row>

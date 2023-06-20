@@ -17,58 +17,25 @@
             </div>
         </v-card>
         <v-data-table ref="data-table" :headers="itemHead" :items="itemList"                     
-                    item-key="i_orderser" single-select 
+                    item-key="i_orderser" single-select v-model="selected" @click:row="rowSelect" 
                     :item-class= "row_classes" :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     class="elevation-1 text-no-wrap"  max-height="500px" 
                     >
             <template v-slot:header="">
                 <thead align='center'>
                     <tr>
-                        <th colspan="4" class="text-center">수주정보</th>
+                        <th colspan="3" class="text-center">수주정보</th>
                         <th colspan="5" class="text-center">제품정보</th>
                         <th colspan="4" class="text-center">생산계획</th>
                     </tr>
                 </thead>
             </template>
-            <!-- <tr :class="{ 'selected-row': item === selectedItem }" @click="selectItem(item)"> -->
-            <template v-slot:item="{ item,index }">
-                
-                <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
-                    <td> {{ index + 1 }}</td>
-                    <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td>
-                    <td :rowspan="getRowspan(item)">{{ item.s_date }}</td>
-                    <td :rowspan="getRowspan(item)" >{{ item.n_vend }}</td>                    
-                    <td class="left-align"> {{ item.n_item }}</td>
-                    <td class="left-align"> {{ item.t_size }}</td>
-                    <td> {{ item.i_unit }}</td>
-                    <td> {{ item.m_cnt }}</td>
-                    <td> {{ item.s_duedate }}</td>
-                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)" class="underline" align='center'>{{getStatus(item.f_work)}}</td>
-                        <td align='center' v-else>{{getStatus(item.f_work)}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)" class="underline" align='center'>{{item.d_plan1}}</td>
-                        <td align='center' v-else>{{item.d_plan1}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)" class="underline" align='center'>{{item.d_plan2}}</td>
-                        <td align='center' v-else>{{item.d_plan2}}</td>
-                    <td class="left-align"> {{ item.t_remark }}</td>
-                </tr>
-                <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
-                    <td> {{ index + 1 }}</td>
-                    <td class="left-align"> {{ item.n_item }}</td>
-                    <td class="left-align"> {{ item.t_size }}</td>
-                    <td> {{ item.i_unit }}</td>
-                    <td> {{ item.m_cnt }}</td>
-                    <td> {{ item.s_duedate }}</td>
-                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)" class="underline" align='center'>{{getStatus(item.f_work)}}</td>
-                        <td align='center' v-else>{{getStatus(item.f_work)}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)" class="underline" align='center'>{{item.d_plan1}}</td>
-                        <td align='center' v-else>{{item.d_plan1}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)" class="underline" align='center'>{{item.d_plan2}}</td>
-                        <td align='center' v-else>{{item.d_plan2}}</td>
-                    <td class="left-align"> {{ item.t_remark }}</td>
-                </tr>
-            </template>
 
-            <!-- <template v-slot:[`item.f_work`]="{ item }">               
+            <template v-slot:[`item.f_work`]="{ item }">
+                <!-- <v-chip v-if="item.f_work == '1' || item.f_work == '2'" @dblclick="setWork(item)" x-small class="no_padmar1">
+                    {{ item.f_work == '1' ? '수주' : '계획'}}
+                </v-chip>
+                <v-chip v-else x-small class="no_padmar1"> {{getStatus(item.f_work)}} </v-chip>                 -->
                 <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)" class="underline" align='center'>{{getStatus(item.f_work)}}</td>
                 <span v-else>{{getStatus(item.f_work)}}</span>
             </template>
@@ -80,16 +47,10 @@
                 <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)" class="underline" align='center'>{{item.d_plan2}}</td>
                     
                 <span v-else>{{item.d_plan2}}</span>
-            </template> -->
+            </template>
          
-           
+            
         </v-data-table>
-
-        <ez-dialog ref="dialog_plan" label="생산계획일" persistent @onClose="close_plan" width="250px" >
-            <dates-dialog @onEnter="setplandate" :sDate="selected.d_plan1" :eDate="selected.d_plan2">
-
-            </dates-dialog>
-        </ez-dialog>
     </v-container>
 </template>
 
@@ -99,11 +60,10 @@ import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import { PROD001 } from '../../../util/constval';
-import DatesDialog from '../../components/etc/DatesDialog.vue';
 
 export default {
     // components: { TooltipBtn, EzDialog, InputDate2, InputAmt, InputNumber, ItemPop, VendPop, SalesNotestimate },
-    components: { InputDateft, TooltipBtn, EzDialog, InputDate2, DatesDialog},
+    components: { InputDateft, TooltipBtn, EzDialog, InputDate2},
     data() {
         return {
             PROD001,
@@ -112,12 +72,11 @@ export default {
                 sDate1:"", sDate2:"", sVend:"",
             },
             itemHead: [
-                {text: 'No',       sortable: false, align:'center', width: "25"},
                 {text: '수주번호',  value: 'i_orderno', sortable: false, align:'center', width: "75"},
                 {text: '수주일',    value: 's_date', sortable: false, align:'center', width: "60px"},                
                 {text: '발주처',    value: 'n_vend', sortable: false, align:'center', width: "120px"},
-                {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "130px"},
-                {text: '규격(사양)', value: 't_size', sortable: false, align:'center', width: "100px"},
+                {text: '항목(품목)', value: 'n_item', sortable: false, align:'left', width: "130px"},
+                {text: '규격(사양)', value: 't_size', sortable: false, align:'left', width: "100px"},
                 {text: '단위',      value: 'i_unit', sortable: false, align:'center', width: "50px"},
                 {text: '수량',      value: 'm_cnt', sortable: false, align:'center', width: "30px"},
                 {text: '납기일',    value: 's_duedate', sortable: false, align:'center', width: "60px"},
@@ -139,16 +98,6 @@ export default {
     computed: {
     },
     methods: {     
-
-        shouldMergeRow(item) {
-            const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);
-            return index === this.itemList.indexOf(item);
-        },
-        getRowspan(item) {
-            const count = this.itemList.filter((i) => i.i_orderno === item.i_orderno).length;
-            return count;
-        },
-
         async init() {
             this.view();
         },  
@@ -177,10 +126,6 @@ export default {
                 this.selected = [item]
             }
         },
-        selectItem(item) {
-            this.selected = item;
-            
-        },
         getStatus(item) {
             var find = this.PROD001.find(e => e.value === item);
             return find !== undefined ? find.label : '';
@@ -196,15 +141,9 @@ export default {
             item.f_work = item.f_work == "1" ? "2" : "1";
             item.f_edit = "1";
         },
-        handleCellClick() {            
-            this.$refs.dialog_plan.open();
-        },
-        close_plan() {
-
-        },
-        setplandate() {
-            this.$refs.dialog_plan.close();
-        },
+        handleCellClick() {
+            console.log("handleCellClick")
+        }
 
     }
 

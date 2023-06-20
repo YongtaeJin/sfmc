@@ -8,7 +8,7 @@
         :value="value"
         :readonly="readonly"
         @input="onInput"
-        class="my-custom-class my-text-field no-padding"
+        class="my-custom-class my-text-field"
       >
         <template v-if="!readonly"  v-slot:append>
           <v-btn icon small tabindex="-1" @click="open">

@@ -67,7 +67,12 @@ tr.v-data-table__selected {
 	padding: 0;
     margin: 0;
 }
-
+.row_select {
+	background-color: #c2fad8 !important;
+	
+	padding: 0;
+    margin: 0;
+}
 .blue_background {	background: linear-gradient(to bottom, #0d54fa, #6894ff) }
 
 .text-input-blue .v-text-field__slot input {
@@ -231,8 +236,14 @@ table.type07 {
 	color: white;
 }
 
+.center-align {
+	text-align: center;
+}
 .right-align {
 	text-align: justify;
+}
+.left-align {
+	text-align: left;
 }
 .v-tabs { height: 26px; }
 .v-tab {

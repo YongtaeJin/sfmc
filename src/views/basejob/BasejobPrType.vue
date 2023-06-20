@@ -85,7 +85,7 @@ export default {
         return {
             headers: [
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
-                {text: '공정유형코드',  value: 'c_ptype', sortable: false, align:'left', },
+                {text: '공정유형코드',  value: 'c_ptype', sortable: false, align:'center', },
                 {text: '공정유형명',  value: 'n_ptype', sortable: false, align:'left', },
                 // {text: '설명',  value: 't_remark', sortable: false, align:'left', },                
                 {text: '사용',  value: 'f_use', sortable: false, align:'center'},                
@@ -98,12 +98,12 @@ export default {
             c_ptype: "", 
             headersDT: [
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
-                {text: '공정코드',  value: 'c_process', sortable: false, align:'left', },
+                {text: '공정코드',  value: 'c_process', sortable: false, align:'center', },
                 {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
-                {text: '작업시간',  value: 'm_whour', sortable: false, align:'center', },
-                {text: '첫공정',  value: 'f_jobs', sortable: false, align:'center', },
-                {text: '마지막공정',  value: 'f_jobf', sortable: false, align:'center', },
-                {text: '외주',  value: 'f_jobo', sortable: false, align:'center', },                
+                {text: '작업시간',  value: 'm_whour', sortable: false, align:'center', width: "70px"},
+                {text: '첫공정',  value: 'f_jobs', sortable: false, align:'center', width: "70px"},
+                {text: '마지막공정',  value: 'f_jobf', sortable: false, align:'center', width: "70px"},
+                {text: '외주',  value: 'f_jobo', sortable: false, align:'center', width: "70px"},                
             ],
             progresstypelis: [],
             progresstypeli: [],
