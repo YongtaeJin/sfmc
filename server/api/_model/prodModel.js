@@ -71,12 +71,26 @@ const prodModel = {
         return rows;
     },
 
+    async iuProdPlanlist(req) {        
+        
+        const at = moment().format('LT'); 
+        const item = objectSplit(req.body); 
+        let sql;
+        let rv=[];
+
+        for (let i = 0; i < item.length; i++) {
+            const {c_com, i_order, i_orderser, f_work, d_plan1, d_plan2, t_remark, f_edit, f_editold} = item[i];
+            if (f_edit !== "1" || f_editold !== "0") continue;
+            
+            sql = sqlHelper.Update(TABLE.ORDERLI, {f_work, d_plan1, d_plan2, t_remark}, {c_com, i_order, i_orderser});
+            const [row] = await db.execute(sql.query, sql.values); 
+            if (row.affectedRows > 0) rv[rv.length] = i_orderser;
+        }
+        return  rv;
+    },
     
 }
 
-async function sqlDbExecute(sql) {	    
-    const [row] = await db.execute(sql.query, sql.values);
-    return row;
-}
+function sqlDbExecute() {}
 
 module.exports = prodModel;

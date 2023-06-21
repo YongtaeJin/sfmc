@@ -8,17 +8,11 @@ export const actions = {
 		const data = await $axios.post(`/api/prod/getProdPlanlist`, form);
 		return data;
 	},
-	// async iuSaleEstimate( { commit }, est) {
-	// 	const { $axios } = Vue.prototype;
+	async iuProdPlanlist( { commit }, items) {
+		const { $axios } = Vue.prototype;
 		
-	// 	const data = await $axios.post('/api/prod/iuSaleEstimate',  est);
-	// 	return data;
-	// },
+		const data = await $axios.post('/api/prod/iuProdPlanlist', items);
+		return data;
+	},
 
-	// async iuSaleOrder( { commit }, order) {
-	// 	const { $axios } = Vue.prototype;
-		
-	// 	const data = await $axios.post('/api/prod/iuSaleOrder',  order);
-	// 	return data;
-	// },
 };

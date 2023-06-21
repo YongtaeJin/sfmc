@@ -1,39 +1,51 @@
 <template>
   <div>
-    <v-text-field v-model="startDate" label="Start Date" type="date"></v-text-field>
-    <v-text-field v-model="endDate" label="End Date" type="date"></v-text-field>
-    <v-btn @click="getSelectedRange">선택</v-btn>
+    <p></p>  
+    <v-date-picker v-model="selectedDates" no-title range :day-format="dayFormat" @input="handleDateChange"></v-date-picker>
+
+    <v-btn color="primary" block @click="onclick" v-if="selectedDates[1] > selectedDates[0]" > 
+      기간 : {{ selectedRange[0] }} ∽ {{ selectedRange[1] }}
+    </v-btn>   
+    <v-btn color="primary" block @click="onclick" v-else > 
+      기간 : {{ selectedRange[1] }} ∽ {{ selectedRange[0] }}
+    </v-btn>   
+    
+    
   </div>
+  
 </template>
 
 <script>
 export default {
   props: {
-    sDate: {type : String, default: null,},    
-    eDate: {type : String, default: null,},    
+    sDate :{type : String, default: '',},
+    eDate :{type : String, default: '',},
+  },
+  watch: {
+    sDate() {this.selectedDates[0] = this.sDate; this.selectedRange = [...this.selectedDates]},
+    eDate() {this.selectedDates[1] = this.eDate; this.selectedRange = [...this.selectedDates]},
+  },
+  created() {    
   },
   data() {
     return {
-      startDate: null,
-      endDate: null
+      selectedRange: [],
+      selectedDates: []
     };
   },
-  created() {
-  },  
-  watch: {
-    sDate() { this.startDate = Date(this.sDate) , console.log(this.sDate, this.startDate)},
-    eDate() { this.endDate = Date(this.eDate) },
-  },
   methods: {
-    getSelectedRange() {
-      if (this.startDate && this.endDate) {
-        //console.log("Selected Range:", this.startDate, "-", this.endDate);
-        // 여기서 선택된 날짜 범위를 사용하여 원하는 작업을 수행할 수 있습니다.
-        this.$emit('onEnter'); 
-      } else {
-        console.log("Please enter start and end dates.");
-      }
-    }
-  }
+    handleDateChange(newValue) {
+      // console.log(newValue);
+      this.selectedRange = newValue;      
+    },
+    onclick() {    
+      // console.log("onEnter")  
+      this.$emit("onEnter", this.selectedRange);  
+    },
+    dayFormat(day) {			
+			const arr = day.split('-');
+			return Number(arr[arr.length-1]);
+		}
+  },
 };
 </script>

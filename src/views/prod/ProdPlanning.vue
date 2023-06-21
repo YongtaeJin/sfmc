@@ -4,8 +4,8 @@
             <v-toolbar-title>생산 계획</v-toolbar-title>
             <v-spacer/>
             <tooltip-btn label="조회" @click="view"><v-icon>mdi-magnify</v-icon></tooltip-btn>
-            <tooltip-btn label="작성" @click="add"><v-icon>mdi-plus</v-icon></tooltip-btn>
-            <tooltip-btn label="삭제" @click="del"><v-icon>mdi-minus</v-icon></tooltip-btn>
+            <!-- <tooltip-btn label="작성" @click="add"><v-icon>mdi-plus</v-icon></tooltip-btn>
+            <tooltip-btn label="삭제" @click="del"><v-icon>mdi-minus</v-icon></tooltip-btn> -->
             <tooltip-btn label="저장" @click="save"><v-icon>mdi-content-save-outline</v-icon></tooltip-btn>            
         </v-toolbar> 
         <v-card style="display: flex; height: 34px; " class="my-card text-input-blue my-text-fontsize  "> 
@@ -43,13 +43,18 @@
                     <td> {{ item.i_unit }}</td>
                     <td> {{ item.m_cnt }}</td>
                     <td> {{ item.s_duedate }}</td>
-                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)" class="underline" align='center'>{{getStatus(item.f_work)}}</td>
-                        <td align='center' v-else>{{getStatus(item.f_work)}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)" class="underline" align='center'>{{item.d_plan1}}</td>
+                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)">
+                        <v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
+                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)">
+                        <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-table"/></td>
                         <td align='center' v-else>{{item.d_plan1}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)" class="underline" align='center'>{{item.d_plan2}}</td>
+                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)">
+                        <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-table"/></td>
                         <td align='center' v-else>{{item.d_plan2}}</td>
-                    <td class="left-align"> {{ item.t_remark }}</td>
+                    <td align="left"> 
+                        <v-text-field v-if="item.f_work == '1'" v-model="item.t_remark" @input="setedit" dense hide-details class="my-text-table"/>
+                        <span v-else>{{item.t_remark}}</span>
+                    </td>
                 </tr>
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
                     <td> {{ index + 1 }}</td>
@@ -58,42 +63,33 @@
                     <td> {{ item.i_unit }}</td>
                     <td> {{ item.m_cnt }}</td>
                     <td> {{ item.s_duedate }}</td>
-                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)" class="underline" align='center'>{{getStatus(item.f_work)}}</td>
-                        <td align='center' v-else>{{getStatus(item.f_work)}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)" class="underline" align='center'>{{item.d_plan1}}</td>
+                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)">
+                       <v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip> </td>
+
+                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)">
+                        <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-table"/></td>
                         <td align='center' v-else>{{item.d_plan1}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)" class="underline" align='center'>{{item.d_plan2}}</td>
+                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)">
+                        <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-table"/></td>
                         <td align='center' v-else>{{item.d_plan2}}</td>
-                    <td class="left-align"> {{ item.t_remark }}</td>
+                    <td align="left"> 
+                        <v-text-field v-if="item.f_work == '1'" v-model="item.t_remark" @input="setedit" dense hide-details class="my-text-table"/>
+                        <span v-else>{{item.t_remark}}</span>
+                    </td>
                 </tr>
             </template>
-
-            <!-- <template v-slot:[`item.f_work`]="{ item }">               
-                <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)" class="underline" align='center'>{{getStatus(item.f_work)}}</td>
-                <span v-else>{{getStatus(item.f_work)}}</span>
-            </template>
-            <template v-slot:[`item.d_plan1`]="{ item }">                
-                <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)" class="underline" align='center'>{{item.d_plan1}}</td>
-                <span v-else>{{item.d_plan1}}</span>
-            </template>
-            <template v-slot:[`item.d_plan2`]="{ item }">                
-                <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)" class="underline" align='center'>{{item.d_plan2}}</td>
-                    
-                <span v-else>{{item.d_plan2}}</span>
-            </template> -->
-         
            
         </v-data-table>
 
-        <ez-dialog ref="dialog_plan" label="생산계획일" persistent @onClose="close_plan" width="250px" >
+        <ez-dialog ref="dialog_plan" label="생산계획일" persistent @onClose="close_plan" width="350px" >
             <dates-dialog @onEnter="setplandate" :sDate="selected.d_plan1" :eDate="selected.d_plan2">
-
             </dates-dialog>
         </ez-dialog>
     </v-container>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import InputDateft from '../../components/InputForms/InputDateft.vue'
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
@@ -139,7 +135,7 @@ export default {
     computed: {
     },
     methods: {     
-
+        ...mapActions("prod", ["iuProdPlanlist"]), 
         shouldMergeRow(item) {
             const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemList.indexOf(item);
@@ -162,7 +158,21 @@ export default {
 
         },
         async save() {
-
+            // const data = await this.iuProdPlanlist(this.);
+            const edititem = this.itemList.filter(obj => obj.f_edit === '1').map(obj => ({...obj}));
+            if (edititem.length) {
+                const data = await this.iuProdPlanlist(edititem);                
+                data.forEach((row, index) => {
+                    const idx = this.itemList.findIndex(obj => obj.i_orderser == row);
+                    if (idx >= 0) {
+                        this.itemList[idx].f_edit = "0";
+                        this.itemList[idx].f_editold = "0";
+                    }
+                });
+                if (data.length > 0) {
+                    this.$toast.info(`저장 하였습니다.`);
+                }
+            }
         },
         row_classes(item) {
             if (item.f_edit == "2") {
@@ -179,6 +189,7 @@ export default {
         },
         selectItem(item) {
             this.selected = item;
+            this.itemInfo = item;
             
         },
         getStatus(item) {
@@ -202,8 +213,24 @@ export default {
         close_plan() {
 
         },
-        setplandate() {
+        setedit() {
+            if (this.itemInfo) this.itemInfo.f_edit = "1";
+        },
+        setplandate(item) {
             this.$refs.dialog_plan.close();
+            if (item[1]) {
+                this.itemInfo.d_plan1 = item[0] > item[1] ? item[1] : item[0];
+                this.itemInfo.d_plan2 = item[0] > item[1] ? item[0] : item[1];            
+            } else {
+                this.itemInfo.d_plan1 = item[0];
+                this.itemInfo.d_plan2 = item[0];
+            };
+            item.f_edit = "1";
+        },
+        getColor (data) {
+            if(data == "1") { return 'red'; } 
+            else if (data == "2") {return 'blue';}
+            else { return 'green';}
         },
 
     }

@@ -423,7 +423,7 @@ export default {
                 return;
             }
 
-            const order = Object.assign({}, this.masterinfo, this.itemListFilter);
+            const order = Object.assign({}, this.masterinfo, this.itemListFilter);    // 발주마스트 + 발주세부 합하여 전달
             const data = await this.iuSaleOrder(order);
             for (let i = this.itemListFilter.length - 1; i >= 0; i--) {
                 if (this.itemListFilter[i].f_edit == "2" ) {

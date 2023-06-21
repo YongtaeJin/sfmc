@@ -164,7 +164,7 @@ table.type07 {
 }
 .my-text-field {
 	padding: 0;    margin: 0; 
-	height: 24px !important;
+	height: 26px !important;
 }
 .my-text-fieldend {
 	padding: 0;    margin: 0; 
@@ -175,6 +175,23 @@ table.type07 {
 }
 .my-text-fontsize input {
 	font-size: 0.7rem !important;	
+}
+.my-text-table {
+	padding: 0;    margin: 0; 
+	height: 24px !important;
+}
+.my-text-table input {	
+	font-size: 0.7rem !important;	
+	height: 24px !important;		
+}
+.my-text-table-center {
+	padding: 0;    margin: 0; 
+	height: 24px !important;
+}
+.my-text-table-center input {	
+	font-size: 0.7rem !important;	
+	height: 24px !important;	
+	text-align: center;
 }
 
 .v-subheader {

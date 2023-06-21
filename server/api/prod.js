@@ -1,76 +1,18 @@
 const router = require('express').Router();
-const salesModel = require('./_model/prodModel');
+const prodModel = require('./_model/prodModel');
 const { modelCall } = require('../../util/lib');
 const passport = require('passport');
 const jwt = require('../plugins/jwt');
 
 
-router.post('/getProdPlanlist', async (req, res) => {
-    const result = await modelCall(salesModel.getProdPlanlist, req);
+router.post('/getProdPlanlist', async (req, res) => {    
+    const result = await modelCall(prodModel.getProdPlanlist, req);
 	res.json(result);
 });
 
-// router.get('/getSaleEstimateInit', async (req, res) => {
-//     const result = await modelCall(salesModel.getSaleEstimateInit, req);
-// 	res.json(result);    
-// });
-// router.get('/getSaleEstimateInit/:c_com/:c_gcode', async (req, res) => {
-//     console.log("sadf");
-//     const result = await modelCall(salesModel.getSaleEstimateInit, req);
-// 	res.json(result);
-// });
-
-// router.post('/getSaleEstimateLi', async (req, res) => {
-//     const result = await modelCall(salesModel.getSaleEstimateLi, req);
-// 	res.json(result);
-// });
-
-// router.post('/iuSaleEstimate', async (req, res) => {
-//     const result = await modelCall(salesModel.iuSaleEstimate, req);
-// 	res.json(result);
-// });
-
-// router.delete('/delSaleEstimate/:c_com/:i_ser', async(req, res)=>{
-// 	const result = await modelCall(salesModel.delSaleEstimate, req);
-// 	res.json(result);
-// });
-
-// // router.get('/getSaleEstimateInit/c_com/:value1/:c_gcode/:value2/c_code:value3', async (req, res) => {
-// //     const result = await modelCall(salesModel.getSaleEstimateInit, req);
-// // 	res.json(result);
-// // });
-
-
-// router.post('/getSaleOrder', async (req, res) => {
-//     const result = await modelCall(salesModel.getSaleOrder, req);
-// 	res.json(result);
-// });
-
-// router.post('/getSaleOrderLi', async (req, res) => {
-//     const result = await modelCall(salesModel.getSaleOrderLi, req);
-// 	res.json(result);
-// });
-
-// router.post('/iuSaleOrder', async (req, res) => {
-//     const result = await modelCall(salesModel.iuSaleOrder, req);
-// 	res.json(result);
-// });
-
-// router.delete('/delSaleOrder/:c_com/:i_order', async(req, res)=>{
-// 	const result = await modelCall(salesModel.delSaleOrder, req);
-// 	res.json(result);
-// });
-// router.post('/getSaleNotInsertOrder', async (req, res) => {
-//     const result = await modelCall(salesModel.getSaleNotInsertOrder, req);
-// 	res.json(result);
-// });
-
-
+router.post('/iuProdPlanlist', async (req, res) => {
+    const result = await modelCall(prodModel.iuProdPlanlist, req);
+	res.json(result);
+});
 
 module.exports = router;
-
-
-// router.post('/iuBaseVend', async (req, res) => {
-// 	const result = await modelCall(basejobModel.iuBaseVend, req);
-// 	res.json(result);
-// });
