@@ -194,6 +194,9 @@ table.type07 {
 	text-align: center;
 }
 
+.v-subtitle {
+	font-size: 0.9rem !important;	
+}
 .v-subheader {
 	font-size: 0.7rem !important;	
 }

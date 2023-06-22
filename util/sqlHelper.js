@@ -189,6 +189,27 @@ const sqlHelper = {
 
 		return { query, values };
 	},
+	
+	addEditCol(data) {	
+		data.f_edit = '0';	
+		data.f_editold = '0';	
+		return data;
+	},
+	async objectSplit(data, f) {	
+		const obj = {};
+		if ( f === 'M' || f === 'm' ) {
+			const objKeys = Object.keys(data).filter((key) => isNaN(key));
+			const values = objKeys.map((key) => data[key]);
+			for (let i = 0; i < objKeys.length; i++) {
+				obj[objKeys[i]] = values[i];
+			}
+			return obj;
+		} else {        
+			const objKeys = Object.keys(data).filter((key) => !isNaN(key));
+			const objValues = objKeys.map((key) => data[key]);
+			return objValues;
+		}    
+	}
 };
 
 module.exports = sqlHelper;

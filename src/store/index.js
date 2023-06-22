@@ -127,7 +127,7 @@ const store = new Vuex.Store({
 					]
 				},
 				{
-					title : "생산계획",
+					title : "생산관리",
 					icon : "mdi-wrench",
 					to : '',
 					grant : 6, 
@@ -142,32 +142,40 @@ const store = new Vuex.Store({
 							subItems : []
 						},
 						{
-							title : "작업시지",
+							title : "생산실적",
 							icon : "",
 							to : '/prod/work',
 							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
-					]
-				},
-				{
-					title : "생산관리",
-					icon : "mdi-basket-fill",
-					to : '',
-					grant : 5, 
-					newTab : false,
-					subItems : [
 						{
-							title : "생산실적",
+							title : "생산현황",
 							icon : "",
-							to : '',
-							grant : 5, 
+							to : '/prod/workview',
+							grant : 6, 
 							newTab : false,
 							subItems : []
-						},	
+						},
 					]
 				},
+				// {
+				// 	title : "생산관리",
+				// 	icon : "mdi-basket-fill",
+				// 	to : '',
+				// 	grant : 5, 
+				// 	newTab : false,
+				// 	subItems : [
+				// 		{
+				// 			title : "생산실적",
+				// 			icon : "",
+				// 			to : '',
+				// 			grant : 5, 
+				// 			newTab : false,
+				// 			subItems : []
+				// 		},	
+				// 	]
+				// },
 				{
 					title : "납품관리",
 					icon : "mdi-car-multiple",

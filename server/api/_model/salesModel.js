@@ -6,7 +6,18 @@ const moment = require('../../../util/moment');
 const { LV, isGrant } = require('../../../util/level');
 const { extractNumber } = require('../../../util/lib');
 
-
+async function setAutoCommitNo() {
+    const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
+    if (data[0].rt == 1) {
+        const [rv] = await db.execute('SET AUTOCOMMIT = FALSE');
+    }
+}
+async function setAutoCommit() {
+    const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
+    if (data[0].rt == 0) {
+        const rv = await db.execute('SET AUTOCOMMIT = TRUE');
+    }
+}
 function addEditCol(data) {	
 	data.f_edit = '0';	
     data.f_editold = '0';	
@@ -158,7 +169,7 @@ const salesModel = {
             const sql = newdata ? sqlHelper.Insert(TABLE.ESTIMATE, master) : sqlHelper.Update(TABLE.ESTIMATE, master, {c_com, i_ser});
 
             console.log("master", sql)      
-            const [row] = await db.execute(sql.query, sql.values);
+            const [row] = await db.execute(sql.query, sql.values);            
             if (row.affectedRows < 1) return -1;            
         }
         
@@ -188,6 +199,7 @@ const salesModel = {
                 if (res.affectedRows < 1) return index + 1;
             }
         })
+        await db.execute('COMMIT');
         return 0;
     },
     async delSaleEstimate(req) {
@@ -208,7 +220,7 @@ const salesModel = {
         //     const sqldt = sqlHelper.DeleteSimple(TABLE.ESTIMATELI, { c_com, i_ser });
         //     await db.execute(sqldt.query, sqldt.values);
         // }
-
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
 
@@ -350,6 +362,7 @@ const salesModel = {
                 if (res.affectedRows < 1) return index + 1;
             }
         })
+        await db.execute('COMMIT');
         return 0;
     },
     async delSaleOrder(req) {
@@ -364,7 +377,7 @@ const salesModel = {
             const sqldt = sqlHelper.DeleteSimple(TABLE.ORDERLI, { c_com, i_order });
             await db.execute(sqldt.query, sqldt.values);
         }
-
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
 

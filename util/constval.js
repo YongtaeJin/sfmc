@@ -14,7 +14,7 @@ export const ORDER001 = [
 
 export const PROD001 = [
 	{ label: "수주", value: "1" },
-	{ label: "계획", value: "2" },
+	{ label: "지시", value: "2" },   // 계획 
 	{ label: "지시", value: "3" },
 	{ label: "완료", value: "4" },
 	{ label: "출고", value: "5" },

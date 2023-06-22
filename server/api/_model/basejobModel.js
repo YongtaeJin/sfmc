@@ -49,6 +49,7 @@ const basejobModel = {
                 
         const sql = sqlHelper.DeleteSimple(TABLE.VEND, { c_com, c_vend });
         const [row] = await db.execute(sql.query, sql.values);		
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
     async iuBaseVend(req) {
@@ -85,6 +86,7 @@ const basejobModel = {
         }
         const vendsql = sqlHelper.SelectSimple(TABLE.VEND,{ c_com,  c_vend });
         const [[vend]] = await db.execute(vendsql.query, vendsql.values);
+        await db.execute('COMMIT');
         return vend;
     },
 
@@ -127,7 +129,8 @@ const basejobModel = {
 		const { c_com, c_item } = req.params;
                 
         const sql = sqlHelper.DeleteSimple(TABLE.ITEM, { c_com, c_item });
-        const [row] = await db.execute(sql.query, sql.values);		
+        const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
     async iuBaseItem(req) {
@@ -157,6 +160,7 @@ const basejobModel = {
         }
         const itemsql = sqlHelper.SelectSimple(TABLE.ITEM,{ c_com,  c_item });
         const [[item]] = await db.execute(itemsql.query, itemsql.values);
+        await db.execute('COMMIT');
         return item;
     },
 
@@ -192,6 +196,7 @@ const basejobModel = {
                 
         const sql = sqlHelper.DeleteSimple(TABLE.PROCESS, { c_com, c_process });
         const [row] = await db.execute(sql.query, sql.values);		
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
     async iuBaseProcess(req) {
@@ -220,6 +225,7 @@ const basejobModel = {
         }
         const itemsql = sqlHelper.SelectSimple(TABLE.PROCESS,{ c_com,  c_process });
         const [[item]] = await db.execute(itemsql.query, itemsql.values);
+        await db.execute('COMMIT');
         return item;
     },
     async getProcessItem(req) {     
@@ -263,7 +269,8 @@ const basejobModel = {
 		const { c_com, c_ptype } = req.params;
                 
         const sql = sqlHelper.DeleteSimple(TABLE.PROCESSTYPE, { c_com, c_ptype });
-        const [row] = await db.execute(sql.query, sql.values);		
+        const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');		
 		return row.affectedRows == 1;
 	},
     async iuBaseProcesstype(req) {
@@ -292,6 +299,7 @@ const basejobModel = {
         }
         const itemsql = sqlHelper.SelectSimple(TABLE.PROCESSTYPE,{ c_com,  c_ptype });
         const [[item]] = await db.execute(itemsql.query, itemsql.values);
+        await db.execute('COMMIT');
         return item;
     },
 
@@ -324,7 +332,8 @@ const basejobModel = {
 		const { c_com, c_ptype, c_process } = req.params;
                 
         const sql = sqlHelper.DeleteSimple(TABLE.PROCESSTYPELIST, { c_com, c_ptype, c_process });
-        const [row] = await db.execute(sql.query, sql.values);		
+        const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');		
 		return row.affectedRows == 1;
 	},
     async iuBaseProcesstypeLi(req) {
@@ -354,6 +363,7 @@ const basejobModel = {
         }
         const itemsql = sqlHelper.SelectSimple(TABLE.PROCESSTYPELIST,{ c_com,  c_ptype, c_process });
         const [[item]] = await db.execute(itemsql.query, itemsql.values);
+        await db.execute('COMMIT');
         return addIDProcesstypeLi(item);
     },
 
@@ -430,7 +440,7 @@ const basejobModel = {
             const sqldt = sqlHelper.DeleteSimple(TABLE.ROUTEPROC, { c_com, c_item });
             await db.execute(sqldt.query, sqldt.values);
         }
-
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
     async iuBaseRoute(req) {
@@ -473,6 +483,7 @@ const basejobModel = {
 
             const sql = sqlHelper.Update(TABLE.ROUTE, payload, {c_com, c_item});            
             const [row] = await db.execute(sql.query, sql.values);
+            
             if (row.affectedRows < 1) return ''; 
         }
         // 공정유형 추가 작업처리  
@@ -496,7 +507,7 @@ const basejobModel = {
                 }
             }            
         }
-
+        await db.execute('COMMIT');
         const [item] = await basejobModel.getBaseRoute({c_com, c_item, req});        
         return item;
     },
@@ -569,6 +580,7 @@ const basejobModel = {
             sqlrv.query = sqlrv.query + ` AND i_ser = ` + i_ser_new ;
         }
         const [[item]] = await db.execute(sqlrv.query, sqlrv.values); 
+        await db.execute('COMMIT');
         return item;
     },
     async delBaseRouteProc(req) {
@@ -577,6 +589,7 @@ const basejobModel = {
                 
         const sql = sqlHelper.DeleteSimple(TABLE.ROUTEPROC, { c_com, c_item, i_ser });
         const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
 

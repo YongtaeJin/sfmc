@@ -72,7 +72,7 @@ const memberModel = {
 		payload.p_password = jwt.generatePassword(payload.p_password);
 		const sql = sqlHelper.Insert(TABLE.MEMBER, payload);
 		const [row] = await db.execute(sql.query, sql.values);
-
+		await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
 	async updateMember(req) {
@@ -142,6 +142,7 @@ const memberModel = {
 
 		const sql = sqlHelper.Update(TABLE.MEMBER, payload, {i_id});
 		const [row] = await db.execute(sql.query, sql.values);
+		await db.execute('COMMIT');
 		return await memberModel.getMemberBy({i_id});
 	},
 	async getMemberBy(form, cols = []) {
@@ -187,6 +188,7 @@ const memberModel = {
 			const sql2 = sqlHelper.Update(TABLE.USERS, data, { i_id, c_com });
 			db.execute(sql2.query, sql2.values);
 		}
+		db.execute('COMMIT');
 		return data;
 	},
 	async findId(data) {
@@ -236,7 +238,7 @@ const memberModel = {
 			console.log(e);
 			return { err: `email 발송에 필패 하였습니다.\n관리자에게 문의 주세요.` }
 		}
-
+		await db.execute('COMMIT');
 		return member;
 	},
 	async modifyPassword(data) {
@@ -262,6 +264,7 @@ const memberModel = {
 		// 처리한거 삭제
 		const delSql = sqlHelper.DeleteSimple(TABLE.SEND_MAIL, { sm_hash: data.hash });
 		db.execute(delSql.query, delSql.values);
+		await db.execute('COMMIT');
 		return upRes.affectedRows == 1;
 	},
 	async loginSocial(req, data) {
@@ -290,6 +293,7 @@ const memberModel = {
 			await db.execute(sql.query, sql.values);
 			member = await memberModel.getMemberBy({ e_email: email });
 		}
+		await db.execute('COMMIT');
 		return member;
 	},
 	async socialCallback(req, res, err, member) {

@@ -68,7 +68,7 @@ const systemModel = {
             const sql2 = sqlHelper.Insert(TABLE.USERS, payload);
             const [row2] = await db.execute(sql2.query, sql2.values);
         } 
-
+        await db.execute('COMMIT');
         return row.affectedRows == 1;                
     },
     async updateWorksite(req) {
@@ -95,6 +95,7 @@ const systemModel = {
             const sql2 = sqlHelper.Update(TABLE.USERS, payload, {c_com, i_id});
             const [row2] = await db.execute(sql2.query, sql2.values);
         }
+        await db.execute('COMMIT');
         return row;
     },
     
@@ -109,7 +110,7 @@ const systemModel = {
         
         rows.forEach((row) => {
             clearUserField(row);
-        });        
+        });
         return rows;
     },
     async iuWorkUser(req) {
@@ -142,7 +143,7 @@ const systemModel = {
 
         const usersql = sqlHelper.SelectSimple(TABLE.USERS,{ c_com,  i_id });
         const [[user]] = await db.execute(usersql.query, usersql.values);
-        
+        await db.execute('COMMIT');
         return clearUserField(user);
     },
 
@@ -152,7 +153,8 @@ const systemModel = {
         const field = { d_leave_at : moment().format('LT')};
         
         const sql = sqlHelper.Update(TABLE.USERS, field, { c_com, i_id });        
-        const [row] = await db.execute(sql.query, sql.values);		
+        const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
 
@@ -225,6 +227,7 @@ const systemModel = {
         }
         const grpsql = sqlHelper.SelectSimple(TABLE.GRPCODE,{ c_com,  c_gcode });
         const [[grpcode]] = await db.execute(grpsql.query, grpsql.values);
+        await db.execute('COMMIT');
         return grpcode;
     },
     async delGprCode(req) {
@@ -232,7 +235,8 @@ const systemModel = {
 		const { c_com, c_gcode } = req.params;
                 
         const sql = sqlHelper.DeleteSimple(TABLE.GRPCODE, { c_com, c_gcode });
-        const [row] = await db.execute(sql.query, sql.values);		
+        const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
 
@@ -273,6 +277,7 @@ const systemModel = {
         }
         const comsql = sqlHelper.SelectSimple(TABLE.COMCODE,{ c_com, c_gcode, c_code });
         const [[comcode]] = await db.execute(comsql.query, comsql.values);
+        await db.execute('COMMIT');
         return comcode;
     },
     async delComCode(req) {
@@ -280,7 +285,8 @@ const systemModel = {
 		const { c_com, c_gcode, c_code } = req.params;
         
         const sql = sqlHelper.DeleteSimple(TABLE.COMCODE, { c_com, c_gcode, c_code });
-        const [row] = await db.execute(sql.query, sql.values);		
+        const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
 

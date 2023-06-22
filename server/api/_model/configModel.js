@@ -76,6 +76,7 @@ const configModel = {
 		const sql = sqlHelper.InsertOrUpdate(TABLE.CONFIG, data);
 		const [row] = await db.execute(sql.query, sql.values);
 		configModel.setConfigItem(data);
+		await db.execute('COMMIT');
 		return data;
 	},
 	async sortUpdate(req) {
@@ -84,6 +85,7 @@ const configModel = {
 			const sql = sqlHelper.Update(TABLE.CONFIG, { cf_sort }, { cf_key });
 			db.execute(sql.query, sql.values);
 		});
+		await db.execute('COMMIT');
 		return true;
 	},
 	async removeConfig(req) {
@@ -94,6 +96,7 @@ const configModel = {
 		const sql = sqlHelper.DeleteSimple(TABLE.CONFIG, { cf_key });
 		const [row] = await db.execute(sql.query, sql.values);
 		configModel.clearConfigItem(cf_key);
+		await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	}
 };
