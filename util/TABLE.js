@@ -17,7 +17,7 @@ const TABLE = {
 	ESTIMATELI: 'tb_estimateli',
 	ORDER: 'tb_order',
 	ORDERLI: 'tb_orderli',
-	PRODPLAN: 'tb_prodplan',
+	PRODMAKE: 'tb_prodmake',
 
 
 };

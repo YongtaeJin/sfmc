@@ -94,7 +94,7 @@ const lib = {
 		}	  
 		return result;
 	  },
-	  dateToKorean(dateStr) {
+	dateToKorean(dateStr) {
 		// 입력된 날짜를 Date 객체로 변환
 
 		if (!dateStr) return '';
@@ -105,10 +105,16 @@ const lib = {
 		var dateFormatter = new Intl.DateTimeFormat('ko-KR', options);
 
 		return dateFormatter.format(date);		 
-	  },
-	  amtToKorean(amount) {
+	},
+	amtToKorean(amount) {
 		return amount.toLocaleString('ko-KR');
-	  }
+	},
+
+	addToUniqueArray(array, value) {
+		if (!array.includes(value)) {
+		  array.push(value);
+		}
+	},
 }
 
 module.exports = lib;
