@@ -23,5 +23,13 @@ router.post('/getProdWorklist', async (req, res) => {
     const result = await modelCall(prodModel.getProdWorklist, req);
 	res.json(result);
 });
+router.post('/iuProdWorklist', async (req, res) => {
+    const result = await modelCall(prodModel.iuProdWorklist, req);
+	res.json(result);
+});
+router.post('/iuProdWorkset', async (req, res) => {
+    const result = await modelCall(prodModel.iuProdWorkset, req);
+	res.json(result);
+});
 
 module.exports = router;

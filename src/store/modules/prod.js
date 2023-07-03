@@ -9,9 +9,18 @@ export const actions = {
 		return data;
 	},
 	async iuProdPlanlist( { commit }, items) {
-		const { $axios } = Vue.prototype;
-		
+		const { $axios } = Vue.prototype;		
 		const data = await $axios.post('/api/prod/iuProdPlanlist', items);
+		return data;
+	},
+	async iuProdWorklist( { commit }, items) {
+		const { $axios } = Vue.prototype;		
+		const data = await $axios.post('/api/prod/iuProdWorklist', items);
+		return data;
+	},
+	async iuProdWorkset( { commit }, items) {
+		const { $axios } = Vue.prototype;		
+		const data = await $axios.post('/api/prod/iuProdWorkset', items);
 		return data;
 	},
 

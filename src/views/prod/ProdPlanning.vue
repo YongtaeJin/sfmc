@@ -45,14 +45,16 @@
                     <td> {{ item.s_duedate }}</td>
                     <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)">
                         <v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
+                        <td align='center' v-else><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
+                        
                     <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)">
-                        <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-table"/></td>
+                        <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan1}}</td>
                     <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)">
-                        <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-table"/></td>
+                        <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan2}}</td>
                     <td align="left"> 
-                        <v-text-field v-if="item.f_work == '1'" v-model="item.t_remark" @input="setedit" dense hide-details class="my-text-table"/>
+                        <v-text-field v-if="item.f_work == '1'" v-model="item.t_remark" @input="setedit" dense hide-details class="my-text-field"/>
                         <span v-else>{{item.t_remark}}</span>
                     </td>
                 </tr>
@@ -67,13 +69,13 @@
                        <v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip> </td>
 
                     <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)">
-                        <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-table"/></td>
+                        <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan1}}</td>
                     <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)">
-                        <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-table"/></td>
+                        <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan2}}</td>
                     <td align="left"> 
-                        <v-text-field v-if="item.f_work == '1'" v-model="item.t_remark" @input="setedit" dense hide-details class="my-text-table"/>
+                        <v-text-field v-if="item.f_work == '1'" v-model="item.t_remark" @input="setedit" dense hide-details class="my-text-field"/>
                         <span v-else>{{item.t_remark}}</span>
                     </td>
                 </tr>
@@ -94,12 +96,12 @@ import InputDateft from '../../components/InputForms/InputDateft.vue'
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
+import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import { PROD001 } from '../../../util/constval';
 import DatesDialog from '../../components/etc/DatesDialog.vue';
 
 export default {
-    // components: { TooltipBtn, EzDialog, InputDate2, InputAmt, InputNumber, ItemPop, VendPop, SalesNotestimate },
-    components: { InputDateft, TooltipBtn, EzDialog, InputDate2, DatesDialog},
+    components: { InputDateft, TooltipBtn, EzDialog, InputDate2, InputDate3, DatesDialog},
     data() {
         return {
             PROD001,

@@ -27,7 +27,7 @@
                     <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td>                    
                     <td :rowspan="getRowspan(item)">{{ item.n_vend }}</td> 
                     <td class="left-align"> {{ item.n_item }}</td>
-                    <td><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
+                    <td><v-chip x-small :color="getColor(item.f_work)" dark @dblclick ="setWork(item)">{{getStatus(item.f_work)}}</v-chip></td>
                     <td>{{item.d_plan1}}</td>
                     <td>{{item.d_plan2}}</td>
                     <td>{{ item.m_cnt }}</td>
@@ -38,7 +38,7 @@
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
                     <td> {{ index + 1 }}</td>
                     <td class="left-align"> {{ item.n_item }}</td>
-                    <td><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
+                    <td><v-chip x-small :color="getColor(item.f_work)" dark @dblclick ="setWork(item)">{{getStatus(item.f_work)}}</v-chip></td>
                     <td>{{item.d_plan1}}</td>
                     <td>{{item.d_plan2}}</td>
                     <td>{{ item.m_cnt }}</td>
@@ -63,7 +63,23 @@
                         hide-default-footer 
                         :item-class= "row_classes" :items-per-page="-1" 
                         class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
-                        >                        
+                        >
+                        <template v-slot:[`item.s_workday`]="{ item }">
+                            <input-date-2 v-model="item.s_workday" v-if="ordStatus"  @input="onChangeDetail" :rules="rules.date({required: false})" class="my-text-table"/>
+                            <span v-else>{{item.s_workday}}</span>
+                        </template>
+                        <template v-slot:[`item.n_name`]="{ item }">
+                            <v-text-field v-model="item.n_name" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <span v-else>{{item.n_name}}</span>
+                        </template>
+                        <template v-slot:[`item.m_cnt`]="{ item }">
+                            <input-amt v-model="item.m_cnt" @input="onChangeDetail" v-if="ordStatus" ></input-amt>
+                            <span v-else>{{item.m_cnt}}</span>
+                        </template>
+                        <template v-slot:[`item.t_remark`]="{ item }">
+                            <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <span v-else>{{item.t_remark}}</span>
+                        </template>
                     </v-data-table>
                 </v-col>
                 <v-col>
@@ -79,6 +95,31 @@
                         :item-class= "row_classes" :items-per-page="-1" 
                         class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
                         >
+
+                        <template v-slot:[`item.s_workday`]="{ item }">
+                            <input-date-2 v-model="item.s_workday" v-if="ordStatus"  @input="onChangeDetail" :rules="rules.date({required: false})" class="my-text-table"/>
+                            <span v-else>{{item.s_workday}}</span>
+                        </template>
+                        <template v-slot:[`item.n_name`]="{ item }">
+                            <v-text-field v-model="item.n_name" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <span v-else>{{item.n_name}}</span>
+                        </template>
+                        <template v-slot:[`item.m_err`]="{ item }">
+                            <input-amt v-model="item.m_err" @input="onChangeDetail" v-if="ordStatus" ></input-amt>
+                            <span v-else>{{item.m_err}}</span>
+                        </template>
+                        <template v-slot:[`item.i_process`]="{ item }">
+                            <v-text-field v-model="item.i_process" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <span v-else>{{item.i_process}}</span>
+                        </template>
+                        <template v-slot:[`item.f_cause`]="{ item }">
+                            <v-text-field v-model="item.f_cause" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <span v-else>{{item.f_cause}}</span>
+                        </template>
+                        <template v-slot:[`item.t_remark`]="{ item }">
+                            <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <span v-else>{{item.t_remark}}</span>
+                        </template>
                     </v-data-table>
                 </v-col>
             </v-row>
@@ -93,14 +134,14 @@ import InputDateft from '../../components/InputForms/InputDateft.vue'
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
+import InputAmt from '../../components/InputForms/InputAmt.vue';
 import { PROD001 } from '../../../util/constval';
 import { getDate } from '../../../util/lib';
 import DatesDialog from '../../components/etc/DatesDialog.vue';
-import { id } from '../../../util/validateRules';
-
+import validateRules from "../../../util/validateRules";
 
 export default {
-    components: { InputDateft, TooltipBtn, EzDialog, InputDate2, DatesDialog},
+    components: { InputDateft, TooltipBtn, EzDialog, InputDate2, InputAmt, DatesDialog},
     mounted() {
         this.init();
     },
@@ -130,18 +171,18 @@ export default {
             itemMakeHead: [
                 {text: '작업일',    value: 's_workday', sortable: false, align:'center', width: "60px"},
                 {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "60px"},
-                {text: '생산수량',  value: 'm_cnt', sortable: false, align:'center', width: "60px"},
-                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "120px"},
+                {text: '생산수량',  value: 'm_cnt', sortable: false, align:'center', width: "50px"},
+                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "100px"},
             ],
             itemErrHead: [
                 {text: '작업일',    value: 's_workday', sortable: false, align:'center', width: "60px"},
-                {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "60px"},
-                {text: '불량수량',  value: 'm_err', sortable: false, align:'center', width: "60px"},
-                {text: '불량공정',  value: 'i_process', sortable: false, align:'center', width: "60px"},
-                {text: '불량원인',  value: 'f_cause', sortable: false, align:'center', width: "60px"},
-                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "120px"},
+                {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "50px"},
+                {text: '불량수량',  value: 'm_err', sortable: false, align:'center', width: "50px"},
+                {text: '불량공정',  value: 'i_process', sortable: false, align:'center', width: "55px"},
+                {text: '불량원인',  value: 'f_cause', sortable: false, align:'center', width: "55px"},
+                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "100px"},
             ],
-            itemProd:[],
+            itemProd:[], setItemProd:[],
             itemMake:[], itemErr:[], makeRow:[], errRow:[],
            
         }
@@ -149,13 +190,21 @@ export default {
     watch: {
     },
     computed: {
+        rules: () => validateRules,
         ordStatus() {
-            return (this.itemInfo == undefined || this.itemInfo.f_work == undefined || this.itemInfo.f_work !== '2') ? false : true;
-            
+            return (this.itemInfo == undefined || this.itemInfo.f_work == undefined || this.itemInfo.f_work !== '2' && this.itemInfo.f_work !== '3' ) ? false : true;
+        },
+        editStatus() {
+            for (var i = 0; i < this.itemProd.length; i++) {
+                if (this.itemProd[i].f_edit === '1' || this.itemProd[i].f_edit === '2') {
+                     return true; // 값이 존재하면 true 반환
+                }
+            }
+            return false; // 값이 존재하지 않으면 false 반환
         }
     },
     methods: {     
-        ...mapActions("prod", ["iuProdPlanlist"]), 
+        ...mapActions("prod", ["iuProdWorklist", "iuProdWorkset"]), 
         shouldMergeRow(item) {
             const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemList.indexOf(item);
@@ -178,9 +227,13 @@ export default {
         async del() {
 
         },
-        async save() {
+        async save() {          
             if (!this.ordStatus) return;
-            
+
+            const data = await this.iuProdWorklist(this.itemProd);     
+            if (!data)  {
+                return;
+            }
             // for (const [idx, item] of this.itemProd.entries()) {   // 정방향
             for (let i = this.itemProd.length - 1; i >= 0; i--) {
                 const item = this.itemProd[i];                        // 역방향시 사용
@@ -194,10 +247,12 @@ export default {
             }
             this.setProdList('Y');
             this.setProdList('N'); 
+            this.$toast.info(`저장 하였습니다.`);
         },
         getColor (data) {
             if(data == "1") { return 'red'; } 
-            else if (data == "2") {return 'blue';}
+            else if (data == "2") {return 'orange';}
+            else if (data == "3") {return 'blue';}
             else { return 'green';}
         },
         row_classes(item) {
@@ -206,6 +261,11 @@ export default {
             } 
         },
         async selectItem(item) {
+            if (this.selected == item) return;
+            this.itemProd = [];
+            this.makeRow = [];
+            this.errRow = [];
+
             this.selected = item;
             this.itemInfo = item; 
             this.prodselect.c_com = this.itemInfo.c_com; 
@@ -219,11 +279,6 @@ export default {
         getStatus(item) {
             var find = this.PROD001.find(e => e.value === item);
             return find !== undefined ? find.label : '';
-        },
-        getColor (data) {
-            if(data == "1") { return 'red'; } 
-            else if (data == "2") {return 'blue';}
-            else { return 'green';}
         },
         async makeAdd() {
             const idx = this.addmake('N');            
@@ -243,15 +298,17 @@ export default {
         
         rowSelectMake:function (item, row) {                            
             row.select(true);
+            this.setItemProd = item;
         },
         rowSelectErr:function (item, row) {                
             row.select(true);
+            this.setItemProd = item;
         },
         setProdList(gubun) {
             if (gubun == 'N') {
                 this.itemMake = this.itemProd.filter(function(item) { return item.f_err === 'N'; });
             } else {
-                this.itemErr = this.itemProd.filter(function(item) { return item.f_err === 'Y'; });
+                this.itemErr = this.itemProd.filter(function(item) { return item.f_err === 'Y'; });                
             }
         },
 
@@ -270,11 +327,12 @@ export default {
             obj.i_process = '';
             obj.f_cause   = '';
             obj.n_name    = '';
-            obj.f_edit    = "1"; 
-            obj.f_editold = "1";
+            obj.f_edit    = '1'; 
+            obj.f_editold = '1';
             const idx = this.itemProd.push(obj)
 
             if (idx > -1) this.setProdList(gubun);
+            
             return idx;
         },
         delmake(gubun, i_orderser, i_makeser) {
@@ -294,15 +352,39 @@ export default {
             return idx;
         },
         calculateTotal() {
-            let makecnt = 0, errcnt = 0;
+            let makecnt = 0, errcnt = 0;            
+            let delcnt = 0
             for (const item of this.itemProd) {
-                if (item.f_edit == '2') continue;
-                makecnt += item.m_cnt;
-                errcnt += item.m_err;
-            }
+                if (item.f_edit == '2') {
+                    delcnt ++;
+                    continue;
+                }
+                makecnt += Number(item.m_cnt);
+                errcnt += Number(item.m_err);
+            }            
             this.itemInfo.m_makecnt = makecnt;
             this.itemInfo.m_errcnt = errcnt;
+            this.itemInfo.f_work = this.itemProd.length == delcnt ? '2' : '3';
         },
+        onChangeDetail() {
+            this.setItemProd.f_edit = "1";
+            this.calculateTotal();
+        },
+        setWork(item) {
+            if (this.editStatus) {
+                this.$toast.info(`수정 내용이 존재 합니다...`);
+                return;
+            }
+            if (item.f_work == '3' || item.f_work == '4') {                
+                if(Number(item.m_cnt) > Number(item.m_makecnt) ) {
+                    this.$toast.warning(`생산 수량이 부족 합니다...`)
+                    return;
+                }
+                item.f_work = item.f_work == '3' ? '4' : '3';
+                const rv = this.iuProdWorkset(item)
+                if(rv) this.$toast.info(`작업 상태 처리 하였습니다...`);
+            }
+        }
   },
 }
 </script>

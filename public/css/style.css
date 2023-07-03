@@ -163,21 +163,24 @@ table.type07 {
 	flex-direction: row;
 }
 .my-text-field {
-	padding: 0;    margin: 0; 
-	height: 26px !important;
+	padding: 0;    margin-top: -4px; 
+	height: 26px !important;	
+}
+.my-text-field .v-select {
+	font-size: 0.7rem !important;
+}
+.my-text-field input {
+	font-size: 0.7rem !important;	
 }
 .my-text-fieldend {
 	padding: 0;    margin: 0; 
 	height: 8px !important;
 }
-.my-text-field input {
-	font-size: 0.7rem !important;	
-}
 .my-text-fontsize input {
 	font-size: 0.7rem !important;	
 }
 .my-text-table {
-	padding: 0;    margin: 0; 
+	margin-top: -8px; 
 	height: 24px !important;
 }
 .my-text-table input {	
@@ -193,6 +196,9 @@ table.type07 {
 	height: 24px !important;	
 	text-align: center;
 }
+.my-text-field-label label {
+	font-size: 0.7rem !important;	
+}
 
 .v-subtitle {
 	font-size: 0.9rem !important;	
@@ -200,29 +206,22 @@ table.type07 {
 .v-subheader {
 	font-size: 0.7rem !important;	
 }
-.my-text-field-label label {
-	font-size: 0.7rem !important;	
-}
 
 .my-custom-class .v-label {
 	margin-bottom: 1px; /* label 아래쪽 간격 조정 */
-	line-height: 30px;
+	line-height: 30px; 
 	font-size: 0.7rem; /* label 글자 크기 조정 */
 }
 
 .my-custom-class .v-input__control {
 	padding-top: 0x; /* input 위쪽 간격 조정 */
 	padding-bottom: 0px; /* input 아래쪽 간격 조정 */
-	margin-top: -2px;	
+	margin-top: -4px;	
 }
 
 .my-card {
 	background-color: rgba(234, 235, 220, 0.937) !important;	
 	margin-top: 0px; /* 카드의 위쪽 여백을 10px로 지정합니다 */	
-}
-
-.my-text-field .v-select {
-	font-size: 0.7rem !important;
 }
 
 .inputPrice input::-webkit-outer-spin-button,
@@ -274,6 +273,7 @@ table.type07 {
 .no-padding {
     padding: 0;
     margin: 0;
+	margin-top: -2px;
   }
 .no-margin {
     padding: 0;

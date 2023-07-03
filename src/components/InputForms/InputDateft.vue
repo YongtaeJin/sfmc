@@ -2,7 +2,7 @@
   <div style="width: 190px; display: flex;">
       <v-dialog v-model="modal" persistent max-width="290">
         <template v-slot:activator="{ attrs }">
-          <v-text-field dense hide-details v-bind="{ ...$attrs, ...attrs }" :value="value" :readonly="readonly" @input="onInput" class="my-custom-class my-text-field">
+          <v-text-field dense hide-details v-bind="{ ...$attrs, ...attrs }" :value="value" :readonly="readonly" @input="onInput" class="my-text-field">
             <template v-if="!readonly" v-slot:append>
               <v-btn icon small tabindex="-1" @click="open"><v-icon>mdi-calendar-today</v-icon></v-btn>
             </template>            
@@ -22,7 +22,7 @@
     
       <v-dialog v-model="modal2" persistent max-width="290">
         <template v-slot:activator="{ attrs }">
-          <v-text-field dense hide-details v-bind="{ ...$attrs, ...attrs }" :value="value2" :readonly="readonly" @input="onInput2" class="my-custom-class my-text-field">
+          <v-text-field dense hide-details v-bind="{ ...$attrs, ...attrs }" :value="value2" :readonly="readonly" @input="onInput2" class="my-text-field">
             <template v-if="!readonly" v-slot:append>
               <v-btn icon small tabindex="-1" @click="open2"><v-icon>mdi-calendar-today</v-icon></v-btn>
             </template>            

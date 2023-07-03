@@ -8,7 +8,7 @@
         :value="value"
         :readonly="readonly"
         @input="onInput"
-        class="my-text-table my-text-field"
+        class="my-text-field my-text-field"
       >
         <template v-if="!readonly"  v-slot:append>
           <v-btn icon small tabindex="-1" @click="open">

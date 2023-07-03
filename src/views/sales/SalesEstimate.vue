@@ -12,8 +12,8 @@
         <v-card class="my-card">
             <v-row no-gutters class="my-text-field">
                 <v-col col="12" sm="1" md="1"><v-text-field value="견적기간" readonly dense hide-details class="text-input-blue no-padding"/></v-col>
-                <v-col col="12" sm="2" md="2"><input-date-2 v-model="form.sDate1" /></v-col>
-                <v-col col="12" sm="2" md="2"><input-date-2 v-model="form.sDate2" /></v-col>
+                <v-col col="12" sm="2" md="2"><input-date-3 v-model="form.sDate1" /></v-col>
+                <v-col col="12" sm="2" md="2"><input-date-3 v-model="form.sDate2" /></v-col>
                 <v-col col="12" sm="1" md="1"><v-text-field value="고객사" readonly dense hide-details class="text-input-blue no-padding"/></v-col>
                 <v-col col="12" sm="3" md="3"><v-text-field v-model="form.sVend" dense hide-details class="text-input-blue no-padding" /></v-col>
                 <v-col col="12" sm="1" md="1"><v-text-field value="견적상태" readonly dense hide-details class="text-input-blue no-padding"/> </v-col>
@@ -90,11 +90,11 @@
                 </v-row>
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="견적일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="estimate.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>                    
+                    <v-col col="8" sm="2" md="2"><input-date-3 v-model="estimate.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>                    
                     <v-col col="8" sm="1" md="1"><v-text-field value="유효일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="estimate.s_date2" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>
+                    <v-col col="8" sm="2" md="2"><input-date-3 v-model="estimate.s_date2" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-2 v-model="estimate.s_date3" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>
+                    <v-col col="8" sm="2" md="2"><input-date-3 v-model="estimate.s_date3" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>
 
                     <!-- :rules="[rules.require({ label: 'Code' }), rules.alphaNum()]" /> -->
                 </v-row>
@@ -195,6 +195,7 @@ import validateRules from "../../../util/validateRules";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
+import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import InputAmt from '../../components/InputForms/InputAmt.vue';
 import InputNumber from '../../components/InputForms/InputNumber.vue';
 import ItemPop from '../codelist/ItemPop.vue';
@@ -203,7 +204,7 @@ import { _fonts }  from'../../font/fonts.js';
 
 
 export default {
-    components: { TooltipBtn, EzDialog, InputDate2, ItemPop, InputAmt, InputNumber, VendPop },    
+    components: { TooltipBtn, EzDialog, InputDate2, InputDate3, ItemPop, InputAmt, InputNumber, VendPop },    
     
     name: "Salesestimate",
     mounted() {

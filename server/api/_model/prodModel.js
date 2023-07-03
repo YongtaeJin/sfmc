@@ -118,8 +118,9 @@ const prodModel = {
         }
         where += ` order by a.i_order, b.s_sort, b.i_orderser \n` ;
 
-        console.log(where)
+        console.log('getProdWork', where)
         const [rows] = await db.execute(where, values);        
+        
         return rows;
     },
     async getProdWorklist(req) {
@@ -127,7 +128,7 @@ const prodModel = {
         const { c_com, i_order, i_orderser } = req.body;
         const sql = sqlHelper.SelectSimple(TABLE.PRODMAKE, { c_com, i_order, i_orderser}) ;
         sql.query = sql.query + ` ORDER BY i_makeser `;
-        console.log(sql)
+        console.log('getProdWorklist', sql)
        
         const [rows] = await db.execute(sql.query, sql.values);  
         
@@ -135,9 +136,109 @@ const prodModel = {
             sqlHelper.addEditCol(row);
         });      
         return rows;        
+    },
+    async iuProdWorklist(req) {
+        const { c_com } = req.user;
+        const item = req.body;
+        let order = []; 
+        let orderlist = []; 
+        
+        await dbSet.setAutoCommitNo();
+        for (let i = 0; i < item.length; i++) {
+            const {c_com, i_order, i_orderser, i_makeser, s_workday, f_err, m_cnt, m_err, i_process, f_cause, n_name, t_remark, f_edit, f_editold} = item[i];
+            if (f_edit == "0") continue;      // 수정 내용 없음
+            const newdata = item[i].f_editold == "1" ? true : false;
+            const deldata = item[i].f_edit == "2" ? true : false;
+            
+            if (newdata) {
+                delete item[i].d_update_at;
+                delete item[i].n_upnm;
+                item[i].d_create_at = moment().format('LT');
+                item[i].n_crnm      = req.user.n_name;                
+            } else {
+                delete item[i].d_create_at;
+                delete item[i].n_crnm;
+                item[i].d_update_at = moment().format('LT');
+                item[i].n_upnm      = req.user.n_name                
+            };
+            delete item[i].f_edit;
+            delete item[i].f_editold;
+            const sql = deldata ? sqlHelper.DeleteSimple(TABLE.PRODMAKE, {c_com, i_order, i_orderser, i_makeser}) :  newdata ? sqlHelper.Insert(TABLE.PRODMAKE, item[i]) : sqlHelper.Update(TABLE.PRODMAKE, item[i], {c_com, i_order, i_orderser, i_makeser});
+            
+            console.log("detial", sql);
+            const res = await sqlDbExecute(sql);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+            await addOrder(order, {c_com, i_order});
+            await addOrderList(orderlist, {c_com, i_order, i_orderser});
+        }
+        // 발주서 상태 변경  (계획 <-> 작업)
+        for (let i = 0; i < order.length; i++) {
+            const sqldt = sqlHelper.SelectSimple(TABLE.PRODMAKE, order[i], ['COUNT(*) as cnt']);
+            const [[rv]] = await db.execute(sqldt.query, sqldt.values);
+            const f_status = { f_status : rv.cnt > 0 ? "W" : 'P' };
+            
+            const sql = sqlHelper.Update(TABLE.ORDER, f_status, order[i]);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }
+        // 발주서 list 상태 변경  (지시 <-> 작업 )
+        for (let i = 0; i < orderlist.length; i++) {
+            const sqldt = sqlHelper.SelectSimple(TABLE.PRODMAKE, orderlist[i], ['COUNT(*) as cnt']);
+            const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
+            const f_work = { f_work : rv.cnt > 0 ? "3" : '2' };
+            const sql = sqlHelper.Update(TABLE.ORDERLI, f_work, orderlist[i]);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }
+
+        await db.execute('COMMIT');
+        return true;
+    },
+
+    async iuProdWorkset(req) {
+        const {c_com, i_order, i_orderser, f_work}  = req.body;
+        const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work}, {c_com, i_order, i_orderser});
+        const res = await db.execute(sql.query, sql.values);
+        if (res.affectedRows < 1) {
+            await db.execute('ROLLBACK');
+            return false;
+        }
+        await db.execute('COMMIT');
+        return true;
     }
+
 }
 
+async function sqlDbExecute(sql) {	    
+    const [row] = await db.execute(sql.query, sql.values);
+    return row;
+}
 
+async function addOrder(jsonArr, newData) {
+    const isDuplicate = jsonArr.some(obj =>
+      obj.c_com === newData.c_com &&
+      obj.i_order === newData.i_order 
+    );  
+    if (!isDuplicate) jsonArr.push(newData);      
+    return jsonArr;
+}
 
+async function addOrderList(jsonArr, newData) {
+    const isDuplicate = jsonArr.some(obj =>
+      obj.c_com === newData.c_com &&
+      obj.i_order === newData.i_order &&
+      obj.i_orderser === newData.i_orderser
+    );  
+    if (!isDuplicate) jsonArr.push(newData);      
+    return jsonArr;
+}
 module.exports = prodModel;
