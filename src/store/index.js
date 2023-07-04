@@ -186,7 +186,7 @@ const store = new Vuex.Store({
 						{
 							title : "출하관리",
 							icon : "",
-							to : '',
+							to : '/shipment/derliver',
 							grant : 4, 
 							newTab : false,
 							subItems : []

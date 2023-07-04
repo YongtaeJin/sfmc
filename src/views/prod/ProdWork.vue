@@ -322,8 +322,8 @@ export default {
             obj.i_makeser = Date.now();
             obj.s_workday = getDate();
             obj.f_err     = gubun;
-            obj.m_cnt     = 0;
-            obj.m_err     = 0;
+            obj.m_cnt     = gubun == 'N' ? Number(this.itemInfo.m_cnt) - Number(this.itemInfo.m_makecnt) : 0;
+            obj.m_err     = gubun == 'N' ? 0 : 1;
             obj.i_process = '';
             obj.f_cause   = '';
             obj.n_name    = '';

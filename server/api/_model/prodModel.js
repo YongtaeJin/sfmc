@@ -174,13 +174,14 @@ const prodModel = {
             await addOrder(order, {c_com, i_order});
             await addOrderList(orderlist, {c_com, i_order, i_orderser});
         }
-        // 발주서 상태 변경  (계획 <-> 작업)
+        // 발주서 상태 변경  (계획 <-> 작업)        
         for (let i = 0; i < order.length; i++) {
             const sqldt = sqlHelper.SelectSimple(TABLE.PRODMAKE, order[i], ['COUNT(*) as cnt']);
             const [[rv]] = await db.execute(sqldt.query, sqldt.values);
-            const f_status = { f_status : rv.cnt > 0 ? "W" : 'P' };
+            // const f_status = { f_status : rv.cnt > 0 ? "W" : 'P' };
+            const f_status = rv.cnt > 0 ? "W" : 'P';
             
-            const sql = sqlHelper.Update(TABLE.ORDER, f_status, order[i]);
+            const sql = sqlHelper.Update(TABLE.ORDER, {f_status}, order[i]);
             const res = await db.execute(sql.query, sql.values);
             if (res.affectedRows < 1) {
                 await db.execute('ROLLBACK');
@@ -188,11 +189,18 @@ const prodModel = {
             }
         }
         // 발주서 list 상태 변경  (지시 <-> 작업 )
+        let n_work1 = req.user.n_name;
+        let d_work1_at = moment().format('LT');
         for (let i = 0; i < orderlist.length; i++) {
-            const sqldt = sqlHelper.SelectSimple(TABLE.PRODMAKE, orderlist[i], ['COUNT(*) as cnt']);
+            const sqldt = sqlHelper.SelectSimple(TABLE.PRODMAKE, orderlist[i], ['COUNT(*) as cnt', 'MIN(s_workday) as dates', 'MAX(s_workday) as datee']);
             const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
-            const f_work = { f_work : rv.cnt > 0 ? "3" : '2' };
-            const sql = sqlHelper.Update(TABLE.ORDERLI, f_work, orderlist[i]);
+            
+            //const f_work = { f_work : rv.cnt > 0 ? "3" : '2' };
+            const f_work = rv.cnt > 0 ? "3" : '2';
+            const d_work2 = rv.dates;
+            const d_work3 = rv.datee;
+            const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work, d_work2, d_work3, n_work1, d_work1_at}, orderlist[i]);
+            sql.query = sql.query.replace("WHERE", `, d_work1 = ifnull(d_work1, DATE_FORMAT(CURDATE(), '%Y-%m-%d')) WHERE`)
             const res = await db.execute(sql.query, sql.values);
             if (res.affectedRows < 1) {
                 await db.execute('ROLLBACK');
@@ -206,7 +214,9 @@ const prodModel = {
 
     async iuProdWorkset(req) {
         const {c_com, i_order, i_orderser, f_work}  = req.body;
-        const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work}, {c_com, i_order, i_orderser});
+        const n_work3 = req.user.n_name;
+        const d_work3_at = moment().format('LT');
+        const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work, n_work3, d_work3_at}, {c_com, i_order, i_orderser});
         const res = await db.execute(sql.query, sql.values);
         if (res.affectedRows < 1) {
             await db.execute('ROLLBACK');

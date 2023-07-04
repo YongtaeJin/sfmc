@@ -101,6 +101,11 @@ const routes = [
 		name: 'ProdWorkView',
 		component: () => import(/* webpackChunkName: "ProdWorkView" */ '../views/prod/ProdWorkView.vue')
 	},
+	{
+		path: '/shipment/derliver',
+		name: 'DerliverView',
+		component: () => import(/* webpackChunkName: "DerliverView" */ '../views/shipment/DerliverView.vue')
+	},
 
 
 	
