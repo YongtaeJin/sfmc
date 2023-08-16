@@ -49,6 +49,11 @@ const routes = [
 		name: 'Systemusers',
 		component: () => import(/* webpackChunkName: "Systemusers" */ '../views/system/Systemusers.vue')
 	},
+	{
+		path: '/adm/notice',
+		name: 'Notice',
+		component: () => import(/* webpackChunkName: "Notice" */ '../views/system/Notice.vue')
+	},
 	// 기준정보
 	{
 		path: '/base/vend',

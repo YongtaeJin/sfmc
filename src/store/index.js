@@ -50,6 +50,14 @@ const store = new Vuex.Store({
 							newTab : false,
 							subItems : []
 						},
+						{
+							title : "공지관리",
+							icon : "",
+							to : '/adm/notice',
+							grant : 9, 
+							newTab : false,
+							subItems : []
+						},
 					]
 				},
 				{
@@ -109,7 +117,7 @@ const store = new Vuex.Store({
 					newTab : false,
 					subItems : [
 						{
-							title : "견적관리",
+							title : "견적등록",
 							icon : "",
 							to : '/sales/estimate',
 							grant : 7, 
@@ -117,9 +125,25 @@ const store = new Vuex.Store({
 							subItems : []
 						},
 						{
-							title : "수주관리",
+							title : "견적제출현황",
+							icon : "",
+							to : '/sales/estimatelist',
+							grant : 7, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "수주등록",
 							icon : "",
 							to : '/sales/orders',
+							grant : 7, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "수주(출하)현황",
+							icon : "",
+							to : '/sales/orderslist',
 							grant : 7, 
 							newTab : false,
 							subItems : []
@@ -127,7 +151,7 @@ const store = new Vuex.Store({
 					]
 				},
 				{
-					title : "생산관리",
+					title : "생산계획",
 					icon : "mdi-wrench",
 					to : '',
 					grant : 6, 
@@ -159,23 +183,23 @@ const store = new Vuex.Store({
 						},
 					]
 				},
-				// {
-				// 	title : "생산관리",
-				// 	icon : "mdi-basket-fill",
-				// 	to : '',
-				// 	grant : 5, 
-				// 	newTab : false,
-				// 	subItems : [
-				// 		{
-				// 			title : "생산실적",
-				// 			icon : "",
-				// 			to : '',
-				// 			grant : 5, 
-				// 			newTab : false,
-				// 			subItems : []
-				// 		},	
-				// 	]
-				// },
+				{
+					title : "생산관리",
+					icon : "mdi-basket-fill",
+					to : '',
+					grant : 5, 
+					newTab : false,
+					subItems : [
+						{
+							title : "생산실적",
+							icon : "",
+							to : '',
+							grant : 5, 
+							newTab : false,
+							subItems : []
+						},	
+					]
+				},
 				{
 					title : "납품관리",
 					icon : "mdi-car-multiple",
