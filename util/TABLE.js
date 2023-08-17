@@ -18,7 +18,7 @@ const TABLE = {
 	ORDER: 'tb_order',
 	ORDERLI: 'tb_orderli',
 	PRODMAKE: 'tb_prodmake',
-
+	NOTICE: 'tb_notice',
 
 };
 

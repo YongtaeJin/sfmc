@@ -80,7 +80,6 @@ router.get('/getCodeList', async (req, res) => {
 	const result = await modelCall(systemModel.getCodeList, req);
 	res.json(result);
 });
-
 // 사업자정보조회
 router.get('/getCompany', async (req, res) => {
 	const result = await modelCall(systemModel.getCompany, req);
@@ -90,6 +89,20 @@ router.get('/getCompany', async (req, res) => {
 // 단위 팝업 선택 창 List
 router.get('/getUnitPop', async (req, res) => {
 	const result = await modelCall(systemModel.getUnitPop, req);
+	res.json(result);
+});
+
+// 공지사항
+router.get('/getNoticeList', async (req, res) => {	
+	const result = await modelCall(systemModel.getNoticeList, req);
+	res.json(result);
+});
+router.post('/iuNotice', async (req, res) => {
+	const result = await modelCall(systemModel.iuNotice, req);
+	res.json(result);
+});
+router.delete('/delNotice/:c_com/:i_ser', async(req, res)=>{
+	const result = await modelCall(systemModel.delNotice, req);
 	res.json(result);
 });
 

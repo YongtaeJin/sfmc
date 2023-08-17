@@ -291,3 +291,7 @@ table.type07 {
 .underline {
 	text-decoration: underline;
 }
+
+.text-center {
+	text-align: center;
+}

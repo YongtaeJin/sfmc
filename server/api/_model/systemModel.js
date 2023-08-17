@@ -1,4 +1,5 @@
 const db = require('../../plugins/mysql');
+const dbSet = require('./dbSet');
 const sqlHelper = require('../../../util/sqlHelper');
 const TABLE = require('../../../util/TABLE');
 const jwt = require('../../plugins/jwt');
@@ -315,7 +316,6 @@ const systemModel = {
         return rows;
     },
 
-
     async getUnitPop(req) {
         if (req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
 		const { c_com } = req.user;
@@ -331,8 +331,48 @@ const systemModel = {
         values.push(c_com);
         const [rows] = await db.execute(query, values);    
         return rows;
-    }
- 
+    },
+
+    // 공시사항
+    async getNoticeList(req) {
+        const { c_com } = req.query;       
+        const sql = sqlHelper.SelectSimple(TABLE.NOTICE, { c_com });
+        sql.query = sql.query + ` ORDER BY d_start desc , i_ser ASC `;
+        const [rows] = await db.execute(sql.query, sql.values);    
+        return rows;
+    },
+    async iuNotice(req) {
+        const at = moment().format('LT');        
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+        const payload = {
+			...req.body,
+        }
+        const {c_com, i_ser } = payload;
+        if (i_ser == "new") {
+            payload.i_ser = Date.now();
+            payload.n_crnm = req.user.n_name;            
+        }
+        payload.d_create_at = at;
+        const sql = i_ser == "new" ? sqlHelper.Insert(TABLE.NOTICE, payload) : sqlHelper.Update(TABLE.NOTICE, payload, {i_ser, c_com});
+        
+        const [row] = await db.execute(sql.query, sql.values);
+        if (row.affectedRows > 0) {
+            const {c_com, i_ser } = payload;
+            const noticeSql = sqlHelper.SelectSimple(TABLE.NOTICE, { i_ser, c_com });
+            const [[notice]] = await db.execute(noticeSql.query, noticeSql.values);
+            return notice;
+        }
+        return ;
+    }, 
+    async delNotice(req) {
+		if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+		const { c_com, i_ser } = req.params;
+        
+        const sql = sqlHelper.DeleteSimple(TABLE.NOTICE, { c_com, i_ser });
+        const [row] = await db.execute(sql.query, sql.values);
+        await db.execute('COMMIT');
+		return row.affectedRows == 1;
+	},
 };
 
 module.exports = systemModel;
