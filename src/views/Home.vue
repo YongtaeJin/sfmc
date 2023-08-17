@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height fluid> 
     <v-row >
-      <v-col v-if= "!this.$store.state.user.member && !+this.$store.state.user.member.c_com" class="text-center" cols="12">
+      <v-col v-if= "this.$store.state.user.member == undefined" class="text-center" cols="12">
         <!-- <v-img
           :src="require('../../server/upload/mainlog.jpeg')"          
           contain
@@ -15,7 +15,7 @@
         <v-textarea v-model="form.t_content" label="공지내용" readonly hide-details="false" />
       </v-col>  
     </v-row>
-    <v-row  v-if= "this.$store.state.user.member && this.$store.state.user.member.c_com" class="text-center">
+    <v-row v-if= "this.$store.state.user.member" class="text-center">
       <v-col>
         <v-data-table ref="noticeTable" :headers="headers" :items="data" item-key="i_ser" single-select @click:row="rowSelect">
           
