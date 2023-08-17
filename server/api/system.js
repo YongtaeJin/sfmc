@@ -105,5 +105,9 @@ router.delete('/delNotice/:c_com/:i_ser', async(req, res)=>{
 	const result = await modelCall(systemModel.delNotice, req);
 	res.json(result);
 });
+router.get('/getNoticeCom', async (req, res) => {	
+	const result = await modelCall(systemModel.getNoticeCom, req);
+	res.json(result);
+});
 
 module.exports = router;

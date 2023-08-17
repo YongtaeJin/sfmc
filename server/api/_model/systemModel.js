@@ -357,6 +357,7 @@ const systemModel = {
         
         const [row] = await db.execute(sql.query, sql.values);
         if (row.affectedRows > 0) {
+            await db.execute('COMMIT');
             const {c_com, i_ser } = payload;
             const noticeSql = sqlHelper.SelectSimple(TABLE.NOTICE, { i_ser, c_com });
             const [[notice]] = await db.execute(noticeSql.query, noticeSql.values);
@@ -373,6 +374,15 @@ const systemModel = {
         await db.execute('COMMIT');
 		return row.affectedRows == 1;
 	},
+    async getNoticeCom(req) {
+        const { c_com } = req.query;       
+        const sql = sqlHelper.SelectSimple(TABLE.NOTICE, { c_com });
+        sql.query = sql.query + ` AND f_use = 'Y' `
+        sql.query = sql.query + ` AND DATE_FORMAT(NOW(), '%Y-%m-%d') BETWEEN d_start AND d_end `
+        sql.query = sql.query + ` ORDER BY d_start desc , i_ser ASC `;
+        const [rows] = await db.execute(sql.query, sql.values);    
+        return rows;
+    },
 };
 
 module.exports = systemModel;
