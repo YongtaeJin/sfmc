@@ -172,23 +172,7 @@ const store = new Vuex.Store({
 							grant : 6, 
 							newTab : false,
 							subItems : []
-						},
-						{
-							title : "생산실적",
-							icon : "",
-							to : '/prod/work',
-							grant : 6, 
-							newTab : false,
-							subItems : []
-						},
-						{
-							title : "생산현황",
-							icon : "",
-							to : '/prod/workview',
-							grant : 6, 
-							newTab : false,
-							subItems : []
-						},
+						},						
 					]
 				},
 				{
@@ -201,22 +185,70 @@ const store = new Vuex.Store({
 						{
 							title : "생산실적",
 							icon : "",
-							to : '',
+							to : '/prod/work',
 							grant : 5, 
 							newTab : false,
 							subItems : []
-						},	
+						},
+						{
+							title : "생산실적조회",
+							icon : "",
+							to : '/prod/workview',
+							grant : 5, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "공정진행현황",
+							icon : "",
+							to : '/prod/workview2',
+							grant : 5, 
+							newTab : false,
+							subItems : []
+						},
 					]
 				},
 				{
-					title : "납품관리",
+					title : "출하관리",
 					icon : "mdi-car-multiple",
 					to : '',
 					grant : 4, 
 					newTab : false,
 					subItems : [
 						{
-							title : "출하관리",
+							title : "출하등록",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 4, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "출하현황",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 4, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "세금계산서등록",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 4, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "대금수금등록",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 4, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "수금현황",
 							icon : "",
 							to : '/shipment/derliver',
 							grant : 4, 
@@ -226,12 +258,45 @@ const store = new Vuex.Store({
 					]
 				},
 				{
-					title : "현황분석",
+					title : "실적분석",
 					icon : "mdi-chart-bar-stacked",
 					to : '',
 					grant : 6, 
 					newTab : false,
-					subItems : []
+					subItems : [
+						{
+							title : "납기내역",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "불량율 분석",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "고객별 매출 분석",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "기간별 매출 분석",
+							icon : "",
+							to : '/shipment/derliver',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+					]
 				},
 				
 			]
