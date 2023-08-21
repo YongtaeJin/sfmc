@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-toolbar height="40px" background-color="primary" dark>
-            <v-toolbar-title>작업실적</v-toolbar-title>
+            <v-toolbar-title>생산실적</v-toolbar-title>
             <v-spacer/>
             <tooltip-btn label="조회" @click="view"><v-icon>mdi-magnify</v-icon></tooltip-btn>
             <!-- <tooltip-btn label="작성" @click="add"><v-icon>mdi-plus</v-icon></tooltip-btn>

@@ -225,7 +225,50 @@ const prodModel = {
         }
         await db.execute('COMMIT');
         return true;
-    }
+    },
+
+    async getProdWorkview(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;
+        
+        var values = new Array();
+        let query = `select a.c_com, a.i_order, b.i_orderser, ` +
+                    `       a.i_orderno, a.n_vend, a.n_order, b.c_item, b.n_item, b.t_size, b.m_cnt m_ocnt, b.s_duedate,  \n` +
+                    `       c.m_yescnt, c.m_nocnt, b.d_plan1, b.d_plan2, d.s_works, d.s_worke, d.w_workcnt, b.f_work \n` +
+                    `  from tb_order a \n` +
+                    `       join tb_orderli b on a.i_order = b.i_order and a.c_com = b.c_com \n` +
+                    `       join (select i_order, c_com, i_orderser, sum(if(f_err = 'N', m_cnt,0)) m_yescnt, sum(if(f_err = 'N', 0, m_cnt)) m_nocnt \n` +
+                    `                          from tb_prodmake \n` +
+                    `                         group by i_order, c_com, i_orderser)  c on b.c_com = c.c_com and b.i_order = c.i_order and b.i_orderser = c.i_orderser \n` +
+                    `       join (select i_order, c_com, i_orderser, count(*) w_workcnt, min(s_workday) s_works, max(s_workday) s_worke \n` +
+                    `                          from (select i_order, c_com, i_orderser, s_workday \n` +
+                    `                                  from tb_prodmake \n` +
+                    `                                  group by i_order, c_com, i_orderser, s_workday) t \n` +
+                    `                          group by i_order, c_com, i_orderser  \n` +
+                    `                        )  d on b.c_com = d.c_com and b.i_order = d.i_order and b.i_orderser = d.i_orderser \n ` +
+                    ` where a.c_com = ? \n` ;
+        values.push(c_com);        
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += ` and a.d_plan2 between ? and ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += ` and a.d_plan2 >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += ` and a.d_plan2 <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query += ` and a.n_vend like ? \n `
+            values.push(sVend + '%');
+        }
+        query += ` order by a.i_order, b.s_sort, b.i_orderser \n` ;
+
+        const [rows] = await db.execute(query, values);         
+        return rows;        
+    },
 
 }
 
