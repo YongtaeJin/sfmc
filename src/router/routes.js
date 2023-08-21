@@ -97,6 +97,11 @@ const routes = [
 		component: () => import(/* webpackChunkName: "ProdPlanning" */ '../views/prod/ProdPlanning.vue')
 	},
 	{
+		path: '/prod/workorder',
+		name: 'ProdWorkorder',
+		component: () => import(/* webpackChunkName: "ProdWorkorder" */ '../views/prod/ProdWorkorder.vue')
+	},
+	{
 		path: '/prod/work',
 		name: 'ProdWork',
 		component: () => import(/* webpackChunkName: "ProdWork" */ '../views/prod/ProdWork.vue')

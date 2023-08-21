@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-toolbar height="40px" background-color="primary" dark>
-            <v-toolbar-title>생산 계획</v-toolbar-title>
+            <v-toolbar-title>작업 지시</v-toolbar-title>
             <v-spacer/>
             <tooltip-btn label="조회" @click="view"><v-icon>mdi-magnify</v-icon></tooltip-btn>
             <!-- <tooltip-btn label="작성" @click="add"><v-icon>mdi-plus</v-icon></tooltip-btn>
@@ -43,14 +43,15 @@
                     <td> {{ item.i_unit }}</td>
                     <td> {{ item.m_cnt }}</td>
                     <td> {{ item.s_duedate }}</td>
-                    <td v-if="item.f_work == 'x' || item.f_work == '2'" @dblclick ="setWork(item)">
+                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)">
                         <v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
-                        <td align='center' v-else><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>                        
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)">
-                        <v-text-field v-model="item.d_plan1" readonly dense hide-details  class="my-text-field"/></td>
+                        <td align='center' v-else><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
+                        
+                    <td v-if="item.f_work == 'x'" @dblclick ="handleCellClick(item.d_plan1)">
+                        <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan1}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)">
-                        <v-text-field v-model="item.d_plan2" readonly dense hide-details  class="my-text-field"/></td>
+                    <td v-if="item.f_work == 'x'" @dblclick ="handleCellClick(item.d_plan2)">
+                        <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan2}}</td>
                     <td align="left"> 
                         <v-text-field v-if="item.f_work == '1'" v-model="item.t_remark" @input="setedit" dense hide-details class="my-text-field"/>
@@ -64,13 +65,13 @@
                     <td> {{ item.i_unit }}</td>
                     <td> {{ item.m_cnt }}</td>
                     <td> {{ item.s_duedate }}</td>
-                    <td v-if="item.f_work == 'x' || item.f_work == '2'" @dblclick ="setWork(item)">
+                    <td v-if="item.f_work == '1' || item.f_work == '2'" @dblclick ="setWork(item)">
                        <v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip> </td>
                        <td align='center' v-else><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan1)">
+                    <td v-if="item.f_work == 'x'" @dblclick ="handleCellClick(item.d_plan1)">
                         <v-text-field v-model="item.d_plan1" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan1}}</td>
-                    <td v-if="item.f_work == '1'" @dblclick ="handleCellClick(item.d_plan2)">
+                    <td v-if="item.f_work == 'x'" @dblclick ="handleCellClick(item.d_plan2)">
                         <v-text-field v-model="item.d_plan2" readonly dense hide-details class="my-text-field"/></td>
                         <td align='center' v-else>{{item.d_plan2}}</td>
                     <td align="left"> 
@@ -106,7 +107,7 @@ export default {
             PROD001,
             valid: true,
             form : {
-                sDate1:"", sDate2:"", sVend:"", work:"plan",
+                sDate1:"", sDate2:"", sVend:"", work:"order",
             },
             itemHead: [
                 {text: 'No',       sortable: false, align:'center', width: "25"},
@@ -210,17 +211,16 @@ export default {
         },
         handleCellClick() {            
             this.$refs.dialog_plan.open();
-            // this.setedit();
         },
         close_plan() {
 
         },
         setedit() {
-           if (this.itemInfo) this.itemInfo.f_edit = "1";
-        },
-        setplandate(item) {            
             if (this.itemInfo) this.itemInfo.f_edit = "1";
+        },
+        setplandate(item) {
             this.$refs.dialog_plan.close();
+            if (this.itemInfo) this.itemInfo.f_edit = "1";
             if (item[1]) {
                 this.itemInfo.d_plan1 = item[0] > item[1] ? item[1] : item[0];
                 this.itemInfo.d_plan2 = item[0] > item[1] ? item[0] : item[1];            

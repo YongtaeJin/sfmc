@@ -14,7 +14,7 @@ const prodModel = {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         
         const { c_com } = req.user;
-        const { sDate1, sDate2, sVend } = req.body;  
+        const { sDate1, sDate2, sVend, work } = req.body;  
 
         // let where = `SELECT * FROM tb_prodplan \n WHERE c_com = ? \n`;
         let where = `select a.c_com, a.i_order, b.i_orderser, a.i_orderno, \n` +
@@ -24,6 +24,7 @@ const prodModel = {
                     ` where a.c_com = ? and a.f_use = 'Y' \n` ;
                     
         var values = new Array();
+        if(work == "order") where += `  and b.d_plan1 is not null \n`;
         values.push(c_com);
         if (sDate1.length > 0 && sDate2.length > 0 ) {
             where += ` and a.s_date between ? and ? \n `

@@ -166,6 +166,14 @@ const store = new Vuex.Store({
 							subItems : []
 						},
 						{
+							title : "작업지시",
+							icon : "",
+							to : '/prod/workorder',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+						{
 							title : "생산실적",
 							icon : "",
 							to : '/prod/work',
