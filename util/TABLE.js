@@ -19,6 +19,7 @@ const TABLE = {
 	ORDERLI: 'tb_orderli',
 	PRODMAKE: 'tb_prodmake',
 	NOTICE: 'tb_notice',
+	SHIPMENT: 'tb_prodship',
 
 };
 

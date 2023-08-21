@@ -523,7 +523,7 @@ export default {
             });
         },
 
-        rowSelectDetail:function (item, row) {                
+        rowSelectDetail:function (item, row) {
             row.select(true);
             this.itemInfo = item;
         },

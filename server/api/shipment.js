@@ -9,6 +9,10 @@ router.post('/getDerliverlist', async (req, res) => {
     const result = await modelCall(shipmentModel.getDerliverlist, req);
 	res.json(result);
 });
+router.post('/getDerliverlistdt', async (req, res) => {    
+    const result = await modelCall(shipmentModel.getDerliverlistdt, req);
+	res.json(result);
+});
 
 router.post('/iuDerliverlist', async (req, res) => {
     const result = await modelCall(shipmentModel.iuDerliverlist, req);
