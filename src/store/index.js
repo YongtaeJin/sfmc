@@ -201,7 +201,7 @@ const store = new Vuex.Store({
 						{
 							title : "공정진행현황",
 							icon : "",
-							to : '/prod/workview2',
+							to : '/prod/workorderview',
 							grant : 5, 
 							newTab : false,
 							subItems : []
