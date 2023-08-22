@@ -18,5 +18,7 @@ export const PROD001 = [
 	{ label: "작업", value: "3" },
 	{ label: "완료", value: "4" },
 	{ label: "출고", value: "5" },
-	{ label: "임금", value: "6" },
+	{ label: "요청", value: "6" },
+	{ label: "입금", value: "7" },
 ];
+

@@ -32,7 +32,7 @@ const shipmentModel = {
         
         var values = new Array();
         let query = `select a.c_com, a.i_order, b.i_orderser, \n` +
-                    `       a.s_date, a.i_orderno, a.n_vend, a.n_order, b.c_item, b.n_item, b.t_size, b.m_cnt m_ocnt, b.s_duedate,  \n` +
+                    `       a.s_date, a.i_orderno, a.n_vend, a.n_order, b.c_item, b.n_item, b.t_size, b.m_cnt m_ocnt, b.s_duedate, b.f_work,  \n` +
                     `       c.m_yescnt, ifnull(d.m_shipcnt, 0) m_shipcnt,  d.d_ship  \n` +        
                     ` from  tb_order a \n` +
                     `       join tb_orderli b on a.i_order = b.i_order \n` +
@@ -122,7 +122,8 @@ const shipmentModel = {
         }
         await db.execute('COMMIT');        
         return true;
-    }
+    },
+    
 }
 
 async function sqlDbExecute(sql) {	    

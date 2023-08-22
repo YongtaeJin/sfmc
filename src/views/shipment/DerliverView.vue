@@ -32,6 +32,7 @@
                     <td> {{ item.i_orderno }}</td>
                     <td> {{ item.s_date }}</td>
                     <td> {{ item.n_vend }}</td>
+                    <td><v-chip x-small :color="getColor(item.f_work)" dark @dblclick="setStatus(item)">{{getStatus(item.f_work)}} </v-chip></td>
                     <td> {{ item.c_item }}</td>
                     <td class="left-align"> {{ item.n_item }}</td>
                     <td> {{ item.t_size }}</td>
@@ -55,19 +56,19 @@
                     class="elevation-1 text-no-wrap"  max-height="160px" height="160px" 
                     >
             <template v-slot:[`item.i_shipno`]="{ item }">
-                <v-text-field v-model="item.i_shipno" @input="onChangeDetail" v-if=" item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
+                <v-text-field v-model="item.i_shipno" @input="onChangeDetail" v-if=" edit && item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
                 <span v-else>{{item.i_shipno}}</span>
             </template>
             <template v-slot:[`item.d_ship`]="{ item }">
-                <input-date-2 v-model="item.d_ship" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" :rules="rules.date({required: false})" />
+                <input-date-2 v-model="item.d_ship" @input="onChangeDetail" v-if=" edit && item.i_shipser === selectdt.i_shipser" :rules="rules.date({required: false})" />
                 <span v-else>{{item.d_ship}}</span>
             </template>
             <template v-slot:[`item.m_shipcnt`]="{ item }">                        
-                <input-number v-model="item.m_shipcnt" :maxlength="4" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" ></input-number>                        
+                <input-number v-model="item.m_shipcnt" :maxlength="4" @input="onChangeDetail" v-if=" edit && item.i_shipser === selectdt.i_shipser" ></input-number>                        
                 <span v-else>{{comma(item.m_shipcnt)}}</span>                
             </template>
             <template v-slot:[`item.t_remark`]="{ item }">
-                <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if=" item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
+                <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if=" edit && item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
                 <span v-else>{{item.t_remark}}</span>
             </template>
         </v-data-table>
@@ -105,7 +106,8 @@ export default {
                 {text: 'No',            sortable: false, align:'center', width: "25"},
                 {text: '수주번호',   value: 'i_orderno', sortable: false, align:'center', width: "60"},
                 {text: '수주일',     value: 's_date', sortable: false, align:'center', width: "50px"},
-                {text: '발주처',     value: 'n_vend', sortable: false, align:'center', width: "100px"},
+                {text: '발주처',     value: 'n_vend', sortable: false, align:'center', width: "100px"},                
+                {text: '상태',       value: 'f_work', sortable: false, align:'center', width: "50px"},
                 {text: '품번',       value: 'c_item', sortable: false, align:'center', width: "50px"},
                 {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "130px"},
                 {text: '규격(사양)', value: 't_size', sortable: false, align:'center', width: "90px"},
@@ -113,7 +115,7 @@ export default {
                 // {text: '단위',      value: 'i_unit', sortable: false, align:'center', width: "50px"},
                 {text: '납품예정일', value: 's_duedate', sortable: false, align:'center', width: "50px"},
                 {text: '생산수량',   value: 'm_yescnt', sortable: false, align:'center', width: "30px"},
-                {text: '출하수량',   value: 'm_nocnt', sortable: false, align:'center', width: "30px"},                
+                {text: '출하수량',   value: 'm_shipcnt', sortable: false, align:'center', width: "30px"},                
                 {text: '출하일자',    value: 'd_ship', sortable: false, align:'center', width: "50px"},
                 
             ],
@@ -136,10 +138,17 @@ export default {
                     return r.f_edit == '1' || r.f_edit == '2'
                 });
             return tmp.length;
-        },        
+        },
+        edit() {
+            return this.selected.f_work == "3" || this.selected.f_work == "4" ? true : false;
+        },
+        workend() {
+            return this.selected.f_work >= "6" ? true : false;
+        }
     },
     methods: {     
         ...mapActions("shipment", ["iuDerliverlist"]), 
+        ...mapActions("prod", ["iuProdWorkset"]), 
         comma (value) {
             if (value !== null && value !== undefined) {
                 return String(Math.trunc(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -147,7 +156,14 @@ export default {
                 return String(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             }
         },
+        getStatus(item) {
+            return item == "3" ? "작업" : item == "4" ? "생산" : "출고";
+        },
         
+        // getStatus(item) {
+        //     var find = this.PROD001.find(e => e.value === item);
+        //     return find !== undefined ? find.label : '';
+        // },
         async init() {
             this.view();
         },  
@@ -162,24 +178,39 @@ export default {
             } 
         },
         getColor (data) {
-            if(data == "1") { return 'red'; } 
-            else if (data == "2") {return 'blue';}
-            else { return 'green';}
+            return data == "3" ? 'red' : data == "4" ? 'blue' : 'green';
         },
-        getStatus(item) {
-            var find = this.PROD001.find(e => e.value === item);
-            return find !== undefined ? find.label : '';
-        },
+        async setStatus(item) {
+            if (this.workend) return;
+            // if (item.f_work >= '6') return;
+            if (this.editJob) {
+                this.$toast.warning(`저장 후 상태 변경 가능 합니다.`);
+                return;
+            };            
+            // 출하수량 확인 
+            if (this.selected.m_shipcnt == "0") {
+                this.$toast.warning(`출하 수량이 없습니다.`);
+                return;
+            }
+
+            const res = await this.$ezNotify.confirm("출하처리 또는 취소 합니다. ", "출고 확인", {icon: "mdi-message-bulleted-off", width: 350,});
+            if(!res) return
+
+            this.selected.f_work = this.selected.f_work == "5" ? "4" : "5";
+            const rv = this.iuProdWorkset(this.selected);
+            if(rv) this.$toast.info(`출하 상태 처리 하였습니다...`);
+        },  
+        
         async save() {
-            const data = await this.iuDerliverlist(this.itemdts);
-            
+            const data = await this.iuDerliverlist(this.itemdts);            
             if (data) {
                 for (let i = this.itemdts.length - 1; i >= 0; i--) {
                     if (this.itemdts[i].f_edit == "2" ) {
                         this.itemdts.splice(i, 1);
                     };
                 }
-                this.itemdts.forEach((row) => { 
+                this.itemdts.forEach((row, index) => { 
+                    row.m_sort = index + 1;
                     row.f_edit = "0";
                     row.f_editold = "0";
                 });
@@ -188,11 +219,12 @@ export default {
 
         },
         async selectItem(item) {
+            if (this.selected == item) return;    
             if (this.editJob) {
                 const res = await this.$ezNotify.confirm("수정 내용 취소 합니다. ", "수정 확인", {icon: "mdi-message-bulleted-off", width: 350,});
                 if(!res) return;                
             }
-            if (this.selected == item) return;
+            
             this.selected = item;
             this.fromdt.c_com = item.c_com
             this.fromdt.i_order = item.i_order
@@ -203,17 +235,20 @@ export default {
             this.itemdts = await this.$axios.post(`/api/shipment/getDerliverlistdt`, this.fromdt);            
         },
         
-        selectItemDt:function (item, row) {           //     
+        selectItemDt:function (item, row) {
             row.select(true);
             this.selectdt = item;            
         },
-        // async selectItemDt(item, row)  {
-        //     row.select(true);
-        //     this.selectdt = item;           
-        // },
+        
         async addDetail() {
+            if(!this.edit) return;
             if(!this.selected || this.selected.i_order == undefined ) return;
             
+            let ordercnt = parseInt(this.selected.m_ocnt);
+            let shipcnt  = parseInt(this.selected.m_shipcnt);
+            let yescnt   = parseInt(this.selected.m_yescnt);
+            let difcnt   = parseInt(this.selected.m_difcnt);
+
             const ms = Date.now(); 
             const obj = {};            
             obj.c_com       = this.$store.state.user.member.c_com;
@@ -222,7 +257,7 @@ export default {
             obj.d_ship      = getDate();
             obj.i_order     = this.selected.i_order;
             obj.i_orderser  = this.selected.i_orderser;
-            obj.m_shipcnt   = this.selected.m_ocnt;
+            obj.m_shipcnt   = shipcnt == 0 ? ordercnt : difcnt <= shipcnt ? 1 : yescnt - shipcnt;
             obj.t_remark    = "";
             obj.f_edit      = "1";
             obj.f_editold   = "1";
@@ -236,12 +271,12 @@ export default {
             this.onChangeMaster();
         },
         async delDetail() {
+            if(!this.edit) return;
             if(!this.selected || this.selected.i_order == undefined ) return;
             const idx = this.itemdts.indexOf(this.selectdt);
             if (idx > -1) {                
                 if (this.itemdts[idx].f_editold == "0") {
-                    this.itemdts[idx].f_edit = this.itemdts[idx].f_edit === "2" ? "1": "2";
-                    // this.itemdts[idx].f_edit = "2";
+                    this.itemdts[idx].f_edit = this.itemdts[idx].f_edit === "2" ? "1": "2";                    
                 } else {
                     this.itemdts.splice(idx, 1);                    
                 }
