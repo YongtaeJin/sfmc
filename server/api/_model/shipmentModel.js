@@ -62,6 +62,10 @@ const shipmentModel = {
         query += ` order by a.i_order, b.s_sort, b.i_orderser \n` ;
 
         const [rows] = await db.execute(query, values);
+        rows.forEach((row, index) => {
+            row.m_difcnt =  row.m_yescnt - row.m_shipcnt;
+            addEditCol(row);     // 수정 칼럼 추가 처리 
+        });
         return rows;
     },
     async getDerliverlistdt(req) {
@@ -72,13 +76,57 @@ const shipmentModel = {
         console.log(sql)
         const [rows] = await db.execute(sql.query, sql.values);        
         
-        rows.forEach((row) => {
+        rows.forEach((row, index) => {
+            row.m_sort = index + 1;            
             addEditCol(row);
         });
         return rows;
     },
     async iuDerliverlist(req) {
+        if (!isGrant(req, LV.PRODUCTION))  throw new Error('권한이 없습니다.');
+		const { i_id, n_name } = req.user;
+        // console.log(req.body)
+        const at = moment().format('LT'); 
+        const item = req.body;
+        
+        if (! item.length) return 0;
+        
+        await dbSet.setAutoCommitNo();
+        for (let i = 0; i < item.length; i++) {
+            const { c_com, i_shipser, i_shipno, d_ship, i_order, i_orderser, m_shipcnt, t_remark, f_edit, f_editold } = item[i];
+            if (f_edit == "0") continue;      // 수정 내용 없음
+            delete item[i].m_sort;
+            delete item[i].f_edit;
+            delete item[i].f_editold;
+
+            const newdata = f_editold == "1" ? true : false;
+            const deldata = f_edit == "2" ? true : false;
+            if (newdata) {
+                delete item[i].d_update_at;
+                delete item[i].n_upnm;
+                item[i].d_create_at = at;
+                item[i].n_crnm      = n_name;
+            } else {
+                delete item[i].d_create_at;
+                delete item[i].n_crnm;
+                item[i].d_update_at = at;
+                item[i].n_upnm      = n_name;
+            };
+            const sql = deldata ? sqlHelper.DeleteSimple(TABLE.SHIPMENT, {c_com, i_shipser}) : newdata ? sqlHelper.Insert(TABLE.SHIPMENT, item[i]) : sqlHelper.Update(TABLE.SHIPMENT, item[i], {c_com, i_shipser});
+            console.log("sql", sql);
+            const res = await sqlDbExecute(sql);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }
+        await db.execute('COMMIT');        
+        return true;
     }
 }
 
+async function sqlDbExecute(sql) {	    
+    const [row] = await db.execute(sql.query, sql.values);
+    return row;
+}
 module.exports = shipmentModel;

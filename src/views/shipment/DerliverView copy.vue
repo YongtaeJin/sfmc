@@ -50,25 +50,26 @@
             <tooltip-btn label="삭제" @click="delDetail"  x-small><v-icon>mdi-minus</v-icon></tooltip-btn>            
         </v-toolbar>
         <v-data-table ref="tabledt" :headers="itemHeaddt" :items="itemdts"                     
-                    item-key="i_shipser" single-select v-model="selectedItemIndex"  @click:row="selectItemDt"  
-                    :item-class= "row_classes" :items-per-page="-1"  hide-default-footer                    
+                    item-key="i_shipser" single-select v-model="selectedItemIndex"  
+                    :item-class= "row_classes" :items-per-page="-1"  hide-default-footer
+                    
                     class="elevation-1 text-no-wrap"  max-height="160px" height="160px" 
                     >
-            <template v-slot:[`item.i_shipno`]="{ item }">
-                <v-text-field v-model="item.i_shipno" @input="onChangeDetail" v-if=" item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
-                <span v-else>{{item.i_shipno}}</span>
-            </template>
-            <template v-slot:[`item.d_ship`]="{ item }">
-                <input-date-2 v-model="item.d_ship" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" :rules="rules.date({required: false})" />
-                <span v-else>{{item.d_ship}}</span>
-            </template>
-            <template v-slot:[`item.m_shipcnt`]="{ item }">                        
-                <input-number v-model="item.m_shipcnt" :maxlength="4" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" ></input-number>                        
-                <span v-else>{{comma(item.m_shipcnt)}}</span>                
-            </template>
-            <template v-slot:[`item.t_remark`]="{ item }">
-                <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if=" item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
-                <span v-else>{{item.t_remark}}</span>
+            <template v-slot:item="{ item,index }">
+                <tr :class="{ 'row_select': item === selectdt }" class="center-align"  @click="selectItemDt(item)">
+                    <td> {{ index + 1 }} </td>
+                    <td> <v-text-field v-model="item.i_shipno" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
+                        <span v-else> {{ item.i_shipno }} </span> </td>
+                    <td> <input-date-2 v-model="item.d_ship" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" :rules="rules.date({required: false})" />
+                         <span v-else>{{item.d_ship}}</span>                        
+                    </td>                    
+                    <td> <input-amt v-model="item.m_shipcnt" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" ></input-amt>
+                        <span v-else> {{comma(item.m_shipcnt)}} </span>
+                    </td>   
+                    <td> <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
+                         <span v-else> {{ item.t_remark }} </span>
+                    </td>                    
+                </tr>  
             </template>
         </v-data-table>
     </v-container>  
@@ -83,11 +84,10 @@ import InputDateft from '../../components/InputForms/InputDateft.vue'
 import validateRules from "../../../util/validateRules";
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import InputAmt from '../../components/InputForms/InputAmt.vue';
-import InputNumber from '../../components/InputForms/InputNumber.vue';
     
 
 export default {    
-    components: { TooltipBtn,  InputDateft, InputDate2, InputAmt, InputNumber},
+    components: { TooltipBtn,  InputDateft, InputDate2, InputAmt},
     name: "DerliverView",
     mounted() {        
         this.init();
@@ -102,7 +102,7 @@ export default {
             },
             fromdt : {c_com: "", i_order: "", i_orderser: ""},
             itemHead: [
-                {text: 'No',            sortable: false, align:'center', width: "25"},
+                {text: 'No',       sortable: false, align:'center', width: "25"},
                 {text: '수주번호',   value: 'i_orderno', sortable: false, align:'center', width: "60"},
                 {text: '수주일',     value: 's_date', sortable: false, align:'center', width: "50px"},
                 {text: '발주처',     value: 'n_vend', sortable: false, align:'center', width: "100px"},
@@ -119,13 +119,13 @@ export default {
             ],
             itemLists:[], selected:[],
             itemHeaddt: [
-                {text: 'No',        value: 'm_sort', sortable: false, align:'center', width: "30"},
+                {text: 'No',                           sortable: false, align:'center', width: "30"},
                 {text: '출하번호',   value: 'i_shipno', sortable: false, align:'center', width: "100px"},
                 {text: '출하일자',   value: 'd_ship', sortable: false, align:'center', width: "70px"},
                 {text: '출하수량',   value: 'm_shipcnt', sortable: false, align:'center', width: "60px"},
                 {text: '비고',       value: 't_remark', sortable: false, align:'center', width: "300px"},
             ],
-            itemdts:[], selectdt:[],  selectedItemIndex:[],
+            itemdts:[], selectdt:[],  selectedItemIndex: [],
            
         }
     },
@@ -172,8 +172,8 @@ export default {
         },
         async save() {
             const data = await this.iuDerliverlist(this.itemdts);
-            
-            if (data) {
+            //console.log(data);
+            if (data == 0) {
                 for (let i = this.itemdts.length - 1; i >= 0; i--) {
                     if (this.itemdts[i].f_edit == "2" ) {
                         this.itemdts.splice(i, 1);
@@ -199,18 +199,16 @@ export default {
             this.fromdt.i_orderser = item.i_orderser;
 
             this.selectdt = [];
-            this.selectedItemIndex = [];
             this.itemdts = await this.$axios.post(`/api/shipment/getDerliverlistdt`, this.fromdt);            
         },
         
-        selectItemDt:function (item, row) {           //     
+        selectItemDt:function (item, row) {                
             row.select(true);
             this.selectdt = item;            
         },
-        // async selectItemDt(item, row)  {
-        //     row.select(true);
-        //     this.selectdt = item;           
-        // },
+        async selectItemDt(item)  {
+            this.selectdt = item;           
+        },
         async addDetail() {
             if(!this.selected || this.selected.i_order == undefined ) return;
             
@@ -226,22 +224,20 @@ export default {
             obj.t_remark    = "";
             obj.f_edit      = "1";
             obj.f_editold   = "1";
-            obj.m_sort      = this.itemdts.length + 1;
             
             const idx = this.itemdts.push(obj);
-            if (idx >=0 ) {                
-                this.selectedItemIndex = [];
-                this.selectedItemIndex.push(obj)
+            if (idx >=0 ) {
+                this.selectItemDt(obj);
             }
             this.onChangeMaster();
         },
         async delDetail() {
             if(!this.selected || this.selected.i_order == undefined ) return;
             const idx = this.itemdts.indexOf(this.selectdt);
-            if (idx > -1) {                
+            if (idx > -1) {
                 if (this.itemdts[idx].f_editold == "0") {
-                    this.itemdts[idx].f_edit = this.itemdts[idx].f_edit === "2" ? "1": "2";
-                    // this.itemdts[idx].f_edit = "2";
+                    this.itemdts[idx].f_edit = this.selected.f_edit === "2" ? "0": "2";
+                    this.itemdts[idx].f_edit = "2";
                 } else {
                     this.itemdts.splice(idx, 1);                    
                 }
@@ -264,7 +260,7 @@ export default {
                 }
             } else {
                 this.itemLists[idx].m_shipcnt = 0;
-                this.itemLists[idx].d_ship = '';
+                this.itemLists[idx].d_ship = '';''
                 this.itemLists[idx].m_difcnt = this.itemLists[idx].m_yescnt - this.itemLists[idx].m_shipcnt;
                 this.itemLists[idx].f_edit = '1';
             }

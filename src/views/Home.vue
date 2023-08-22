@@ -61,7 +61,8 @@ export default {
     async init() {
       const query = qs.stringify({c_com: this.$store.state.user.member.c_com});            
       this.data = await this.$axios.get(`/api/system/getNoticeCom?${query}`);
-      if (this.data) {
+      
+      if (this.data.length) {
         this.form.t_title = this.data[0].t_title
         this.form.t_content = this.data[0].t_content
       }
