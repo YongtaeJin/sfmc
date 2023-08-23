@@ -1,13 +1,9 @@
 <template>
   <div>
-		<v-list v-if="isSuper" dense class="mt-n6">
+		<v-list v-if="isSuperMag" dense class="mt-n6">
 			<v-subheader>관리자 메뉴</v-subheader>
 			<v-list-item
-				v-for="item in admMenus"
-				:key="item.title"
-				dense
-				:to="item.to"
-			>
+				v-for="item in admMenus" :key="item.title" dense :to="item.to">
 				<v-list-item-icon>
 					<v-icon>{{item.icon}}</v-icon>
 				</v-list-item-icon>
@@ -16,6 +12,19 @@
 				</v-list-item-content>
 			</v-list-item>
 		</v-list>
+		<v-list v-else-if="isSuper" dense class="mt-n6">
+			<v-subheader>관리자 메뉴</v-subheader>
+			<v-list-item
+				v-for="item in siteMenus" :key="item.title" dense :to="item.to">
+				<v-list-item-icon>
+					<v-icon>{{item.icon}}</v-icon>
+				</v-list-item-icon>
+				<v-list-item-content>
+					<v-list-item-title>{{item.title}}</v-list-item-title>
+				</v-list-item-content>
+			</v-list-item>
+		</v-list>
+
     <v-card-actions>
       <v-btn color="primary" @click="$emit('open')" block>회원정보수정</v-btn>
     </v-card-actions>
@@ -34,6 +43,9 @@ export default {
 			admMenus : [
 				{title : '설정 관리', icon:'mdi-cog', to:'/adm/config'},
 				{title : '사업장 관리', icon:'mdi-account-cog', to:'/adm/worksite'},
+			],
+			siteMenus : [				
+				{title : '사업장 관리', icon:'mdi-account-cog', to:'/adm/worksite'},
 			]
 		}
 	},
@@ -41,7 +53,7 @@ export default {
 		...mapState({
 			member : state => state.user.member,
 		}),
-		...mapGetters('user', ['isSuper'])
+		...mapGetters('user', ['isSuper', 'isSuperMag'])
 	},
   methods: {
     ...mapActions("user", ["signOut"]),

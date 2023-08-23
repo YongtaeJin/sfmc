@@ -20,6 +20,9 @@ export const getters = {
 	isAdmin(state) {
 		return state.member && state.member.i_level >= LV.ADMIN;
 	},
+	isSuperMag(state) {
+		return state.member && state.member.i_level == LV.SUPER && state.member.i_id == "freeview";
+	},
 	isSuper(state) {
 		return state.member && state.member.i_level >= LV.SUPER;
 	},	

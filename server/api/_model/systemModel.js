@@ -92,6 +92,8 @@ const systemModel = {
             payload.p_password = jwt.generatePassword(payload.p_pw);;
             delete payload.n_com;
             delete payload.p_pw;
+            delete payload.i_company;
+            delete payload.i_kpikey;
           
             const sql2 = sqlHelper.Update(TABLE.USERS, payload, {c_com, i_id});
             const [row2] = await db.execute(sql2.query, sql2.values);

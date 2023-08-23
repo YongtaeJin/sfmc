@@ -31,12 +31,12 @@ export function createRouter() {
 		const access = store.getters.access;
 		const GRANT = store.getters['user/GRANT'];
 		const isMember = !!store.state.user.member;
-
-		let msg = '';
+		
+		let msg = '';		
 		if (to.name.startsWith('NoAuth') && isMember) {
 			// 비회원 인경우에만 접근
 			msg = "이미 로그인 되어 있습니다.";
-		} else if (to.name.startsWith('Adm') && GRANT < LV.SUPER) {
+		} else if (to.name.startsWith('Adm') && GRANT < LV.SUPER ) {
 			// 관리자 전용 페이지
 			msg = `${LV_LABEL(LV.SUPER)}(${LV.SUPER}) 이상 접근 가능합니다.`;
 		} else {

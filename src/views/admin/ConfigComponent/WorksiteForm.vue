@@ -37,8 +37,7 @@
             <v-responsive width="60px">
                 <v-text-field label="사용여부"             
                     :readonly=true
-                    v-model=form.f_use>
-                    -
+                    v-model=form.f_use>                    
                     <template v-slot:append>                        
                         <v-btn @click="setUseYN" small icon >
                             <v-icon>mdi-check</v-icon>
@@ -53,7 +52,16 @@
                 v-model="form.p_pw"                
                 :rules="rules.password2({len:3})"
             />                         
-        </v-row>        
+        </v-row>
+        <v-row no-gutters>
+             <v-responsive width="60px">
+                <v-text-field label="사업자번호"             
+                v-model="form.i_company" />
+            </v-responsive>
+            <v-spacer />
+            <v-text-field label="KPI 인증키"             
+                v-model="form.i_kpikey" />
+        </v-row>
         <v-textarea label="설명" v-model="form.t_remark" />        
         <v-btn type="submit" block>저장</v-btn>
         
@@ -98,6 +106,8 @@ export default {
                 i_id: "",
                 f_use: "",
                 p_pw: "",
+                i_company: "",
+                i_kpikey: "",
                 t_remark: "",
             },
             isNew : false,            
@@ -137,6 +147,8 @@ export default {
                     i_id: "",
                     f_use: "Y",
                     p_pw: "",
+                    i_company: "",
+                    i_kpikey: "",
                     t_remark: "",
                 },
                 this.isNew = true;
