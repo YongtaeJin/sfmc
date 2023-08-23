@@ -33,7 +33,7 @@
 
 <script>
 import { deepCopy } from '../../../../util/lib';
-import { LVITEMS } from '../../../../util/level';
+import { LVITEMS2 } from '../../../../util/level';
 import validateRules from "../../../../util/validateRules";
 import InputDuplicateDualCheck from '../../../components/InputForms/InputDuplicateDualCheck.vue';
 import InputPassword from '../../../components/InputForms/InputPassword.vue';
@@ -76,7 +76,7 @@ export default {
     },
     created() {
         this.init();
-        this.lvitems = LVITEMS;
+        this.lvitems = LVITEMS2;
     },
     watch: {
         isLoad() {

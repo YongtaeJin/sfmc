@@ -188,6 +188,8 @@ const memberModel = {
 			const sql2 = sqlHelper.Update(TABLE.USERS, data, { i_id, c_com });
 			db.execute(sql2.query, sql2.values);
 		}
+		const logsql = `insert into tb_login (c_com, i_id, d_loing, i_ip) values ('${c_com}', '${i_id}', '${data.d_login_at}', '${data.t_login_ip}')`;
+		db.execute(logsql);
 		db.execute('COMMIT');
 		return data;
 	},
