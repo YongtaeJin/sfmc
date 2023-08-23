@@ -14,9 +14,15 @@ require('./plugins/pm2Bus');
 	const configModel = require('./api/_model/configModel');
 	await configModel.load();
 
+	const kpiModel = require('./api/_model/kpiModel');
 	setInterval(() => {
-		//console.log($config.client.title, $config.server.title)
+		// console.log($config.client.title, $config.server.title);
+		//  kpiModel.kpisend();
 	}, 5000);
+
+	setInterval(() => {
+		// kpiModel.load();		
+	}, 60000);
 
 	let isDiableKeepAlive = false;
 	app.use((req, res, next) => {

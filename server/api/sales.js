@@ -40,6 +40,12 @@ router.delete('/delSaleEstimate/:c_com/:i_ser', async(req, res)=>{
 // 	res.json(result);
 // });
 
+// 견적제출현황
+router.post('/getSaleEstimateList', async (req, res) => {
+	const result = await modelCall(salesModel.getSaleEstimateList, req);
+	res.json(result);    
+});
+
 
 router.post('/getSaleOrder', async (req, res) => {
     const result = await modelCall(salesModel.getSaleOrder, req);

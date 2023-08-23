@@ -14,7 +14,6 @@ export const actions = {
 		const data = await $axios.post('/api/sales/iuSaleEstimate',  est);
 		return data;
 	},
-
 	async iuSaleOrder( { commit }, order) {
 		const { $axios } = Vue.prototype;
 		

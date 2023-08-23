@@ -261,6 +261,9 @@ table.type07 {
 .right-align {
 	text-align: justify;
 }
+.right2-align {
+	text-align: right;
+}
 .left-align {
 	text-align: left;
 }

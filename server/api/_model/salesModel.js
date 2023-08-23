@@ -224,6 +224,39 @@ const salesModel = {
 		return row.affectedRows == 1;
 	},
 
+    async getSaleEstimateList(req) {
+        
+        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;
+        var values = new Array();
+        let query = `select a.c_com, a.i_ser, b.i_serno, a.i_estno, a.f_status, a.n_vend, a.s_date, a.n_magname, \n` +
+                    `       b.c_item, b.n_item, b.t_size, b.i_type, b.m_cnt, b.a_unit, b.a_amt, b.s_duedate \n` +
+                    `  from tb_estimate a \n` +
+                    `       join tb_estimateli b on a.c_com = b.c_com and a.i_ser = b.i_ser \n` +
+                    ` where a.c_com = ? \n`;
+        values.push(c_com);        
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += ` and a.s_date between ? and ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += ` and a.s_date >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += ` and a.s_date <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query += ` and a.n_vend like ? \n `
+            values.push(sVend + '%');
+        }
+        query += ` order by a.i_estno, a.i_ser, b.s_sort`;
+        const [rows] = await db.execute(query, values);    
+        return rows;
+        
+    },
+
     async getSaleOrder(req) {     
         // 권한 확인
         if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}   
