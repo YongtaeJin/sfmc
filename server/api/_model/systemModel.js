@@ -385,6 +385,43 @@ const systemModel = {
         const [rows] = await db.execute(sql.query, sql.values);    
         return rows;
     },
+    async iuSiteCodeinit(req) {
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
+        const at = moment().format('LT');                
+        const payload = {...req.body};
+        const {c_com} = payload;
+        
+        await dbSet.setAutoCommitNo();
+        let res =null;
+        const sql1 = sqlHelper.DeleteSimple(TABLE.COMCODE, { c_com });
+        const sql2 = sqlHelper.DeleteSimple(TABLE.GRPCODE, { c_com });
+        const sql3 = `insert into tb_grpcode (c_com, c_gcode, n_gcode, s_sort, t_remark, n_crnm, d_create_at) \n` +
+                     `select '${c_com}', c_gcode, n_gcode, s_sort, t_remark, 'system', '${at}' \n` +
+                     `  from tb_grpcode \n` +
+                     `  where c_com = 'system' `;
+        
+        const sql4 = `insert into tb_comcode (c_com, c_gcode, c_code, n_code, s_sort, s_buf1, s_buf2, s_buf3, m_buf1, m_buf2, m_buf3, d_buf1, d_buf2, d_buf3, t_buf1, t_buf2, t_buf3, t_remark, n_crnm, d_create_at) \n` +
+                     `select '${c_com}', c_gcode, c_code, n_code, s_sort, s_buf1, s_buf2, s_buf3, m_buf1, m_buf2, m_buf3, d_buf1, d_buf2, d_buf3, t_buf1, t_buf2, t_buf3, t_remark, 'system', '${at}' \n` +
+                     `  from tb_comcode \n` +
+                     ` where c_com = 'system'`;
+        
+        res = await db.execute(sql1.query, sql1.values);
+        
+        res = await db.execute(sql2.query, sql2.values);
+        
+        await db.execute(sql3);
+        
+        await db.execute(sql4);
+        
+        await db.execute('COMMIT'); 
+
+        return true;
+    },
 };
+
+async function sqlDbExecute(sql) {	    
+    const [row] = await db.execute(sql.query, sql.values);
+    return row;
+}
 
 module.exports = systemModel;

@@ -21,6 +21,7 @@ const level = {
 		{ label: "BUSINESS", lv: 7 },
 		{ label: "ADMIN", lv: 8 },
 		{ label: "SYSTEM", lv: 9 },
+		{ label: "SUPER", lv: 10 },
 	],	
 	LV_LABEL: (lv) => {
 		if (lv >= level.LV.SUPER) {

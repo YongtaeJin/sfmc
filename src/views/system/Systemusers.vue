@@ -70,6 +70,7 @@ export default {
         getLvlabel (lv) {            
             var i = LVITEMS.findIndex(i => i.lv == lv );
             return (lv > -1) ?  LVITEMS[i].label : lv;
+            // return  lv;
         },
         rowSelect :function (item, row) {    
             row.select(true);            

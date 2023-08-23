@@ -6,7 +6,14 @@
             <tooltip-btn fab small label="추가" @click="addWorkSite"><v-icon>mdi-plus</v-icon></tooltip-btn>
             <tooltip-btn fab small label="조회" @click="fetchData"><v-icon>mdi-magnify</v-icon></tooltip-btn>
         </v-toolbar>
-        <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo>
+        <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo 
+                    item-key="i_ser" single-select 
+                    :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap" height="500px" max-height="500px" >
+            <template v-slot:[`item.f_init`]="{ item }">
+               <v-btn icon x-small tabindex="-1" @click="clickInit(item)"><v-icon> mdi-dialpad </v-icon></v-btn>
+            </template>
+         
         </v-data-table>
 
         <ez-dialog ref="dialog" label="사업장" persistent @onClose="closeDialog" width="500px">
@@ -33,15 +40,16 @@ export default {
     data() {
         return {
             headers: [
-                {text: '코드',  value: 'c_com', sortable: false, align:'center', width: "100px"},
-                {text: '사업장',  value: 'n_com', sortable: false, },
-                {text: '관리자',  value: 'n_name', sortable: false, align:'center', width: "20%"},
-                {text: 'ID',  value: 'i_id', sortable: false, align:'center', width: "20%"},
+                {text: '사업장코드',  value: 'c_com', sortable: false, align:'center', width: "100px"},
+                {text: '사업장명',  value: 'n_com', sortable: false, },
+                {text: '관리자성명',  value: 'n_name', sortable: false, align:'center', width: "20%"},
+                {text: '관리자ID',  value: 'i_id', sortable: false, align:'center', width: "20%"},
                 {text: '사업자번호',  value: 'i_company', sortable: false, align:'center', width: "130px"},
                 {text: 'KPI 인증키',  value: 'i_kpikey', sortable: false, align:'center', width: "130px"},
-                {text: '사용여부',  value: 'f_use', sortable: false, align:'center', width: "100px"}, 
+                {text: '사용여부',  value: 'f_use', sortable: false, align:'center', width: "100px"},
+                {text: '코드초기화',  value: 'f_init', sortable: false, align:'center', width: "100px"},
                 ],
-            items: [],
+            items: [], selected: [],
             item : {
                 c_com: "",
                 n_com: "",
@@ -61,7 +69,7 @@ export default {
     },
     
     methods: {
-        ...mapActions("system", ["duplicateCheck", "duplicateDualCheck", "insertWorksite", "updateWorksite"]),
+        ...mapActions("system", ["duplicateCheck", "duplicateDualCheck", "insertWorksite", "updateWorksite", "iuSiteCodeinit"]),
         async init() {
             this.fetchData();
         },
@@ -109,7 +117,19 @@ export default {
             }
             this.isLoading = false;   
             this.$refs.dialog.close(); 
-        }
+        },
+        async clickInit(item) {
+            const res = await this.$ezNotify.confirm("<br>공통코드 초기화 하시겠습니까 ?<br>이전 자료는 삭제 처리.... ", `${item.n_com}`, {icon: "mdi-message-bulleted-off", width: 400,});
+            if(!res) return;
+            const res2 = await this.$ezNotify.confirm("초기화 실행 합니다. ", `${item.n_com}`, {icon: "mdi-message-bulleted-off", width: 400,});
+            if(!res2) return;
+            const rv = this.iuSiteCodeinit(item);
+            if (rv) {
+                this.$toast.info(`공통코드 초기하 처리 하였습니다...`);
+            } else {
+                this.$toast.error(`실패...`);
+            }
+        },
     },
 }
 </script>

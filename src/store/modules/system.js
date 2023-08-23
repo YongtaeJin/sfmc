@@ -53,6 +53,10 @@ export const actions = {
 		const data = await $axios.post('/api/system/iuNotice', form);
 		return data;
 	},
-	
+	async iuSiteCodeinit( { commit }, form) {
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/system/iuSiteCodeinit', form);
+		return data;
+	}
 	
 };
