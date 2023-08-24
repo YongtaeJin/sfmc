@@ -8,9 +8,9 @@
         </v-toolbar> 
         <v-card style="display: flex; height: 34px; " class="my-card text-input-blue my-text-fontsize  "> 
             <div style="display: flex;">
-                <div style="width: 70px;"><v-text-field value="    견적일 : " readonly dense hide-details class="no-padding"/></div>                
+                <div style="width: 70px;"><v-text-field value="    수주일 : " readonly dense hide-details class="no-padding"/></div>                
                 <input-dateft v-model="form.sDate1" :value2.sync="form.sDate2"/>
-                <div style="width: 56px;"><v-text-field value="    발주처 : " readonly dense hide-details class="no-padding"/></div>
+                <div style="width: 56px;"><v-text-field value="    고객사 : " readonly dense hide-details class="no-padding"/></div>
                 <div style="width: 100px;"><v-text-field v-model="form.sVend" dense hide-detail class="text-input-blue no-padding" /></div>
             </div>
         </v-card>
@@ -22,11 +22,11 @@
             <template v-slot:item="{ item,index }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
                     <td> {{ index + 1 }}</td> 
-                    <td :rowspan="getRowspan(item)">{{ item.i_estno }}</td>
-                    <td :rowspan="getRowspan(item)">{{ getStatus(item.f_status) }}</td>
-                    <td :rowspan="getRowspan(item)">{{ item.n_vend }}</td> 
-                    <td :rowspan="getRowspan(item)">{{ item.s_date }}</td> 
-                    <td :rowspan="getRowspan(item)">{{ item.n_magname }}</td> 
+                    
+                    <td :rowspan="getRowspan(item)">{{ item.n_vend }}</td>
+                    <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td> 
+                    <td :rowspan="getRowspan(item)">{{ getOrderStatus(item.f_status) }}</td>
+                    <td :rowspan="getRowspan(item)">{{ item.s_date }}</td>                     
                     <td> {{ item.c_item }}</td>
                     <td class="left-align"> {{ item.n_item }}</td>
                     <td> {{ item.t_size }}</td>
@@ -53,42 +53,33 @@
 <script>
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDateft from '../../components/InputForms/InputDateft.vue';
-import { ESTI001 } from '../../../util/constval';
+import { ESTI001, ORDER001 } from '../../../util/constval';
 export default {
-  components: { InputDateft, TooltipBtn },
-    name: "EstimateList",
+    name: "SalesordersList",
+    components: { InputDateft, TooltipBtn },
     mounted() {        
         this.init();
-    },
-    
+    },    
     data() {
         return {
-            ESTI001,
+            ESTI001, ORDER001,
             form : {sDate1:"", sDate2:"", sVend:"",},
             itemHead: [
-                {text: 'No',            sortable: false, align:'center', width: "50px"},
-                {text: '견적번호',   value: 'i_estno', sortable: false, align:'center', width: "60px"},
-                {text: '상태',       value: 'f_status', sortable: false, align:'center', width: "50px"},
-                {text: '고객사',     value: 'n_vend', sortable: false, align:'center', width: "100px"},
-                {text: '견적일',     value: 's_date', sortable: false, align:'center', width: "50px"},
-                {text: '담당자',     value: 'n_magname', sortable: false, align:'center', width: "50px"},
+                {text: 'No',            sortable: false, align:'center', width: "50px"},                
+                {text: '고객사',     value: 'n_vend', sortable: false, align:'center', width: "60px"},                
+                {text: '수주번호',   value: 'i_orderno', sortable: false, align:'center', width: "100px"},
+                {text: '수주상태',   value: 'f_status', sortable: false, align:'center', width: "50px"},
+                {text: '수주일',     value: 's_date', sortable: false, align:'center', width: "50px"},
                 {text: '품번',       value: 'c_item', sortable: false, align:'center', width: "70px"},
                 {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "130px"},
                 {text: '규격(사양)', value: 't_size', sortable: false, align:'center', width: "90px"},
                 {text: '수량',       value: 'm_cnt', sortable: false, align:'center', width: "30px"},
                 {text: '단가',       value: 'a_unit', sortable: false, align:'center', width: "70px"},
                 {text: '금액',       value: 'a_amt', sortable: false, align:'center', width: "70px"},
-                // {text: '단위',      value: 'i_unit', sortable: false, align:'center', width: "50px"},
                 {text: '납품예정일', value: 's_duedate', sortable: false, align:'center', width: "50px"},
-                
-                
             ],
             itemLists:[], selected:[],
-            // select a.c_com, a.i_ser, b.i_serno, a.i_estno, a.f_status, a.n_vend, a.s_date, a.n_magname, \n` +
-            //         `       b.c_item, b.n_item, b.t_size, b.i_type, b.m_cnt, b.a_unit, b.a_amt, b.s_duedate \n` +
         }
-    },
-    computed: {
     },
     methods: {
         comma (value) {
@@ -100,29 +91,33 @@ export default {
         },
     
         shouldMergeRow(item) {
-            const index = this.itemLists.findIndex((i) => i.i_ser === item.i_ser);
+            const index = this.itemLists.findIndex((i) => i.i_order === item.i_order);
             return index === this.itemLists.indexOf(item);
         },
         getRowspan(item) {
-            const count = this.itemLists.filter((i) => i.i_ser === item.i_ser).length;
+            const count = this.itemLists.filter((i) => i.i_order === item.i_order).length;
             return count;
         },
         getStatus(item) {
             var find = this.ESTI001.find(e => e.value === item);
             return find !== undefined ? find.label : '';
         },
+        getOrderStatus(val) {
+            const matchedItem = this.ORDER001.find((item) => item.value === val);
+            return matchedItem ? matchedItem.label : "";
+        },
         async init() {
             this.view();
         },
         async view() {
-            this.itemLists = await this.$axios.post(`/api/sales/getSaleEstimateList`, this.form); 
+            this.itemLists = await this.$axios.post(`/api/sales/getSaleOrderslist`, this.form); 
             
         },
         async selectItem(item) {
             if (this.selected == item) return;
             this.selected = item;
         },
-    }
+    },
 }
 </script>
 

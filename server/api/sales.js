@@ -56,6 +56,10 @@ router.post('/getSaleOrderLi', async (req, res) => {
     const result = await modelCall(salesModel.getSaleOrderLi, req);
 	res.json(result);
 });
+router.post('/getSaleOrderslist', async (req, res) => {
+    const result = await modelCall(salesModel.getSaleOrderslist, req);
+	res.json(result);
+});
 
 router.post('/iuSaleOrder', async (req, res) => {
     const result = await modelCall(salesModel.iuSaleOrder, req);
