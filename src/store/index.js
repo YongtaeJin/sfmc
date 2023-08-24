@@ -232,9 +232,9 @@ const store = new Vuex.Store({
 							subItems : []
 						},
 						{
-							title : "세금계산서등록",
+							title : "세금계산서등록(거래명세서)",
 							icon : "",
-							to : '/shipment/derliver',
+							to : '/shipment/invoice',
 							grant : 4, 
 							newTab : false,
 							subItems : []
@@ -242,7 +242,7 @@ const store = new Vuex.Store({
 						{
 							title : "대금수금등록",
 							icon : "",
-							to : '/shipment/derliver',
+							to : '/shipment/account',
 							grant : 4, 
 							newTab : false,
 							subItems : []
@@ -250,7 +250,7 @@ const store = new Vuex.Store({
 						{
 							title : "수금현황",
 							icon : "",
-							to : '/shipment/derliver',
+							to : '/shipment/invoicelist',
 							grant : 4, 
 							newTab : false,
 							subItems : []
@@ -267,7 +267,7 @@ const store = new Vuex.Store({
 						{
 							title : "납기내역",
 							icon : "",
-							to : '/shipment/derliver',
+							to : '/metrics/derliver',
 							grant : 6, 
 							newTab : false,
 							subItems : []
@@ -275,7 +275,7 @@ const store = new Vuex.Store({
 						{
 							title : "불량율 분석",
 							icon : "",
-							to : '/shipment/derliver',
+							to : '/metrics/defectrate',
 							grant : 6, 
 							newTab : false,
 							subItems : []
@@ -283,7 +283,7 @@ const store = new Vuex.Store({
 						{
 							title : "고객별 매출 분석",
 							icon : "",
-							to : '/shipment/derliver',
+							to : '/metrics/clientsales',
 							grant : 6, 
 							newTab : false,
 							subItems : []
@@ -291,13 +291,46 @@ const store = new Vuex.Store({
 						{
 							title : "기간별 매출 분석",
 							icon : "",
-							to : '/shipment/derliver',
+							to : '/metrics/periodsales',
 							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
 					]
 				},
+				{
+					title : "KPI",
+					icon : "mdi-lan-connect",
+					to : '',
+					grant : 6, 
+					newTab : false,
+					subItems : [
+						{
+							title : "Level 1",
+							icon : "",
+							to : '/kpi/level1',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "Level 2",
+							icon : "",
+							to : '/kpi/level2',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+						{
+							title : "Level 3",
+							icon : "",
+							to : '/kpi/level3',
+							grant : 6, 
+							newTab : false,
+							subItems : []
+						},
+					]
+				}
 				
 			]
 		},

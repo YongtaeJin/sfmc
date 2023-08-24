@@ -54,7 +54,7 @@ const kpiModel = {
 
         const kpiData = JSON.stringify(jsonData, null, 2);
         console.log("시작");
-        axios.post('http://ssf-kpi.kr:8080/kpiLv1InsertTst', kpiData, config)
+        axios.post('http://ssf-kpi.kr:8080/kpiLv1/kpiLv1InsertTst', kpiData, config)
             .then(response => {
             console.log('JSON sent successfully:', response.data);
             })
