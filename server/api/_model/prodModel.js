@@ -175,6 +175,7 @@ const prodModel = {
             await addOrder(order, {c_com, i_order});
             await addOrderList(orderlist, {c_com, i_order, i_orderser});
         }
+        //console.log('order,', order)
         // 발주서 상태 변경  (계획 <-> 작업)        
         for (let i = 0; i < order.length; i++) {
             const sqldt = sqlHelper.SelectSimple(TABLE.PRODMAKE, order[i], ['COUNT(*) as cnt']);

@@ -18,7 +18,15 @@ router.post('/iuDerliverlist', async (req, res) => {
     const result = await modelCall(shipmentModel.iuDerliverlist, req);
 	res.json(result);
 });
+router.post('/iuShipWorkset', async (req, res) => {
+    const result = await modelCall(shipmentModel.iuShipWorkset, req);
+	res.json(result);
+});
 
+router.post('/getDerliverview', async (req, res) => {    
+    const result = await modelCall(shipmentModel.getDerliverview, req);
+	res.json(result);
+});
 
 
 module.exports = router;

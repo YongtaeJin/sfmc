@@ -115,6 +115,14 @@ const lib = {
 		  array.push(value);
 		}
 	},
+	
+	comma (value) {
+		if (value !== null && value !== undefined) {
+			return String(Math.trunc(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		} else {
+			return String(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		}
+	},
 }
 
 module.exports = lib;

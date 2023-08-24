@@ -126,10 +126,16 @@ const routes = [
 		name: 'ProdWorkorderview',
 		component: () => import(/* webpackChunkName: "ProdWorkorderview" */ '../views/prod/ProdWorkorderview.vue')	},
 	
+	// 출하관리
 	{
 		path: '/shipment/derliver',
 		name: 'DerliverView',
 		component: () => import(/* webpackChunkName: "DerliverView" */ '../views/shipment/DerliverView.vue')
+	},
+	{
+		path: '/shipment/derliverlist',
+		name: 'DerliverViewList',
+		component: () => import(/* webpackChunkName: "DerliverViewList" */ '../views/shipment/DerliverViewlist.vue')
 	},
 
 

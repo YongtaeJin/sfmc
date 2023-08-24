@@ -90,7 +90,9 @@ const shipmentModel = {
         const item = req.body;
         
         if (! item.length) return 0;
-        
+        let order = [];
+        let orderlist = [];
+
         await dbSet.setAutoCommitNo();
         for (let i = 0; i < item.length; i++) {
             const { c_com, i_shipser, i_shipno, d_ship, i_order, i_orderser, m_shipcnt, t_remark, f_edit, f_editold } = item[i];
@@ -119,13 +121,104 @@ const shipmentModel = {
                 await db.execute('ROLLBACK');
                 return false;
             }
+            await addOrder(order, {c_com, i_order});
+            await addOrderList(orderlist, {c_com, i_order, i_orderser});
         }
+        
+        // 발주서 상태 변경  (작업 <-> 출하)        
+        for (let i = 0; i < order.length; i++) {
+            const sqldt = sqlHelper.SelectSimple(TABLE.SHIPMENT, order[i], ['COUNT(*) as cnt']);            
+            const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
+            const f_status = rv.cnt > 0 ? "D" : 'W';
+
+            const sql = sqlHelper.Update(TABLE.ORDER, {f_status}, order[i]);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }        
+        // 발주서 세부 작업상태 는 별도 처리 iuProdWorkset --> 출하등록화면에서 상태란 더블 클릭 해서        
+
         await db.execute('COMMIT');        
         return true;
     },
+
+    async iuShipWorkset(req) {
+        const {c_com, i_order, i_orderser, f_work}  = req.body;
+        const n_work4 = req.user.n_name;
+        const d_work4_at = moment().format('LT');
+        const sqldt = sqlHelper.SelectSimple(TABLE.SHIPMENT, {c_com, i_order, i_orderser}, ['max(d_ship) as d_ship']); 
+        const [[rv]] = await db.execute(sqldt.query, sqldt.values);
+        console.log(rv)
+        const d_work4 = rv.d_ship ? rv.d_ship : '';
+
+        const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work, d_work4, n_work4, d_work4_at}, {c_com, i_order, i_orderser});
+        const res = await db.execute(sql.query, sql.values);
+        if (res.affectedRows < 1) {
+            await db.execute('ROLLBACK');
+            return false;
+        }
+        await db.execute('COMMIT');
+        return true;
+    },
+
+    async getDerliverview(req) {        
+        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;
+        var values = new Array();
+        let query = `select a.c_com, b.i_order, b.i_orderser, \n` +
+                    `       a.i_orderno,  a.n_vend, a.s_date, a.f_status,\n` +
+                    `       b.f_work, b.s_sort, b.c_item, b.n_item, b.t_size, b.i_unit, b.i_type, b.m_cnt, a_unit, a_amt, b.s_duedate, \n` +
+                    `       c.m_shipcnt, c.d_ship \n` +
+                    `  from tb_order a \n` +
+                    `       join tb_orderli b on a.c_com = b.c_com and a.i_order = b.i_order \n` +
+                    `       left outer join (select c_com, i_order, i_orderser, sum(m_shipcnt) m_shipcnt, max(d_ship) d_ship \n` +
+                    `                          from tb_prodship \n` +
+                    `                         group by c_com, i_order, i_orderser ) c on b.c_com = c.c_com and b.i_order = c.i_order and b.i_orderser = c.i_orderser \n` +
+                    ` where a.c_com = ? \n`;
+        values.push(c_com);        
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += ` and c.d_ship between ? and ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += ` and c.d_ship >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += ` and c.d_ship <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query += ` and a.n_vend like ? \n `
+            values.push(sVend + '%');
+        }       
+        query += `  order by a.c_com, a.i_order, b.i_orderser`;
+        
+        const [rows] = await db.execute(query, values);    
+        return rows;
+        
+    },
     
 }
-
+async function addOrder(jsonArr, newData) {
+    const isDuplicate = jsonArr.some(obj =>
+      obj.c_com === newData.c_com &&
+      obj.i_order === newData.i_order 
+    );  
+    if (!isDuplicate) jsonArr.push(newData);      
+    return jsonArr;
+}
+async function addOrderList(jsonArr, newData) {
+    const isDuplicate = jsonArr.some(obj =>
+      obj.c_com === newData.c_com &&
+      obj.i_order === newData.i_order &&
+      obj.i_orderser === newData.i_orderser
+    );  
+    if (!isDuplicate) jsonArr.push(newData);      
+    return jsonArr;
+}
 async function sqlDbExecute(sql) {	    
     const [row] = await db.execute(sql.query, sql.values);
     return row;

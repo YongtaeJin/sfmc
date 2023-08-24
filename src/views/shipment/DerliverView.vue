@@ -147,8 +147,7 @@ export default {
         }
     },
     methods: {     
-        ...mapActions("shipment", ["iuDerliverlist"]), 
-        ...mapActions("prod", ["iuProdWorkset"]), 
+        ...mapActions("shipment", ["iuDerliverlist", "iuShipWorkset"]),         
         comma (value) {
             if (value !== null && value !== undefined) {
                 return String(Math.trunc(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -197,7 +196,7 @@ export default {
             if(!res) return
 
             this.selected.f_work = this.selected.f_work == "5" ? "4" : "5";
-            const rv = this.iuProdWorkset(this.selected);
+            const rv = this.iuShipWorkset(this.selected);
             if(rv) this.$toast.info(`출하 상태 처리 하였습니다...`);
         },  
         
