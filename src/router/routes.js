@@ -137,8 +137,13 @@ const routes = [
 		name: 'DerliverViewList',
 		component: () => import(/* webpackChunkName: "DerliverViewList" */ '../views/shipment/DerliverViewlist.vue')
 	},
+	{
+		path: '/shipment/invoice',
+		name: 'Invoice',
+		component: () => import(/* webpackChunkName: "Invoice" */ '../views/shipment/InvoiceView.vue')
+	},
 
-
+	
 	
 
 	{
