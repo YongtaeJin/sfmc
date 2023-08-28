@@ -2,7 +2,7 @@
     <div>
         <v-data-table :headers="Head" :items="data" item-key="i_ser" single-select 
             @click:row="rowSelect" 
-            @dblclick:row="enterSelect" 
+            @dblclick:row="enterSelect"  
             class="elevation-1 text-no-wrap" height="200px" max-height="200px">
         </v-data-table>
     </div>    

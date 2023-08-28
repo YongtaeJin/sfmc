@@ -156,7 +156,7 @@ import { ORDER001 } from '../../../util/constval';
 import validateRules from "../../../util/validateRules";
 import ItemPop from '../codelist/ItemPop.vue';
 import VendPop from '../codelist/VendPop.vue';
-import SalesNotestimate from './SalesNotestimate.vue';
+import SalesNotestimate from './SalesNotestimate.vue'; 
 
 export default {
     components: { TooltipBtn, EzDialog, InputDate2, InputDate3, InputAmt, InputNumber, ItemPop, VendPop, SalesNotestimate },

@@ -28,5 +28,26 @@ router.post('/getDerliverview', async (req, res) => {
 	res.json(result);
 });
 
+router.post('/getInvoicelist', async (req, res) => {    
+    const result = await modelCall(shipmentModel.getInvoicelist, req);
+	res.json(result);
+});
+router.post('/getInvoicelistdt', async (req, res) => {    
+    const result = await modelCall(shipmentModel.getInvoicelistdt, req);
+	res.json(result);
+});
+router.post('/getDeliverNotInsert', async (req, res) => {    
+    const result = await modelCall(shipmentModel.getDeliverNotInsert, req);
+	res.json(result);
+});
+router.post('/getVend', async (req, res) => {    
+    const result = await modelCall(shipmentModel.getVend, req);
+	res.json(result);
+});
+router.post('/iuInvoicelist', async (req, res) => {
+    const result = await modelCall(shipmentModel.iuInvoicelist, req);
+	res.json(result);
+});
+
 
 module.exports = router;

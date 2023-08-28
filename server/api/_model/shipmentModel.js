@@ -164,7 +164,7 @@ const shipmentModel = {
     },
 
     async getDerliverview(req) {        
-        if (!isGrant(req, LV.BUSINESS)) {throw new Error('권한이 없습니다.');}
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
         const { c_com } = req.user;
         const { sDate1, sDate2, sVend } = req.body;
         var values = new Array();
@@ -200,7 +200,82 @@ const shipmentModel = {
         return rows;
         
     },
-    
+
+    // 세금계산서(거래명세서)
+    async getInvoicelist(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;
+
+        const sql = sqlHelper.SelectSimple(TABLE.INVOICE, {c_com} );
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            sql.query += ` and d_invoice between ? and ? \n `
+            sql.values.push(sDate1);
+            sql.values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            sql.query += ` and d_invoice >= ? \n `
+            sql.values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            sql.query += ` and d_invoice <= ? \n `
+            sql.values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            sql.query += ` and n_vend like ? \n `
+            sql.values.push(sVend + '%');
+        }       
+        sql.query += `  order by c_com, i_invoiceno, i_invoiceser`;
+        
+        const [rows] = await db.execute(sql.query, sql.values);  
+        rows.forEach((row) => {
+            sqlHelper.addEditCol(row);
+        });        
+        return rows;
+    },
+    async getInvoicelistdt(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}        
+        const { c_com, i_invoiceser } = req.body;
+        const sort = {
+            c_com: true,
+            i_invoiceser: true,
+            m_sort: true,
+        };
+        const sql = sqlHelper.SelectSimple(TABLE.INVOICELI, {c_com, i_invoiceser}, '',  sort);
+        console.log(sql)
+    },
+    async getDeliverNotInsert(req) {
+        const { c_com } = req.user;
+        const { c_vend } = req.body;
+
+        var values = new Array();
+        values.push(c_com);
+        let query = `select a.c_com, a.i_shipser, a.i_shipno, a.d_ship, a.i_order, a.i_orderser, \n ` +
+                    `       a.m_shipcnt,\n ` +
+                    `       b.c_vend, b.n_vend, c.c_item, c.n_item, c.t_size, c.i_unit, c.i_type, c.a_unit, (a.m_shipcnt * c.a_unit) a_amt,\n ` +
+                    `       t1.n_compnay, t1.n_ceo, t1.i_company, t1.t_job1, t1.t_job2, t1.t_tel, t1.t_fax, t1.e_mail, t1.t_addr \n` +
+                    `  from tb_prodship a\n ` +
+                    `        join tb_order b on a.c_com = b.c_com and a.i_order = b.i_order\n ` +
+                    `        join tb_orderli c on a.c_com = c.c_com and a.i_order = c.i_order and a.i_orderser = c.i_orderser\n ` +
+                    `        join tb_vend t1 on b.c_com = t1.c_com and b.c_vend = t1.c_vend\n` +
+                    ` where a.c_com = ? \n ` +
+                    `       and not exists (select * from tb_invoiceli t where a.c_com = t.c_com and a.i_order = t.i_order and a.i_orderser = t.i_orderser)\n ` ;
+        if (c_vend.length > 0) {
+            query = query + `       and b.c_vend = ?\n `
+            values.push(c_vend);
+        }
+        query = query + ` order by c_com, i_shipno, d_ship, i_shipser\n `;
+        console.log(query)
+        
+        const [rows] = await db.execute(query, values);    
+        return rows;
+    },
+    async getVend(req) {
+        const { c_com, c_vend } = req.body;
+        const sql = sqlHelper.SelectSimple(TABLE.VEND, {c_com, c_vend});
+        const [rows] = await db.execute(sql.query, sql.values);    
+        return rows;
+    }
+
+
 }
 async function addOrder(jsonArr, newData) {
     const isDuplicate = jsonArr.some(obj =>

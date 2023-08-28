@@ -18,4 +18,9 @@ export const actions = {
 		const data = await $axios.post('/api/shipment/iuShipWorkset', items);
 		return data;
 	},
+	async iuInvoicelist( { commit }, items) {
+		const { $axios } = Vue.prototype;		
+		const data = await $axios.post('/api/shipment/iuInvoicelist', items);
+		return data;
+	},
 }

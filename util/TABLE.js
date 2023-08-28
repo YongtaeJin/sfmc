@@ -20,6 +20,8 @@ const TABLE = {
 	PRODMAKE: 'tb_prodmake',
 	NOTICE: 'tb_notice',
 	SHIPMENT: 'tb_prodship',
+	INVOICE: 'tb_invoice',
+	INVOICELI: 'tb_invoiceli',
 
 };
 

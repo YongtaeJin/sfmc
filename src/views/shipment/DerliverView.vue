@@ -256,6 +256,7 @@ export default {
             obj.d_ship      = getDate();
             obj.i_order     = this.selected.i_order;
             obj.i_orderser  = this.selected.i_orderser;
+            obj.i_makeser   = this.selected.i_makeser;
             obj.m_shipcnt   = shipcnt == 0 ? ordercnt : difcnt <= shipcnt ? 1 : yescnt - shipcnt;
             obj.t_remark    = "";
             obj.f_edit      = "1";
