@@ -205,7 +205,7 @@ export default {
         getStatus() {return this.masterinfo.f_status == "1" ? "확정" : this.masterinfo.f_status == "0" ? "작성" : "" },
     },
     methods: {
-        ...mapActions("shipment", ["iuInvoicelist"]),
+        ...mapActions("shipment", ["iuInvoicelist", "invoiceNochk"]),
 
         getColor(f_status) {
             return f_status == "1" ? 'green' : this.masterinfo.f_status == '0' ? 'red' : 'green' ;
@@ -313,14 +313,21 @@ export default {
                 this.$toast.error("계산서번호 입력 필수 입니다.");
                 return;
             }
+
+            // 계산서번호 중복 체크
+            const chk = await this.invoiceNochk(this.masterinfo)
+            if (chk) {
+                this.$toast.error("계산서번호 중복 입니다.");
+                return;
+            }
+
             let s_sort = 0; 
             this.itemLists.forEach((row) => {                    
                 if (row.f_edit !== "2" ) {                    
                     s_sort = s_sort + 1;
                     row.s_sort = s_sort;
                 }
-            });  
-
+            });
             const invoce = Object.assign({}, this.masterinfo, this.itemLists);    // 계산서마스트 + 계산서항목 합하여 전달
             const data = await this.iuInvoicelist(invoce);            
             if (data) {
@@ -620,7 +627,6 @@ export default {
                 if (data) {
                     this.masterinfo.f_status = this.masterinfo.f_status == "1" ? "0" : "1";
                     this.$toast.info(`처리 하였습니다.`);
-
                 }
             }
         }

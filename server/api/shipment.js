@@ -56,5 +56,9 @@ router.post('/iuInvoiceJobend', async (req, res) => {
     const result = await modelCall(shipmentModel.iuInvoiceJobend, req);
 	res.json(result);
 });
+router.post('/invoiceNochk', async (req, res) => {
+    const result = await modelCall(shipmentModel.invoiceNochk, req);
+	res.json(result);
+});
 
 module.exports = router;

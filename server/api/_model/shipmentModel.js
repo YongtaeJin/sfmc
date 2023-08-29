@@ -385,6 +385,19 @@ const shipmentModel = {
 		return row.affectedRows == 1;
         
     },
+    async invoiceNochk(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}        
+        const { c_com, i_invoiceser, i_invoiceno } = req.body;
+       
+        const query = `SELECT COUNT(*) as cnt FROM tb_invoice WHERE c_com = ? AND i_invoiceser <> ? AND i_invoiceno = ? `;
+        var values = new Array();
+        values.push(c_com);
+        values.push(i_invoiceser);
+        values.push(i_invoiceno);
+        
+        const [[rv]]  = await db.execute(query, values);
+        return  rv.cnt > 0 ? true : false;        
+    },
 
 }
 async function addOrder(jsonArr, newData) {
