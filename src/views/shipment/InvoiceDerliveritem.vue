@@ -2,7 +2,7 @@
     <div>
         <v-toolbar height="40px" background-color="primary" dark >
         <v-spacer/>
-        <v-btn small :color= "getCheck ? 'success' : 'warning'"  @click="addInvoice"> {{ getCheck ? "계산서 작성" : "미 출하계산서" }}</v-btn>
+        <v-btn small :color= "getCheck ? 'success' : 'warning'"  @click="addInvoice"> {{ !newInvoce ? '계산선 품목 추가' : getCheck ? "계산서 작성" : "미 출하계산서" }}</v-btn>
         </v-toolbar>
         <v-data-table :headers="Head" :items="data" item-key="i_shipser"           
             v-model="selected"  
@@ -33,6 +33,7 @@ export default {
             type: Array,
             default: null,
         },   
+        newInvoce: { type: Boolean, default: true},
     },
     data() {
         return {
@@ -76,7 +77,6 @@ export default {
         },
 
         async addInvoice() {
-
             const item = this.data.filter(data => data.f_select === '1');
             if (item.length) {
                 // 배열 내 모든 객체의 특정 필드 값들을 추출하여 중복 제거
@@ -85,7 +85,9 @@ export default {
                     this.$ezNotify.alert(`${values} <br>`, "거래처 중복", {icon: "mdi-message-bulleted",})
                     return;
                 } 
-            }
+            } 
+            if (!this.newInvoce && !item.length) { return; }
+
             this.$emit('onEnter', item);             
         },  
         checkboxChanged(item) {

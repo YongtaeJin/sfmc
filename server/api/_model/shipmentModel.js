@@ -24,6 +24,21 @@ function addEditCol(data) {
     data.f_editold = '0';	
 	return data;
 }
+function objectSplit(data, f) {	
+    const obj = {};
+    if ( f === 'M' || f === 'm' ) {
+        const objKeys = Object.keys(data).filter((key) => isNaN(key));
+        const values = objKeys.map((key) => data[key]);
+        for (let i = 0; i < objKeys.length; i++) {
+            obj[objKeys[i]] = values[i];
+        }
+        return obj;
+    } else {        
+        const objKeys = Object.keys(data).filter((key) => !isNaN(key));
+        const objValues = objKeys.map((key) => data[key]);
+        return objValues;
+    }    
+}
 const shipmentModel = {
     async getDerliverlist(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
@@ -237,10 +252,15 @@ const shipmentModel = {
         const sort = {
             c_com: true,
             i_invoiceser: true,
-            m_sort: true,
+            s_sort: true,
         };
         const sql = sqlHelper.SelectSimple(TABLE.INVOICELI, {c_com, i_invoiceser}, '',  sort);
         console.log(sql)
+        const [rows] = await db.execute(sql.query, sql.values);  
+        rows.forEach((row) => {
+            sqlHelper.addEditCol(row);
+        });        
+        return rows;
     },
     async getDeliverNotInsert(req) {
         const { c_com } = req.user;
@@ -250,7 +270,7 @@ const shipmentModel = {
         values.push(c_com);
         let query = `select a.c_com, a.i_shipser, a.i_shipno, a.d_ship, a.i_order, a.i_orderser, \n ` +
                     `       a.m_shipcnt,\n ` +
-                    `       b.c_vend, b.n_vend, c.c_item, c.n_item, c.t_size, c.i_unit, c.i_type, c.a_unit, (a.m_shipcnt * c.a_unit) a_amt,\n ` +
+                    `       b.c_vend, b.n_vend, c.c_item, c.n_item, c.t_size, c.i_unit, c.i_type, FLOOR(c.a_unit) a_unit, (a.m_shipcnt * c.a_unit) a_amt,\n ` +
                     `       t1.n_compnay, t1.n_ceo, t1.i_company, t1.t_job1, t1.t_job2, t1.t_tel, t1.t_fax, t1.e_mail, t1.t_addr \n` +
                     `  from tb_prodship a\n ` +
                     `        join tb_order b on a.c_com = b.c_com and a.i_order = b.i_order\n ` +
@@ -273,8 +293,98 @@ const shipmentModel = {
         const sql = sqlHelper.SelectSimple(TABLE.VEND, {c_com, c_vend});
         const [rows] = await db.execute(sql.query, sql.values);    
         return rows;
-    }
+    },
+    async delInvoic(req) {
+		if (!isGrant(req, LV.PRODUCTION))  throw new Error('권한이 없습니다.');
+		const { c_com, i_invoiceser } = req.params;
 
+        const sql = sqlHelper.DeleteSimple(TABLE.INVOICE, { c_com, i_invoiceser });
+        const [row] = await db.execute(sql.query, sql.values);
+
+        // 세금계산서 폼목 List 삭제
+        if (row.affectedRows > 0) {
+            const sqldt = sqlHelper.DeleteSimple(TABLE.INVOICELI, { c_com, i_invoiceser });
+            await db.execute(sqldt.query, sqldt.values);
+        }
+        await db.execute('COMMIT');
+		return row.affectedRows == 1;
+	},
+    async iuInvoicelist(req) {
+        const payload = {
+			...req.body,
+        }
+        const at = moment().format('LT'); 
+        // f_edit =  0:변경없음, 1:수정, 2:삭제
+        const master = objectSplit(req.body, 'm');
+        const detail = objectSplit(req.body, 'd');  
+ 
+        const {c_com, i_invoiceser } = master;
+        if (master.f_edit !== "0" || master.f_editold !== "0") {                        
+            const newdata = master.f_editold !== "0" ? true : false;
+            delete master.f_edit;
+            delete master.f_editold;
+            delete master.n_end;     // 확정시 별도 저장
+            delete master.d_end;     // 확정시 별도 저장
+
+            if (newdata) {
+                master.d_create_at = at;
+                master.n_crnm = req.user.n_name;                
+                delete master.d_update_at;
+                delete master.n_upnm;                
+            } else {
+                delete master.d_create_at;
+                delete master.n_crnm;
+                master.d_update_at = at;
+                master.n_upnm = req.user.n_name;
+            }
+            const sql = newdata ? sqlHelper.Insert(TABLE.INVOICE, master) : sqlHelper.Update(TABLE.INVOICE, master, {c_com, i_invoiceser});
+
+            console.log("master", sql)      
+            const [row] = await db.execute(sql.query, sql.values);            
+            if (row.affectedRows < 1) return false;          
+        };
+        detail.forEach((row, index) => {
+            if(row.f_edit !== "0" || row.f_editold !== "0") {
+                const {i_invoiceserno} = row;
+                const newdata = row.f_editold !== "0" ? true : false;
+                const deldata = row.f_edit == "2" ? true : false;
+                delete row.f_edit;
+                delete row.f_editold;
+                if (newdata) {
+                    row.d_create_at = at;
+                    row.n_crnm = req.user.n_name;
+                    delete row.d_update_at;
+                    delete row.n_upnm;
+                } else {
+                    delete row.d_create_at;
+                    delete row.n_crnm;
+                    row.d_update_at = at;
+                    row.n_upnm = req.user.n_name;                    
+                }
+                const sql = deldata ? sqlHelper.DeleteSimple(TABLE.INVOICELI, {c_com, i_invoiceser, i_invoiceserno}) :  newdata ? sqlHelper.Insert(TABLE.INVOICELI, row) : sqlHelper.Update(TABLE.INVOICELI, row, {c_com, i_invoiceser, i_invoiceserno});
+                
+                console.log("detial", sql);
+                // const [row] = await db.execute(sql.query, sql.values);
+                const res = sqlDbExecute(sql)    
+                if (res.affectedRows < 1) return false;
+            }
+        });
+        await db.execute('COMMIT');
+        return true;
+    },
+    async iuInvoiceJobend(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}        
+        const { c_com, i_invoiceser, f_status } = req.body;
+        const chang_status = {};
+        chang_status.f_status = f_status == "1" ? "0" : "1";
+        
+        const sql = sqlHelper.Update(TABLE.INVOICE, chang_status, { c_com, i_invoiceser, f_status });
+        const [row] = await db.execute(sql.query, sql.values);
+
+        await db.execute('COMMIT');
+		return row.affectedRows == 1;
+        
+    },
 
 }
 async function addOrder(jsonArr, newData) {

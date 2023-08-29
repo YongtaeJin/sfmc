@@ -48,6 +48,13 @@ router.post('/iuInvoicelist', async (req, res) => {
     const result = await modelCall(shipmentModel.iuInvoicelist, req);
 	res.json(result);
 });
-
+router.delete('/delInvoic/:c_com/:i_invoiceser', async(req, res)=>{
+	const result = await modelCall(shipmentModel.delInvoic, req);
+	res.json(result);
+});
+router.post('/iuInvoiceJobend', async (req, res) => {
+    const result = await modelCall(shipmentModel.iuInvoiceJobend, req);
+	res.json(result);
+});
 
 module.exports = router;
