@@ -123,6 +123,17 @@ const lib = {
 			return String(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 		}
 	},
+
+	previousMonth () {
+		const now = new Date(Date.now());
+
+		now.setDate(now.getDate());
+		const year = now.getDate() > 7 && now.getMonth() == 0 ?  now.getFullYear() - 1 :  now.getFullYear();		
+		const month = now.getDate() > 7 ? now.getMonth() == 0 ? '01' : String(now.getMonth() + 1).padStart(2, '0') : String(now.getMonth()).padStart(2, '0');
+		const day = '01';
+		const dateString = `${year}-${month}-${day}`;
+		return dateString;	
+	},
 }
 
 module.exports = lib;

@@ -57,7 +57,7 @@ import { mapActions } from "vuex";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import validateRules from "../../../util/validateRules";
-import { comma, getDate, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
+import { comma, getDate, dateToKorean, numberToKorean, amtToKorean, previousMonth } from '../../../util/lib';
 import InputDateft from '../../components/InputForms/InputDateft.vue';
 export default {
     components: { EzDialog, TooltipBtn, InputDateft},
@@ -110,6 +110,7 @@ export default {
             } 
         },
         async init() {
+            this.form.sDate1=previousMonth();
             this.viewAccout();
         },
         async viewAccout() {

@@ -310,9 +310,12 @@ const shipmentModel = {
 		if (!isGrant(req, LV.PRODUCTION))  throw new Error('권한이 없습니다.');
 		const { c_com, i_invoiceser } = req.params;
 
+        // 발주서 상태 변경 작업  ORDER(출하:D <-> 결재:A)   // ORDERLI rv.cnt > 0 ? "6" : '5';  --> 복잡함.. 하기 싫어용!!
+        // 미출하 자료만 삭제 처리 : 호출전 체크
+
+        // 자료삭제
         const sql = sqlHelper.DeleteSimple(TABLE.INVOICE, { c_com, i_invoiceser });
         const [row] = await db.execute(sql.query, sql.values);
-
         // 세금계산서 폼목 List 삭제
         if (row.affectedRows > 0) {
             const sqldt = sqlHelper.DeleteSimple(TABLE.INVOICELI, { c_com, i_invoiceser });

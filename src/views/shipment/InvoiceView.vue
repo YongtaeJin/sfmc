@@ -149,7 +149,7 @@ import InputAmt from '../../components/InputForms/InputAmt.vue';
 import InputNumber from '../../components/InputForms/InputNumber.vue';
 import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import validateRules from "../../../util/validateRules";
-import { comma, getDate, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
+import { comma, previousMonth, getDate, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
 import ItemPop from '../codelist/ItemPop.vue';
 import VendPop from '../codelist/VendPop.vue';
 import InvoiceDerliveritem from './InvoiceDerliveritem.vue';
@@ -217,6 +217,7 @@ export default {
         },
 
         async init() {
+            this.form.sDate1=previousMonth();
             this.viewInvoice();
         },
       
@@ -306,6 +307,10 @@ export default {
             // DB 삭제 작업 ....
             // 신규 입력 삭제 (저장전 자료)
             if (this.masterinfo.f_editold != '1') {
+                if( this.masterinfo.f_witre == '1' && this.itemLists.length ) {
+                    await this.$ezNotify.alert("계산서 품록 List 삭제 후 삭제 가능 !", "삭제불가", {icon: "mdi-message-bulleted-off", width: 400,});
+                    return;
+                }
                 // 저장 후 삭제 
                 const res = await this.$ezNotify.confirm("삭제 하시겠습니까 ?", "삭제", {icon: "mdi-message-bulleted-off", width: 350,});
                 if(!res) return;

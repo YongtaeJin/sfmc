@@ -97,6 +97,7 @@ import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import { PROD001 } from '../../../util/constval';
+import { previousMonth } from '../../../util/lib';
 import DatesDialog from '../../components/etc/DatesDialog.vue';
 
 export default {
@@ -147,6 +148,7 @@ export default {
         },
 
         async init() {
+            this.form.sDate1=previousMonth();
             this.view();
         },  
         async view() {

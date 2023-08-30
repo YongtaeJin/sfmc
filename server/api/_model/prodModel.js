@@ -103,14 +103,14 @@ const prodModel = {
 
         values.push(c_com);
         if (sDate1.length > 0 && sDate2.length > 0 ) {
-            where += ` and a.d_plan1 between ? and ? \n `
+            where += ` and b.d_plan1 between ? and ? \n `
             values.push(sDate1);
             values.push(sDate2);
         } else if (sDate1.length > 0) {
-            where += ` and a.d_plan1 >= ? \n `
+            where += ` and b.d_plan1 >= ? \n `
             values.push(sDate1);
         } else if (sDate2.length > 0) {
-            where += ` and a.d_plan1 <= ? \n `
+            where += ` and b.d_plan1 <= ? \n `
             values.push(sDate2);
         }
         if (sVend.length > 0) {
@@ -251,14 +251,14 @@ const prodModel = {
                     ` where a.c_com = ? \n` ;
         values.push(c_com);        
         if (sDate1.length > 0 && sDate2.length > 0 ) {
-            query += ` and a.d_plan2 between ? and ? \n `
+            query += ` and b.d_plan2 between ? and ? \n `
             values.push(sDate1);
             values.push(sDate2);
         } else if (sDate1.length > 0) {
-            query += ` and a.d_plan2 >= ? \n `
+            query += ` and b.d_plan2 >= ? \n `
             values.push(sDate1);
         } else if (sDate2.length > 0) {
-            query += ` and a.d_plan2 <= ? \n `
+            query += ` and b.d_plan2 <= ? \n `
             values.push(sDate2);
         }
         if (sVend.length > 0) {

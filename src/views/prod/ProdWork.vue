@@ -136,7 +136,7 @@ import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import InputAmt from '../../components/InputForms/InputAmt.vue';
 import { PROD001 } from '../../../util/constval';
-import { getDate } from '../../../util/lib';
+import { getDate, previousMonth } from '../../../util/lib';
 import DatesDialog from '../../components/etc/DatesDialog.vue';
 import validateRules from "../../../util/validateRules";
 
@@ -214,6 +214,7 @@ export default {
             return count;
         },
         async init() {
+            this.form.sDate1=previousMonth();
             this.view();
         },  
         async view() {

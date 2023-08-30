@@ -64,6 +64,7 @@ import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import { PROD001 } from '../../../util/constval';
+import { previousMonth } from '../../../util/lib';
 import DatesDialog from '../../components/etc/DatesDialog.vue';
 
 export default {
@@ -113,9 +114,10 @@ export default {
     methods: {     
         ...mapActions("prod", ["iuProdPlanlist"]), 
         async init() {
+            this.form.sDate1=previousMonth();
             this.view();
         },  
-        async view() {
+        async view() {            
             // this.itemInfo = [];
             // this.itemProd = []; this.itemMake = []; this.itemErr = []; this.makeRow =[]; this.errRow = [];
             this.itemLists = await this.$axios.post(`/api/prod/getProdWorkview`, this.form); 

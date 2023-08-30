@@ -151,7 +151,7 @@ import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import InputAmt from '../../components/InputForms/InputAmt.vue';
 import InputNumber from '../../components/InputForms/InputNumber.vue';
-import { getDate, deepCopy, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
+import { getDate, previousMonth, deepCopy, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
 import { ORDER001 } from '../../../util/constval';
 import validateRules from "../../../util/validateRules";
 import ItemPop from '../codelist/ItemPop.vue';
@@ -246,6 +246,7 @@ export default {
             return matchedItem ? matchedItem.label : "";
         },
         async init() {
+            this.form.sDate1=previousMonth();
             this.viewOrd();
         },
         async viewOrd() {

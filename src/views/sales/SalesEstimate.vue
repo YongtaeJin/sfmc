@@ -190,7 +190,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { mapActions } from "vuex";
 import { ESTI001 } from '../../../util/constval';
-import { getDate, deepCopy, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
+import { getDate, previousMonth, deepCopy, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
 import validateRules from "../../../util/validateRules";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
@@ -295,6 +295,7 @@ export default {
             }
         },
         async init() {  
+            this.form.sDate1=previousMonth();
             var query = qs.stringify({c_com: this.$store.state.user.member.c_com, c_gcode: "BUSINESS", c_code: "ESTIMATE01", col: "m_buf1"});
             
             var data = await this.$axios.get(`/api/sales/getSaleEstimateInit?${query}`);

@@ -78,7 +78,7 @@
 <script>
 import { mapActions } from "vuex";
 import { PROD001 } from '../../../util/constval';
-import { getDate, deepCopy, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
+import { getDate, previousMonth, deepCopy, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDateft from '../../components/InputForms/InputDateft.vue'
 import validateRules from "../../../util/validateRules";
@@ -165,6 +165,7 @@ export default {
         //     return find !== undefined ? find.label : '';
         // },
         async init() {
+            this.form.sDate1=previousMonth();
             this.view();
         },  
         async view() {

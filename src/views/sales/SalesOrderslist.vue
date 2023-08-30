@@ -54,6 +54,7 @@
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDateft from '../../components/InputForms/InputDateft.vue';
 import { ESTI001, ORDER001 } from '../../../util/constval';
+import { previousMonth } from '../../../util/lib';
 export default {
     name: "SalesordersList",
     components: { InputDateft, TooltipBtn },
@@ -107,6 +108,7 @@ export default {
             return matchedItem ? matchedItem.label : "";
         },
         async init() {
+            this.form.sDate1=previousMonth();
             this.view();
         },
         async view() {

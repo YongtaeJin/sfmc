@@ -42,6 +42,7 @@
 </template>
 
 <script>
+  import { getDate } from '../../../util/lib';
   export default {
   name: "InputDateft",
 
@@ -65,7 +66,7 @@
       modal2: false,
 			date2 : "",
     };
-  },
+  },  
   watch: {
     date2(newValue) {
       this.$emit('update:value2', newValue);
