@@ -32,6 +32,18 @@ export function createRouter() {
 		const GRANT = store.getters['user/GRANT'];
 		const isMember = !!store.state.user.member;
 		
+		const log = {
+            c_com: store.state.user.member.c_com,
+			i_id: store.state.user.member.i_id,
+			n_name: store.state.user.member.n_name,
+			i_level: store.state.user.member.i_level,
+            to_name: to.name,
+			to_path: to.path,
+			from_name: from.name,
+			from_path: from.path,
+        };
+		$axios.post(`/api/system/openLog`, log);
+
 		let msg = '';		
 		if (to.name.startsWith('NoAuth') && isMember) {
 			// 비회원 인경우에만 접근

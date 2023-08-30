@@ -23,7 +23,7 @@ const TABLE = {
 	INVOICE: 'tb_invoice',
 	INVOICELI: 'tb_invoiceli',
 	ACCOUNT: 'tb_account',
-
+    OPENLOG: 'tb_openlog',
 };
 
 module.exports = TABLE;

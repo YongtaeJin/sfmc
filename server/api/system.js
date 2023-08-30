@@ -114,4 +114,10 @@ router.post('/iuSiteCodeinit', async (req, res) => {
 	const result = await modelCall(systemModel.iuSiteCodeinit, req);
 	res.json(result);
 });
+
+// OpenLog
+router.post('/openLog', async (req, res) => {
+	const result = await modelCall(systemModel.openLog, req);
+	res.json(result);
+});
 module.exports = router;

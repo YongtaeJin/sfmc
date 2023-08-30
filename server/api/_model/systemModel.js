@@ -417,6 +417,14 @@ const systemModel = {
 
         return true;
     },
+
+     openLog(req) {
+        const payload = {...req.body};
+        payload.d_open = moment().format('LT'); 
+        const sql = sqlHelper.Insert(TABLE.OPENLOG, payload);      
+        db.execute(sql.query, sql.values);
+        db.execute('COMMIT');
+    },
 };
 
 async function sqlDbExecute(sql) {	    
