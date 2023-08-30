@@ -32,6 +32,10 @@ router.post('/getInvoicelist', async (req, res) => {
     const result = await modelCall(shipmentModel.getInvoicelist, req);
 	res.json(result);
 });
+router.post('/getInvoicelistInfo', async (req, res) => {    
+    const result = await modelCall(shipmentModel.getInvoicelistInfo, req);
+	res.json(result);
+});
 router.post('/getInvoicelistdt', async (req, res) => {    
     const result = await modelCall(shipmentModel.getInvoicelistdt, req);
 	res.json(result);

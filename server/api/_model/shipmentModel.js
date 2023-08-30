@@ -246,6 +246,18 @@ const shipmentModel = {
         });        
         return rows;
     },
+    async getInvoicelistInfo(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { i_invoiceser } = req.body;
+
+        const sql = sqlHelper.SelectSimple(TABLE.INVOICE, {c_com, i_invoiceser} );
+        const [rows] = await db.execute(sql.query, sql.values);  
+        rows.forEach((row) => {
+            sqlHelper.addEditCol(row);
+        });        
+        return rows;
+    },
     async getInvoicelistdt(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}        
         const { c_com, i_invoiceser } = req.body;

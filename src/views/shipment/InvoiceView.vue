@@ -221,7 +221,20 @@ export default {
       
         async rowSelectMaster(item, row) {
             this.invoiceVend.c_vend = item.c_vend;
-            if (this.editJob) return;
+            if (this.editJob) { 
+                const res = await this.$ezNotify.confirm(`수정내용이 존재 합니다.<br><br>수정 내용을 취소 하시게습니까 ?`, "자료확인", {icon: "mdi-message-bulleted-off", width: 350,});
+                if(!res) return;
+                
+                const idx = this.masters.indexOf(this.masterinfo);
+                if (idx >= 0) {                    
+                    if(this.masterinfo.f_editold !== "1") {
+                        const data = await this.$axios.post(`/api/shipment/getInvoicelistInfo`, this.masterinfo); 
+                        data.length ? this.masters.splice(idx, 1, data[0]) : this.masters.splice(idx, 1);
+                    } else {
+                        this.masters.splice(idx, 1);
+                    }
+                }
+            }
             this.masterinfo = item;
             if (row) { row.select(true) } else { this.selectedM = [item] };
             if (item.f_edit == "1" && item.f_editold == "1") return;
@@ -356,9 +369,7 @@ export default {
             }
          
         },
-        async printInvoce() {
-
-        },
+        
         clickVend() {
             this.$refs.dialog_Vend.open();
         },
@@ -635,8 +646,104 @@ export default {
                     this.$toast.info(`처리 하였습니다.`);
                 }
             }
-        }
+        },
+
+        async printInvoce() {
+            const doc = new jsPDF('p', 'mm', 'a4');
+            doc.addFileToVFS("malgun.ttf", _fonts);
+            doc.addFont("malgun.ttf", "malgun", "normal");
+            doc.setFont("malgun");
+            // 텍스트 출력
+            doc.setFontSize(30);
+            doc.text('거 래 명 세 표', 60, 30);
+            
+            doc.setFontSize(9);            
+            doc.setLineWidth(0.1); // 선 두께를 0.1로 설정합니다
+            doc.rect(10, 50, 190, 230);
+            doc.rect(10, 50, 8, 24);
+            doc.text(13, 56, '공'); doc.text(13, 64, '급'); doc.text(13, 72, '자');        
+            doc.rect(18, 50, 13, 24); 
+
+            doc.rect(18, 50, 87, 6); this.doctext(doc, "등록번호", 18, 56, 6, 6, 0);  this.doctext(doc, this.masterinfo.i_company, 31, 56, 6, 70, 1);
+            doc.rect(18, 56, 87, 6); this.doctext(doc, "상 호 명", 18, 62, 6, 6, 0);  this.doctext(doc, this.masterinfo.n_compnay, 31, 62, 6, 30, 1);
+            doc.rect(63, 56, 13, 6); this.doctext(doc, "성     명", 63, 62, 6, 6, 0); this.doctext(doc, this.masterinfo.n_ceo,     76, 62, 6, 28, 1);
+            doc.rect(18, 62, 87, 6); this.doctext(doc, "주     소", 18, 68, 6, 6, 0); this.doctext(doc, this.masterinfo.t_addr,    31, 68, 6, 70, 1);
+            doc.rect(18, 68, 87, 6); this.doctext(doc, "업     태", 18, 74, 6, 6, 0); this.doctext(doc, this.masterinfo.t_job1,    31, 74, 6, 30, 1);
+            doc.rect(63, 68, 13, 6); this.doctext(doc, "업     종", 63, 74, 6, 6, 0); this.doctext(doc, this.masterinfo.t_job2,    76, 74, 6, 28, 1);
+            
+
+            doc.rect(105, 50, 8, 24);
+            doc.text(108, 56, '공'); doc.text(108, 60, '급');  doc.text(108, 64, '받'); doc.text(108, 68, '는'); doc.text(108, 72, '자');
+            doc.rect(113, 50, 13, 24); 
+            doc.rect(113, 50, 87, 6); this.doctext(doc, "등록번호", 113, 56, 6, 6, 0);  this.doctext(doc, this.masterinfo.i_company, 126, 56, 6, 70, 1);
+            doc.rect(113, 56, 87, 6); this.doctext(doc, "상 호 명", 113, 62, 6, 6, 0);  this.doctext(doc, this.masterinfo.n_compnay, 126, 62, 6, 30, 1);
+            doc.rect(158, 56, 13, 6); this.doctext(doc, "성     명", 158, 62, 6, 6, 0); this.doctext(doc, this.masterinfo.n_ceo,     171, 62, 6, 28, 1);
+            doc.rect(113, 62, 87, 6); this.doctext(doc, "주     소", 113, 68, 6, 6, 0); this.doctext(doc, this.masterinfo.t_addr,    126, 68, 6, 70, 1);
+            doc.rect(113, 68, 87, 6); this.doctext(doc, "업     태", 113, 74, 6, 6, 0); this.doctext(doc, this.masterinfo.t_job1,    126, 74, 6, 30, 1);
+            doc.rect(158, 68, 13, 6); this.doctext(doc, "업     종", 158, 74, 6, 6, 0); this.doctext(doc, this.masterinfo.t_job2,    171, 74, 6, 28, 1);
+            
+            for (let i = 0; i < 26; i++) {
+                if ( i == 0 || i == 25 ) {
+                    doc.setFillColor(192, 192, 192);   
+                    doc.rect(10, 74 + (i * 7), 190, 7, 'FD');
+                    doc.setFillColor(255, 255, 255); 
+                } else {
+                    doc.rect(10, 74 + (i * 7), 190, 7);
+                }
+            }
+            doc.line(16, 74, 16, 256); doc.text(11,79, 'No');
+            doc.line(60, 74, 60, 256); doc.text(35,79, '품명');
+            doc.line(100, 74, 100, 256); doc.text(75,79, '규격');
+            doc.line(120, 74, 120, 256); doc.text(106,79, '단위');
+            doc.line(130, 74, 130, 256); doc.text(122,79, '수량');
+            doc.line(150, 74, 150, 256); doc.text(137,79, '단가');
+            doc.line(172, 74, 172, 256); doc.text(158,79, '금액');  doc.text(184,79, '비고');
+
+            let y = 0;
+            let amt = 0;
+            this.itemLists.forEach((row, index) => {
+                y = 73 + ((index + 2) * 7);
+                this.doctext(doc, (index + 1).toString(), 10,y,7,6, 1)
+                this.doctext(doc, row.n_item, 16,y,7,6, 0)
+                this.doctext(doc, row.t_size, 60,y,7,6, 0)
+                this.doctext(doc, row.i_unit, 100,y,7,20, 1)
+                this.doctext(doc, row.m_cnt.toString(), 120,y,7,10, 1)
+                this.doctext(doc, this.comma(row.a_unit), 130,y,7,20, 2)
+                this.doctext(doc, this.comma(row.a_amt), 150,y,7,22, 2)
+                this.doctext(doc, row.t_remark, 172,y,7,28, 0)
+                if (row.a_amt) amt = amt + (row.a_amt * 1);
+            });
+
+            y = 73 + ((this.itemLists.length + 2) * 7);
+           this.doctext(doc,'- 이 하 여 백 -', 60,y,7,40, 1);
+           doc.setFontSize(10);
+           y = 73 + (26 * 7) ;
+           this.doctext(doc, '합 계', 100,y,7,20, 1);
+           this.doctext(doc, this.comma(amt), 150,y,7,22, 2);
+           doc.setFontSize(9);
+
+           doc.text(12, 260, `비    고 : `);
+
+
+            // PDF 저장            
+            doc.save(`거래명세서_${this.masterinfo.i_invoiceno}.pdf`);
+            this.$toast.success(`다운로드 폴더에 PDF문서생성 하였습니다.`);
+        },
+        doctext(doc, text, x, y, h, w, a) {
+            // a => 0:왼쪽, 1:가운데, 2:오른쪽 정렬
+            if (!text) return;
+            let tx = x, ty = y, tw = 0;            
+            tw = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+            ty = y + (h / 2) - (doc.internal.getFontSize() / 2);                    
+            if (a == 1) {
+                tx = x + (w - tw) / 2;                              
+            } else if (a == 2) {
+                tx = x + w - tw;
+            }
+            doc.text(tx, ty, text);
+        },
     },
+    
 }
 </script>
 
