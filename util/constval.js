@@ -10,7 +10,7 @@ export const ORDER001 = [
 	{ label: "계획", value: "P" },     	
 	{ label: "작업", value: "W" },     // 
 	{ label: "출하", value: "D" },     // prodship data입력시
-	{ label: "결재", value: "A" }, 
+	{ label: "결재", value: "A" },     // invoe data입력시
 ];
 
 export const PROD001 = [

@@ -8,6 +8,7 @@
             <tooltip-btn label="계산서 작성" @click="addInvoice"><v-icon>mdi-plus</v-icon></tooltip-btn>
             <tooltip-btn label="계산서 삭제" @click="delInvoice"><v-icon>mdi-minus</v-icon></tooltip-btn>
             <tooltip-btn label="계산서 저장" @click="saveInvoice"><v-icon>mdi-content-save-outline</v-icon></tooltip-btn>
+            <tooltip-btn label="거래명세서출력" @click="printInvoce"><v-icon>mdi-printer</v-icon></tooltip-btn>
         </v-toolbar> 
         <v-card style="display: flex; height: 34px; " class="my-card text-input-blue my-text-fontsize  "> 
             <div style="display: flex;">
@@ -148,10 +149,13 @@ import InputAmt from '../../components/InputForms/InputAmt.vue';
 import InputNumber from '../../components/InputForms/InputNumber.vue';
 import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import validateRules from "../../../util/validateRules";
-import { comma, getDate } from '../../../util/lib';
+import { comma, getDate, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
 import ItemPop from '../codelist/ItemPop.vue';
 import VendPop from '../codelist/VendPop.vue';
 import InvoiceDerliveritem from './InvoiceDerliveritem.vue';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { _fonts }  from'../../font/fonts.js';
 
 export default {
     components: { EzDialog, InputDateft, TooltipBtn, InputAmt, InputNumber, InputDate3, ItemPop, VendPop, InvoiceDerliveritem },
@@ -238,6 +242,7 @@ export default {
 
         async addInvoice() {
             if (this.editJob) return;
+            this.invoiceVend.c_vend = "";
 
             this.newInvoce = true;            
             await this.addInvoiceJob()
@@ -472,6 +477,7 @@ export default {
 
             this.newInvoce = false;             
             if (this.masterinfo.f_witre == "1") {
+                this.invoiceVend.c_vend = this.masterinfo.c_vend;
                 await this.addInvoiceJob();
             } else {
                 await this.$refs.dialog_Item.open();

@@ -274,7 +274,7 @@ const shipmentModel = {
                     `       t1.n_compnay, t1.n_ceo, t1.i_company, t1.t_job1, t1.t_job2, t1.t_tel, t1.t_fax, t1.e_mail, t1.t_addr \n` +
                     `  from tb_prodship a\n ` +
                     `        join tb_order b on a.c_com = b.c_com and a.i_order = b.i_order\n ` +
-                    `        join tb_orderli c on a.c_com = c.c_com and a.i_order = c.i_order and a.i_orderser = c.i_orderser\n ` +
+                    `        join tb_orderli c on a.c_com = c.c_com and a.i_order = c.i_order and a.i_orderser = c.i_orderser and c.f_work = '5'\n ` +
                     `        join tb_vend t1 on b.c_com = t1.c_com and b.c_vend = t1.c_vend\n` +
                     ` where a.c_com = ? \n ` +
                     `       and not exists (select * from tb_invoiceli t where a.c_com = t.c_com and a.i_order = t.i_order and a.i_orderser = t.i_orderser)\n ` ;
@@ -317,6 +317,9 @@ const shipmentModel = {
         // f_edit =  0:변경없음, 1:수정, 2:삭제
         const master = objectSplit(req.body, 'm');
         const detail = objectSplit(req.body, 'd');  
+
+        let order = [];
+        let orderlist = [];
  
         const {c_com, i_invoiceser } = master;
         if (master.f_edit !== "0" || master.f_editold !== "0") {                        
@@ -345,7 +348,7 @@ const shipmentModel = {
         };
         detail.forEach((row, index) => {
             if(row.f_edit !== "0" || row.f_editold !== "0") {
-                const {i_invoiceserno} = row;
+                const {i_invoiceserno, i_order, i_orderser} = row;
                 const newdata = row.f_editold !== "0" ? true : false;
                 const deldata = row.f_edit == "2" ? true : false;
                 delete row.f_edit;
@@ -363,12 +366,45 @@ const shipmentModel = {
                 }
                 const sql = deldata ? sqlHelper.DeleteSimple(TABLE.INVOICELI, {c_com, i_invoiceser, i_invoiceserno}) :  newdata ? sqlHelper.Insert(TABLE.INVOICELI, row) : sqlHelper.Update(TABLE.INVOICELI, row, {c_com, i_invoiceser, i_invoiceserno});
                 
-                console.log("detial", sql);
-                // const [row] = await db.execute(sql.query, sql.values);
+                console.log("detial", sql);                
                 const res = sqlDbExecute(sql)    
-                if (res.affectedRows < 1) return false;
+                if (res.affectedRows < 1) {
+                    db.execute('ROLLBACK');
+                    return false;
+                }
+                // 발주 item 상태 변경
+                if (i_orderser.length) {
+                    addOrder(order, {c_com, i_order});
+                    addOrderList(orderlist, {c_com, i_order, i_orderser});
+                }
             }
         });
+        // 발주서 상태 변경  (출하:D <-> 결재:A)
+        for (let i = 0; i < order.length; i++) {
+            const sqldt = sqlHelper.SelectSimple(TABLE.INVOICELI, order[i], ['COUNT(*) as cnt']);            
+            const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
+            const f_status = rv.cnt > 0 ? "A" : 'D';
+
+            const sql = sqlHelper.Update(TABLE.ORDER, {f_status}, order[i]);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }
+        for (let i = 0; i < orderlist.length; i++) {
+            const sqldt = sqlHelper.SelectSimple(TABLE.INVOICELI, orderlist[i], ['COUNT(*) as cnt']);            
+            const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
+            const f_work = rv.cnt > 0 ? "6" : '5';
+
+            const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work}, orderlist[i]);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }    
+
         await db.execute('COMMIT');
         return true;
     },

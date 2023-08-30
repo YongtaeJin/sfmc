@@ -128,6 +128,7 @@ export default {
                 {text: '비고',       value: 't_remark', sortable: false, align:'center', width: "300px"},
             ],
             itemdts:[], selectdt:[],  selectedItemIndex:[],
+            noshipcnt : 0,
            
         }
     },
@@ -156,7 +157,7 @@ export default {
             }
         },
         getStatus(item) {
-            return item == "3" ? "작업" : item == "4" ? "생산" : "출고";
+            return item == "3" ? "작업" : item == "4" ? "생산" : item == "5" ? "출고" : "완료";
         },
         
         // getStatus(item) {
@@ -190,10 +191,15 @@ export default {
             if (this.selected.m_shipcnt == "0") {
                 this.$toast.warning(`출하 수량이 없습니다.`);
                 return;
+            }            
+            if (parseInt(this.selected.m_shipcnt) < parseInt(this.selected.m_ocnt) && this.selected.f_work == "4" && this.noshipcnt < 2) {
+                this.$toast.warning(`출하 수량이 수주수량보다 부족 합니다.`);
+                this.noshipcnt ++;
+                return;
             }
-
-            const res = await this.$ezNotify.confirm("출하처리 또는 취소 합니다. ", "출고 확인", {icon: "mdi-message-bulleted-off", width: 350,});
-            if(!res) return
+            const res = await this.$ezNotify.confirm(`출고 ${this.selected.f_work == "5" ? '취소':'처리'} 합니다.`, `출고  ${this.selected.f_work == "5" ? '취소':'처리'}`, {icon: "mdi-message-bulleted-off", width: 350,});
+            if(!res) return;
+            this.noshipcnt = 0;
 
             this.selected.f_work = this.selected.f_work == "5" ? "4" : "5";
             const rv = this.iuShipWorkset(this.selected);
@@ -257,7 +263,7 @@ export default {
             obj.i_order     = this.selected.i_order;
             obj.i_orderser  = this.selected.i_orderser;
             obj.i_makeser   = this.selected.i_makeser;
-            obj.m_shipcnt   = shipcnt == 0 ? ordercnt : difcnt <= shipcnt ? 1 : yescnt - shipcnt;
+            obj.m_shipcnt   = shipcnt == 0 ? ordercnt : ordercnt > shipcnt ? (ordercnt - shipcnt) : difcnt <= shipcnt ? 1 : yescnt - shipcnt;
             obj.t_remark    = "";
             obj.f_edit      = "1";
             obj.f_editold   = "1";
