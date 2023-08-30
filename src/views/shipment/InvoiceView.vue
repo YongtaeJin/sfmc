@@ -153,6 +153,7 @@ import { comma, getDate, dateToKorean, numberToKorean, amtToKorean } from '../..
 import ItemPop from '../codelist/ItemPop.vue';
 import VendPop from '../codelist/VendPop.vue';
 import InvoiceDerliveritem from './InvoiceDerliveritem.vue';
+import qs from "qs";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { _fonts }  from'../../font/fonts.js';
@@ -649,6 +650,10 @@ export default {
         },
 
         async printInvoce() {
+
+            let query = qs.stringify({c_com: this.$store.state.user.member.c_com});
+            const company = await this.$axios.get(`/api/system/getCompany?${query}`);
+            
             const doc = new jsPDF('p', 'mm', 'a4');
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
@@ -664,12 +669,12 @@ export default {
             doc.text(13, 56, '공'); doc.text(13, 64, '급'); doc.text(13, 72, '자');        
             doc.rect(18, 50, 13, 24); 
 
-            doc.rect(18, 50, 87, 6); this.doctext(doc, "등록번호", 18, 56, 6, 6, 0);  this.doctext(doc, this.masterinfo.i_company, 31, 56, 6, 70, 1);
-            doc.rect(18, 56, 87, 6); this.doctext(doc, "상 호 명", 18, 62, 6, 6, 0);  this.doctext(doc, this.masterinfo.n_compnay, 31, 62, 6, 30, 1);
-            doc.rect(63, 56, 13, 6); this.doctext(doc, "성     명", 63, 62, 6, 6, 0); this.doctext(doc, this.masterinfo.n_ceo,     76, 62, 6, 28, 1);
-            doc.rect(18, 62, 87, 6); this.doctext(doc, "주     소", 18, 68, 6, 6, 0); this.doctext(doc, this.masterinfo.t_addr,    31, 68, 6, 70, 1);
-            doc.rect(18, 68, 87, 6); this.doctext(doc, "업     태", 18, 74, 6, 6, 0); this.doctext(doc, this.masterinfo.t_job1,    31, 74, 6, 30, 1);
-            doc.rect(63, 68, 13, 6); this.doctext(doc, "업     종", 63, 74, 6, 6, 0); this.doctext(doc, this.masterinfo.t_job2,    76, 74, 6, 28, 1);
+            doc.rect(18, 50, 87, 6); this.doctext(doc, "등록번호", 18, 56, 6, 6, 0);  this.doctext(doc, company[0].c1, 31, 56, 6, 70, 1);
+            doc.rect(18, 56, 87, 6); this.doctext(doc, "상 호 명", 18, 62, 6, 6, 0);  this.doctext(doc, company[0].c2, 31, 62, 6, 30, 1);
+            doc.rect(63, 56, 13, 6); this.doctext(doc, "성     명", 63, 62, 6, 6, 0); this.doctext(doc, company[0].c3, 76, 62, 6, 28, 1);
+            doc.rect(18, 62, 87, 6); this.doctext(doc, "주     소", 18, 68, 6, 6, 0); this.doctext(doc, company[0].c4, 31, 68, 6, 70, 1);
+            doc.rect(18, 68, 87, 6); this.doctext(doc, "업     태", 18, 74, 6, 6, 0); this.doctext(doc, company[0].c5, 31, 74, 6, 30, 1);
+            doc.rect(63, 68, 13, 6); this.doctext(doc, "업     종", 63, 74, 6, 6, 0); this.doctext(doc, company[0].c6, 76, 74, 6, 28, 1);
             
 
             doc.rect(105, 50, 8, 24);

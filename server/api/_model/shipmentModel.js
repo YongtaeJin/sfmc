@@ -446,6 +446,71 @@ const shipmentModel = {
         const [[rv]]  = await db.execute(query, values);
         return  rv.cnt > 0 ? true : false;        
     },
+    // 대금수금 등록
+    async getAccountInvoce(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;
+        
+        var values = new Array();
+        let query = `SELECT a.c_com, a.i_invoiceser, a.i_invoiceno, a.d_invoice, a.f_status, a.f_witre, a.a_amt, a.a_vat, (a.a_amt + a.a_vat) a_inamt, a.c_vend, a.n_vend, a.n_end, a.d_end, \n ` +
+                    `       b.a_accamt, b.d_account1, b.d_account2, b.m_cnt, \n ` +    
+                    `       (IFNULL(b.a_accamt,0) / (a.a_amt + a.a_vat)) p_per, ((a.a_amt + a.a_vat) - IFNULL(b.a_accamt,0)) a_dif \n ` +    
+                    `  FROM tb_invoice a\n ` +
+                    `       LEFT OUTER JOIN (SELECT c_com, i_invoiceser, SUM(a_accamt) a_accamt, MIN(d_account) d_account1, MAX(d_account) d_account2, COUNT(*) m_cnt \n ` +
+                    `               FROM tb_account WHERE f_del = 'N' \n ` +
+                    `              GROUP BY c_com, i_invoiceser) b ON a.c_com = b.c_com AND a.i_invoiceser = b.i_invoiceser\n` +
+                    ` WHERE a.c_com = ? \n` +
+                    `   AND a.f_status = '1'\n`;
+                   
+        values.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += ` AND a.d_invoice between ? AND ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += ` AND a.d_invoice >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += ` AND a.d_invoice <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query += ` AND a.n_vend like ? \n `
+            values.push(sVend + '%');
+        }       
+        query += `  ORDER BY a.c_com, a.n_vend, a.i_invoiceno, a.i_invoiceser`;
+        
+        const [rows] = await db.execute(query, values); 
+        rows.forEach((row) => {
+            sqlHelper.addEditCol(row);
+        });        
+        return rows;
+    },
+    async getAccountlist(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { i_invoiceser } = req.body;
+
+        const sql = sqlHelper.SelectSimple(TABLE.ACCOUNT, {c_com, i_invoiceser} );
+        const [rows] = await db.execute(sql.query, sql.values);  
+        rows.forEach((row) => {
+            sqlHelper.addEditCol(row);
+        });        
+        return rows;
+    },
+    async iuAccountlist(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { i_accounter } = req.body;
+        // 추가 저장 삭제 처리 
+        const sql = sqlHelper.SelectSimple(TABLE.ACCOUNT, {c_com, i_invoiceser} );
+        const [rows] = await db.execute(sql.query, sql.values);  
+        rows.forEach((row) => {
+            sqlHelper.addEditCol(row);
+        });        
+        return rows;
+    },
 
 }
 async function addOrder(jsonArr, newData) {

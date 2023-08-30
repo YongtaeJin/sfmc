@@ -65,4 +65,21 @@ router.post('/invoiceNochk', async (req, res) => {
 	res.json(result);
 });
 
+router.post('/getAccountInvoce', async (req, res) => {
+    const result = await modelCall(shipmentModel.getAccountInvoce, req);
+	res.json(result);
+});
+router.post('/getAccountlist', async (req, res) => {
+    const result = await modelCall(shipmentModel.getAccountlist, req);
+	res.json(result);
+});
+// router.delete('/delAccountlist/:c_com/:i_accountser', async(req, res)=>{
+// 	const result = await modelCall(shipmentModel.delAccountlist, req);
+// 	res.json(result);
+// });
+router.post('/iuAccountlist', async (req, res) => {
+    const result = await modelCall(shipmentModel.iuAccountlist, req);
+	res.json(result);
+});
+
 module.exports = router;

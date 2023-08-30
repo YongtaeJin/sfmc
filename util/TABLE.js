@@ -22,6 +22,7 @@ const TABLE = {
 	SHIPMENT: 'tb_prodship',
 	INVOICE: 'tb_invoice',
 	INVOICELI: 'tb_invoiceli',
+	ACCOUNT: 'tb_account',
 
 };
 
