@@ -502,6 +502,30 @@ const shipmentModel = {
         });        
         return rows;
     },
+    async getInvoiceNotAccount(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
+
+        const { c_com,  i_invoiceser } = req.body;
+        
+        const query = `SELECT a.c_com, a.i_invoiceno, b.i_invoiceser, b.i_invoiceserno, a.f_witre, a.c_vend, a.n_vend, \n` +
+                      `       b.i_shipser, b.i_shipno, b.i_order, b.i_orderser, c.i_orderno, (b.a_inamt + b.a_invat) a_invatamt, \n` +
+                      `       b.a_inamt, b.a_invat,  b.c_item, b.n_item, b.t_size, b.i_unit, b.i_type, b.m_cnt, b.a_unit \n` +
+                      `  FROM tb_invoice a \n` +
+                      `       JOIN tb_invoiceli b ON a.c_com = b.c_com AND a.i_invoiceser = b.i_invoiceser \n` +
+                      `       LEFT OUTER JOIN tb_orderli c ON b.c_com  = c.c_com AND b.i_order = c.i_order \n` +
+                      `  WHERE a.c_com = ? \n` +
+                      `    AND a.i_invoiceser = ? \n` +
+                      `    AND a.f_status = '1' \n` +
+                      `    AND NOT EXISTS (SELECT * FROM tb_account t WHERE b.c_com = t.c_com AND b.i_invoiceser = t.i_invoiceser AND b.i_invoiceserno = t.i_invoiceserno) \n` +
+                      `  ORDER BY a.c_com, a.i_invoiceno, b.s_sort, b.i_invoiceserno ` ;
+        var values = new Array();
+        values.push(c_com);
+        values.push(i_invoiceser);
+
+        // console.log(query, values)
+        const [rows] = await db.execute(query, values);                 
+        return rows;
+    },
     async iuAccountlist(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
         const { c_com } = req.user;

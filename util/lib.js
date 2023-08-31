@@ -51,13 +51,13 @@ const lib = {
 	priceToString(price)  {
 		return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	},
-	getDate(dayAf) {		
+	getDate(dayAf, dd) {		
 		const now = new Date(Date.now());
 		now.setDate(now.getDate() + (dayAf !== undefined ? dayAf || 0 : 0));
 		const year = now.getFullYear();
 		const month = String(now.getMonth() + 1).padStart(2, '0');
-		const day = String(now.getDate()).padStart(2, '0');
-		const dateString = `${year}-${month}-${day}`;
+		const day = String(now.getDate()).padStart(2, '0');		
+		const dateString = dd !== undefined || dd > 0 ? `${year}-${month}-${String(dd).padStart(2, '0')}` :`${year}-${month}-${day}` ;
 		return dateString;
 	},
 	numberToKorean(number) {
@@ -134,6 +134,11 @@ const lib = {
 		const dateString = `${year}-${month}-${day}`;
 		return dateString;	
 	},
+	later3Month() {
+
+	}
+
+
 }
 
 module.exports = lib;

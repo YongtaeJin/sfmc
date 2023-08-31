@@ -109,7 +109,7 @@ export default {
             return count;
         },
         async init() {
-            this.form.sDate1=previousMonth();
+            this.form.sDate1 = getDate(-100, 1);
             this.view();
         },
         async view() {

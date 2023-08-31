@@ -27,8 +27,8 @@
             <template v-slot:[`item.a_inamt`]="{ item }">                
                 <div class="right2-align"> {{  comma(item.a_inamt) }}</div>
             </template>
-            <template v-slot:[`item.a_accamt`]="{ item }">                
-                <div class="right2-align"> {{  comma(item.a_accamt) }}</div>
+            <template v-slot:[`item.a_accamt`]="{ item }">                  
+                <div class="right2-align"> {{  comma(item.a_accamt) }}</div>                
             </template> 
             <template v-slot:[`item.p_per`]="{ item }">                
                 {{  formattedPercentage(item.p_per) }}
@@ -48,7 +48,27 @@
                     :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
                     class="elevation-1 text-no-wrap no-padding" height="285px" max-height="285px"> 
+
+            <template v-slot:[`item.d_account`]="{ item }">
+                <input-date-2 v-model="item.d_account" @input="onChange(item)" v-if=" item.i_accountser === itemInfo.i_accountser" :rules="rules.date({required: false})" class="my-text-table"/>
+                <div v-else> {{  item.d_account }}</div>   
+            </template>
+
+            <template v-slot:[`item.a_accamt`]="{ item }">
+                <input-amt v-model="item.a_accamt" @input="onChange(item)" v-if=" item.i_accountser === itemInfo.i_accountser" ></input-amt>
+                <div class="right2-align" v-else> {{  comma(item.a_accamt) }}</div>            
+            </template> 
+
+            <template v-slot:[`item.t_remark`]="{ item }">
+                <v-text-field v-model="item.t_remark" @input="onChange(item)" v-if=" item.i_accountser === itemInfo.i_accountser" dense hide-details class="my-text-field no-padding" />
+                <span v-else>{{item.t_remark}}</span>
+            </template>
         </v-data-table>
+        
+
+        <ez-dialog ref="dialog_Insert" label="출하(출고) 선택" width="650px" >
+            <account-invoiceitem :data="invoicedata" @onEnter="invoiceAdd"></account-invoiceitem>
+        </ez-dialog>
     </v-container>
 </template>
 
@@ -59,8 +79,11 @@ import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import validateRules from "../../../util/validateRules";
 import { comma, getDate, dateToKorean, numberToKorean, amtToKorean, previousMonth } from '../../../util/lib';
 import InputDateft from '../../components/InputForms/InputDateft.vue';
+import AccountInvoiceitem from './AccountInvoiceitem.vue';
+import InputAmt from '../../components/InputForms/InputAmt.vue';
+import InputDate2 from '../../components/InputForms/InputDate2.vue';
 export default {
-    components: { EzDialog, TooltipBtn, InputDateft},
+    components: { EzDialog, TooltipBtn, InputDateft, AccountInvoiceitem, InputAmt, InputDate2},
     name: "Account",
     mounted() {        
         this.init();
@@ -77,13 +100,12 @@ export default {
                 {text: '발행금액',       value: 'a_inamt', sortable: false, align:'center', width: "50px"}, 
                 {text: '수금누계',       value: 'a_accamt', sortable: false, align:'center', width: "50px"}, 
                 {text: '수금진행률',     value: 'p_per', sortable: false, align:'center', width: "50px"}, 
-                {text: '수금잔액',       value: 'a_dif', sortable: false, align:'center', width: "50px"}, 
-                {text: '수금회수',       value: 'm_cnt', sortable: false, align:'center', width: "50px"}, 
+                {text: '수금잔액',       value: 'a_dif', sortable: false, align:'center', width: "50px"},                 
                 {text: '수금일자',       value: 'd_account2', sortable: false, align:'center', width: "50px"}, 
             ],
             masters:[], masterinfo:[], selectedM: [],
             itemHead: [
-                {text: '수금일자',    value: 'd_account', sortable: false, align:'center', width: "60px"},
+                {text: '수금일자',    value: 'd_account', sortable: false, align:'center', width: "70px"},
                 {text: '수금금액',    value: 'a_accamt', sortable: false, align:'center', width: "60px"},
                 {text: '출하번호',    value: 'i_shipno', sortable: false, align:'center', width: "60px"},
                 {text: '항목(품목)',  value: 'n_item', sortable: false, align:'center', width: "130px"},
@@ -97,10 +119,12 @@ export default {
                 
             ],
             itemLists: [], itemInfo: [], selectedD: [],
+            invoicedata: [],
         }
     },
     computed: {
         rules: () => validateRules,
+
     },
     methods: {
         ...mapActions("shipment", ["iuAccountlist"]),
@@ -110,18 +134,77 @@ export default {
             } 
         },
         async init() {
-            this.form.sDate1=previousMonth();
+            this.form.sDate1 = getDate(-100, 1);
             this.viewAccout();
         },
         async viewAccout() {
             this.masterinfo = []; this.selectedM = []; this.itemLists = []; this.itemInfo = [];
             this.masters = await this.$axios.post(`/api/shipment/getAccountInvoce`, this.form);             
         },
-        async addAccout() {},
-        async delAccout() {},
+        async addAccout() {
+            if( this.masterinfo.i_invoiceser == undefined) {                
+                return;
+            }
+            this.invoicedata = await this.$axios.post(`/api/shipment/getInvoiceNotAccount`, this.masterinfo); 
+            
+            const otherList = this.invoicedata.filter(sourceItem => {
+                // 다른 배열에 해당 객체가 없는지 확인
+                return !this.itemLists.some(otherItem => otherItem.i_invoiceserno === sourceItem.i_invoiceserno);
+                });
+            if (!otherList.length) {
+                this.$toast.warning(`등록 가능한 출하List 없습니다.`);
+                return;
+            }
+            this.invoicedata = Array.from(new Set(otherList.map(obj => 
+                    JSON.stringify({ c_com:         obj.c_com, 
+                                     f_select:      '0',
+                                     i_invoiceno:    obj.i_invoiceno ,
+                                     i_invoiceser:   obj.i_invoiceser ,
+                                     i_invoiceserno: obj.i_invoiceserno ,
+                                     f_witre:        obj.f_witre, 
+                                     c_vend:         obj.c_vend,
+                                     n_vend:         obj.n_vend,
+                                     i_shipno:       obj.i_shipno,
+                                     i_shipser:      obj.i_shipser,
+                                     i_order:        obj.i_order,
+                                     i_orderser:     obj.i_orderser,
+
+                                     a_invatamt:     obj.a_invatamt,   
+                                     a_inamt:        obj.a_inamt,
+                                     a_invat:        obj.a_invat,
+                                     c_item:         obj.c_item,
+                                     n_item:         obj.n_item,
+                                     t_size:         obj.t_size,
+                                     i_unit:         obj.i_unit,
+                                     i_type:         obj.i_type,
+                                     m_cnt:          obj.m_cnt,
+                                     a_unit:         obj.a_unit,
+                                     }))), 
+                    JSON.parse);
+            this.$refs.dialog_Insert.open();
+        },
+        async delAccout() {
+            if( this.masterinfo.i_invoiceser == undefined || this.itemInfo.i_accountser  == undefined ) {                
+                return;
+            }
+
+            const idx = this.itemLists.indexOf(this.itemInfo);
+            if (idx > -1) {
+                if (this.itemLists[idx].f_editold == "0") {
+                    this.itemLists[idx].f_edit = this.itemInfo.f_edit === "2" ? "0": "2";
+                } else {
+                    this.itemLists.splice(idx, 1)
+                    const idx1 = this.itemLists.indexOf(this.itemInfo)
+                    if (idx1 > -1) this.itemLists.splice(idx1, 1);
+                }
+            }
+            this.sumField();
+        },
         async saveAccout() {},
 
         async rowSelectMaster(item, row) {
+            if(this.masterinfo.i_invoiceno == item.i_invoiceno) return;
+
             this.masterinfo = item;
             if (row) { row.select(true) } else { this.selectedM = [item] };
             // if (item.f_edit == "1" && item.f_editold == "1") return;
@@ -138,6 +221,76 @@ export default {
             const percentage = data * 100;
             return percentage.toFixed(2) + '%';
         }, 
+        invoiceAdd(item) {
+            this.$refs.dialog_Insert.close();
+            if (!item) return;
+            const ms = Date.now();
+            
+            item.forEach((row, i) => {
+                const obj = {};
+                obj.c_com          = this.masterinfo.c_com; 
+                obj.i_accountser   = ms + i;
+                obj.d_account      = getDate(); 
+                obj.a_accamt       = row.a_invatamt;
+                obj.f_del          = "N";
+                obj.c_vend         = row.c_vend; 
+                obj.n_vend         = row.n_vend; 
+                obj.i_invoiceser   = row.i_invoiceser; 
+                obj.i_invoiceserno = row.i_invoiceserno; 
+                obj.i_invoiceno    = row.i_invoiceno; 
+                obj.i_order        = row.i_order; 
+                obj.i_orderser     = row.i_orderser; 
+                obj.i_orderno      = row.i_orderno; 
+                obj.i_shipser      = row.i_shipser; 
+                obj.i_shipno       = row.i_shipno; 
+                obj.c_item         = row.c_item; 
+                obj.n_item         = row.n_item; 
+                obj.t_size         = row.t_size; 
+                obj.i_unit         = row.i_unit; 
+                obj.i_type         = row.i_type; 
+                obj.m_cnt          = row.m_cnt; 
+                obj.a_unit         = row.a_unit; 
+                obj.a_amt          = row.a_inamt; 
+                obj.a_vat          = row.a_invat; 
+                obj.t_remark       = ""; 
+                obj.n_crnm         = ""; 
+                obj.d_create_at    = ""; 
+                obj.n_upnm         = ""; 
+                obj.d_update_at    = "";
+                obj.f_edit         = "1";
+                obj.f_editold      = "1";
+                const idx = this.itemLists.push(obj); 
+            });
+
+            this.sumField();
+            
+        },
+        sumField() {
+            // sum data in give key (property)
+            const data = this.itemLists.reduce((sum, item) => {
+                    if (item.f_edit !== "2") {
+                        return sum + (item['a_accamt'] || 0);
+                    }
+                    return sum;
+                }, 0 );
+            
+            if (data) {
+                this.masterinfo.a_accamt = data;
+                this.masterinfo.a_dif = parseInt(this.masterinfo.a_inamt) - parseInt(data);
+                this.masterinfo.p_per = parseInt(data) / parseInt(this.masterinfo.a_inamt);
+            } else {
+                this.masterinfo.a_accamt = 0;
+                this.masterinfo.a_dif = parseInt(this.masterinfo.a_inamt) ;
+                this.masterinfo.p_per = 0;
+            }
+            const filteredValues = this.itemLists.filter(item => item.f_edit !== "2").map(item => item.d_account);            
+            this.masterinfo.d_account1 = filteredValues.reduce((min, current) => { return current < min ? current : min;}, "");
+            this.masterinfo.d_account2 = filteredValues.reduce((max, current) => { return current > max ? current : max;}, "");            
+        },
+        onChange(item) {
+            item.f_edit = "1";
+            this.sumField();
+        },
     },
 }
 </script>

@@ -73,6 +73,10 @@ router.post('/getAccountlist', async (req, res) => {
     const result = await modelCall(shipmentModel.getAccountlist, req);
 	res.json(result);
 });
+router.post('/getInvoiceNotAccount', async (req, res) => {
+    const result = await modelCall(shipmentModel.getInvoiceNotAccount, req);
+	res.json(result);
+});
 // router.delete('/delAccountlist/:c_com/:i_accountser', async(req, res)=>{
 // 	const result = await modelCall(shipmentModel.delAccountlist, req);
 // 	res.json(result);
