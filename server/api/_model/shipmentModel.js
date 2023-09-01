@@ -617,6 +617,20 @@ const shipmentModel = {
         return true;
     },
 
+    async iuAccountJobend(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}        
+        const { c_com, i_invoiceser, f_status } = req.body;
+        const chang_status = {};
+        chang_status.f_status = f_status == "9" ? "2" : "9";
+        
+        const sql = sqlHelper.Update(TABLE.INVOICE, chang_status, { c_com, i_invoiceser, f_status });
+        const [row] = await db.execute(sql.query, sql.values);
+
+        await db.execute('COMMIT');
+		return row.affectedRows == 1;
+        
+    },
+
 }
 async function addOrder(jsonArr, newData) {
     const isDuplicate = jsonArr.some(obj =>

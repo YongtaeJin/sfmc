@@ -85,5 +85,10 @@ router.post('/iuAccountlist', async (req, res) => {
     const result = await modelCall(shipmentModel.iuAccountlist, req);
 	res.json(result);
 });
+router.post('/iuAccountJobend', async (req, res) => {
+    const result = await modelCall(shipmentModel.iuAccountJobend, req);
+	res.json(result);
+});
+
 
 module.exports = router;

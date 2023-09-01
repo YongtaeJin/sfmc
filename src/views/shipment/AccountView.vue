@@ -55,17 +55,17 @@
                     class="elevation-1 text-no-wrap no-padding" height="285px" max-height="285px"> 
 
             <template v-slot:[`item.d_account`]="{ item }">
-                <input-date-2 v-model="item.d_account" @input="onChange(item)" v-if=" item.i_accountser === itemInfo.i_accountser" :rules="rules.date({required: false})" class="my-text-table"/>
+                <input-date-2 v-model="item.d_account" @input="onChange(item)" v-if="!accEnd && item.i_accountser === itemInfo.i_accountser" :rules="rules.date({required: false})" class="my-text-table"/>
                 <div v-else> {{  item.d_account }}</div>   
             </template>
 
             <template v-slot:[`item.a_accamt`]="{ item }">
-                <input-amt v-model="item.a_accamt" @input="onChange(item)" v-if=" item.i_accountser === itemInfo.i_accountser" ></input-amt>
+                <input-amt v-model="item.a_accamt" @input="onChange(item)" v-if="!accEnd && item.i_accountser === itemInfo.i_accountser" ></input-amt>
                 <div class="right2-align" v-else> {{  comma(item.a_accamt) }}</div>            
             </template> 
 
             <template v-slot:[`item.t_remark`]="{ item }">
-                <v-text-field v-model="item.t_remark" @input="onChange(item)" v-if=" item.i_accountser === itemInfo.i_accountser" dense hide-details class="my-text-field no-padding" />
+                <v-text-field v-model="item.t_remark" @input="onChange(item)" v-if="!accEnd && item.i_accountser === itemInfo.i_accountser" dense hide-details class="my-text-field no-padding" />
                 <span v-else>{{item.t_remark}}</span>
             </template>
         </v-data-table>
@@ -140,6 +140,9 @@ export default {
                     return sum;
                 }, 0 ) > 0 ? true : false ;
         },
+        accEnd() {
+            return this.masterinfo.f_status == "9" ? true : false;
+        }, 
 
     },
     methods: {
@@ -329,8 +332,25 @@ export default {
             item.f_edit = "1";
             this.sumField();
         },
-        async accountEndjob(item) {
-            console.log("aa", this.editJob)
+        async accountEndjob() {            
+            const idx = this.masters.indexOf(this.masterinfo);
+            console.log("aaa", idx)
+            
+            if (this.editJob) { 
+                this.$toast.warning(`저장 후 상태 변경 가능 합니다.`);
+                if(!res) return;
+            }
+            if (idx >= 0 ) {
+                // if ( parseInt(this.masterinfo.f_status)  1) return;
+                const res = await this.$ezNotify.confirm(`대금수금 상태 ${this.masterinfo.f_status=="9"?'완료 취소':'완료'} 처리 하시 겠습니까 ?`, `완료 ${this.masterinfo.f_status=="1"?'취소':'처리'}`, {icon: "mdi-message-bulleted-off", width: 400,});
+                if(!res) return;
+                const data = await this.$axios.post(`/api/shipment/iuAccountJobend`, this.masterinfo); 
+                if (data) {
+                    this.masterinfo.f_status = this.masterinfo.f_status == "9" ? "2" : "9";
+                    this.$toast.info(`처리 하였습니다.`);
+                }
+            }
+
         },
     },
 }
