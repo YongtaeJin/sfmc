@@ -150,6 +150,7 @@ import InputNumber from '../../components/InputForms/InputNumber.vue';
 import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import validateRules from "../../../util/validateRules";
 import { comma, previousMonth, getDate, dateToKorean, numberToKorean, amtToKorean } from '../../../util/lib';
+import { IVCOICE01 } from '../../../util/constval';
 import ItemPop from '../codelist/ItemPop.vue';
 import VendPop from '../codelist/VendPop.vue';
 import InvoiceDerliveritem from './InvoiceDerliveritem.vue';
@@ -167,7 +168,7 @@ export default {
     data() {
         return {
             valid: true,
-            comma,
+            comma, IVCOICE01,
             form : {sDate1:"", sDate2:"", sVend:"",},
             invoiceVend : {c_vend: "",},
             newInvoce : true,
@@ -207,7 +208,13 @@ export default {
             return mod == 0 ? false : true;
         },
         changVend() {return ( this.masterinfo.f_witre == "0") ? true : false}, 
-        getStatus() {return this.masterinfo.f_status == "1" ? "확정" : this.masterinfo.f_status == "0" ? "작성" : "" },
+        // getStatus() {return this.masterinfo.f_status == "1" ? "확정" : this.masterinfo.f_status == "0" ? "작성" : "" },
+        getStatus() {
+            var find = this.IVCOICE01.find(e => e.value == this.masterinfo.f_status);
+            return find !== undefined ? find.label : ''; 
+        }
+
+        
     },
     methods: {
         ...mapActions("shipment", ["iuInvoicelist", "invoiceNochk"]),
@@ -222,6 +229,7 @@ export default {
         },
       
         async rowSelectMaster(item, row) {
+            if(this.masterinfo.i_invoiceno == item.i_invoiceno) return;
             this.invoiceVend.c_vend = item.c_vend;
             if (this.editJob) { 
                 const res = await this.$ezNotify.confirm(`수정내용이 존재 합니다.<br><br>수정 내용을 취소 하시게습니까 ?`, "자료확인", {icon: "mdi-message-bulleted-off", width: 350,});
@@ -643,7 +651,13 @@ export default {
 
         async invoceEndjob() {
             const idx = this.masters.indexOf(this.masterinfo);
+
+            if (this.editJob) { 
+                this.$toast.warning(`저장 후 상태 변경 가능 합니다.`);
+                if(!res) return;
+            }
             if (idx >= 0 ) {
+                if ( parseInt(this.masterinfo.f_status) > 1) return;
                 const res = await this.$ezNotify.confirm(`계산서 상태 ${this.masterinfo.f_status=="1"?'취소':'확정'} 처리 하시 겠습니까 ?`, `확정 ${this.masterinfo.f_status=="1"?'취소':'처리'}`, {icon: "mdi-message-bulleted-off", width: 350,});
                 if(!res) return;
                 const data = await this.$axios.post(`/api/shipment/iuInvoiceJobend`, this.masterinfo); 

@@ -33,3 +33,9 @@ export const PROD002 = [
 	{ label: "입금", value: "7" },
 ];
 
+export const IVCOICE01 = [
+	{ label: "작성", value: "0" },
+	{ label: "확정", value: "1" },
+	{ label: "입금", value: "2" },
+	{ label: "완료", value: "9" },
+];

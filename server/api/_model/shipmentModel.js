@@ -464,7 +464,7 @@ const shipmentModel = {
                     `               FROM tb_account WHERE f_del = 'N' \n ` +
                     `              GROUP BY c_com, i_invoiceser) b ON a.c_com = b.c_com AND a.i_invoiceser = b.i_invoiceser\n` +
                     ` WHERE a.c_com = ? \n` +
-                    `   AND a.f_status = '1'\n`;
+                    `   AND a.f_status >= '1'\n`;
                    
         values.push(c_com);
         if (sDate1.length > 0 && sDate2.length > 0 ) {
@@ -515,7 +515,7 @@ const shipmentModel = {
                       `       LEFT OUTER JOIN tb_orderli c ON b.c_com  = c.c_com AND b.i_order = c.i_order \n` +
                       `  WHERE a.c_com = ? \n` +
                       `    AND a.i_invoiceser = ? \n` +
-                      `    AND a.f_status = '1' \n` +
+                      `    AND a.f_status >= '1' \n` +
                       `    AND NOT EXISTS (SELECT * FROM tb_account t WHERE b.c_com = t.c_com AND b.i_invoiceser = t.i_invoiceser AND b.i_invoiceserno = t.i_invoiceserno) \n` +
                       `  ORDER BY a.c_com, a.i_invoiceno, b.s_sort, b.i_invoiceserno ` ;
         var values = new Array();
@@ -528,15 +528,93 @@ const shipmentModel = {
     },
     async iuAccountlist(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
-        const { c_com } = req.user;
-        const { i_accounter } = req.body;
+        // const { c_com } = req.user;
+        // const { i_accounter } = req.body;
+        const at = moment().format('LT'); 
+
+        let order = [];
+        let orderlist = [];
+        let addInvocielist = [];
         // 추가 저장 삭제 처리 
-        const sql = sqlHelper.SelectSimple(TABLE.ACCOUNT, {c_com, i_invoiceser} );
-        const [rows] = await db.execute(sql.query, sql.values);  
-        rows.forEach((row) => {
-            sqlHelper.addEditCol(row);
-        });        
-        return rows;
+        for (let i = 0; i < req.body.length; i++) {
+            const item = {...req.body[i] };
+           
+            const {c_com, i_accountser, f_edit, f_editold } = item;
+            const newdata = f_editold !== "0" ? true : false;
+            const deldata = f_edit == "2" ? true : false;
+            if  (f_edit == "0" && f_editold == "0") continue;
+            delete item.f_edit;
+            delete item.f_editold;
+            if (newdata) {
+                item.d_create_at = at;
+                item.n_crnm = req.user.n_name;
+                delete item.d_update_at;
+                delete item.n_upnm;
+            } else {
+                delete item.d_create_at;
+                delete item.n_crnm;
+                item.d_update_at = at;
+                item.n_upnm = req.user.n_name;                    
+            }
+            const sql = deldata ? sqlHelper.DeleteSimple(TABLE.ACCOUNT, {c_com, i_accountser}) :  newdata ? sqlHelper.Insert(TABLE.ACCOUNT, item) : sqlHelper.Update(TABLE.ACCOUNT, item, {c_com, i_accountser});
+            
+            console.log("detial", sql);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+            // 발주 item 상태 변경
+            const { i_order, i_orderser, i_invoiceser} = item;
+            if (i_orderser.length) { 
+                addOrder(order, {c_com, i_order});
+                addOrderList(orderlist, {c_com, i_order, i_orderser});
+            }
+            if (i_invoiceser.length) { 
+                addInvocieitem(addInvocielist, {c_com, i_invoiceser});
+            }
+        }
+
+        // 발주서 상태 변경  (출하:D <-> 결재:A)
+        // for (let i = 0; i < order.length; i++) {
+        //     const sqldt = sqlHelper.SelectSimple(TABLE.ACCOUNT, order[i], ['COUNT(*) as cnt']);            
+        //     const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
+        //     const f_status = rv.cnt > 0 ? "A" : 'D';
+
+        //     const sql = sqlHelper.Update(TABLE.ORDER, {f_status}, order[i]);
+        //     const res = await db.execute(sql.query, sql.values);
+        //     if (res.affectedRows < 1) {
+        //         await db.execute('ROLLBACK');
+        //         return false;
+        //     }
+        // }
+        for (let i = 0; i < orderlist.length; i++) {
+            const sqldt = sqlHelper.SelectSimple(TABLE.ACCOUNT, orderlist[i], ['COUNT(*) as cnt']);            
+            const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
+            const f_work = rv.cnt > 0 ? "7" : '6';
+
+            const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work}, orderlist[i]);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }
+        for (let i = 0; i < addInvocielist.length; i++) {
+            const sqldt = sqlHelper.SelectSimple(TABLE.ACCOUNT, addInvocielist[i], ['COUNT(*) as cnt']);            
+            const [[rv]] = await db.execute(sqldt.query, sqldt.values);            
+            const f_status = rv.cnt > 0 ? "2" : '1';
+
+            const sql = sqlHelper.Update(TABLE.INVOICE, {f_status}, addInvocielist[i]);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }    
+
+        await db.execute('COMMIT');
+        return true;
     },
 
 }
@@ -553,6 +631,14 @@ async function addOrderList(jsonArr, newData) {
       obj.c_com === newData.c_com &&
       obj.i_order === newData.i_order &&
       obj.i_orderser === newData.i_orderser
+    );  
+    if (!isDuplicate) jsonArr.push(newData);      
+    return jsonArr;
+}
+async function addInvocieitem(jsonArr, newData) {
+    const isDuplicate = jsonArr.some(obj =>
+      obj.c_com === newData.c_com &&
+      obj.i_invoiceser === newData.i_invoiceser 
     );  
     if (!isDuplicate) jsonArr.push(newData);      
     return jsonArr;

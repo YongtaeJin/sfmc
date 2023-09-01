@@ -36,7 +36,12 @@
             <template v-slot:[`item.a_dif`]="{ item }">                
                 <div class="right2-align"> {{  comma(item.a_dif) }}</div>
             </template>
+            <template v-slot:[`item.f_status`]="{ item }">                
+                <div> <v-chip x-small :color="getColor(item.f_status)" dark @dblclick="accountEndjob">{{ getStatus(item.f_status) }}</v-chip></div>
+            </template>
         </v-data-table>
+
+
         <v-toolbar height="25px" background-color="primary" dark >
             <v-toolbar-title>대금수금 등록 List</v-toolbar-title>
             <v-spacer/>
@@ -78,6 +83,7 @@ import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import validateRules from "../../../util/validateRules";
 import { comma, getDate, dateToKorean, numberToKorean, amtToKorean, previousMonth } from '../../../util/lib';
+import { IVCOICE01 } from '../../../util/constval';
 import InputDateft from '../../components/InputForms/InputDateft.vue';
 import AccountInvoiceitem from './AccountInvoiceitem.vue';
 import InputAmt from '../../components/InputForms/InputAmt.vue';
@@ -91,7 +97,7 @@ export default {
     data() {
         return {
             valid: true,
-            comma,
+            comma, IVCOICE01,
             form : {sDate1:"", sDate2:"", sVend:"",},
             masterHead: [
                 {text: '고객사',         value: 'n_vend',     sortable: false, align:'center', width: "100px" },
@@ -102,6 +108,7 @@ export default {
                 {text: '수금진행률',     value: 'p_per', sortable: false, align:'center', width: "50px"}, 
                 {text: '수금잔액',       value: 'a_dif', sortable: false, align:'center', width: "50px"},                 
                 {text: '수금일자',       value: 'd_account2', sortable: false, align:'center', width: "50px"}, 
+                {text: '상태',           value: 'f_status', sortable: false, align:'center', width: "20px"}, 
             ],
             masters:[], masterinfo:[], selectedM: [],
             itemHead: [
@@ -124,6 +131,15 @@ export default {
     },
     computed: {
         rules: () => validateRules,
+        
+        editJob() {    
+            return this.itemLists.reduce((sum, item) => {
+                    if (item.f_edit !== "0") {
+                        return sum + (1 || 0);
+                    }
+                    return sum;
+                }, 0 ) > 0 ? true : false ;
+        },
 
     },
     methods: {
@@ -132,6 +148,13 @@ export default {
             if (item.f_edit == "2") {
                 return "orange";
             } 
+        },
+        getStatus(f_status) {
+            var find = this.IVCOICE01.find(e => e.value == f_status);
+            return find !== undefined ? find.label : ''; 
+        },
+        getColor(f_status) {
+            return f_status == "0" ? 'red' : 'green';
         },
         async init() {
             this.form.sDate1 = getDate(-100, 1);
@@ -200,7 +223,22 @@ export default {
             }
             this.sumField();
         },
-        async saveAccout() {},
+        async saveAccout() {
+            const data = await this.iuAccountlist(this.itemLists); 
+            if (data) {
+                for (let i = this.itemLists.length - 1; i >= 0; i--) {
+                    const item = this.itemLists[i];   // 역방향시 사용
+                    if(item.f_edit == '0') continue;
+                    if(item.f_edit == '2') {
+                        this.itemLists.splice(i, 1);
+                    } else {
+                        item.f_edit = '0';
+                        item.f_editold = '0';
+                    }
+                }                
+                this.$toast.info(`저장 하였습니다.`);
+            }
+        },
 
         async rowSelectMaster(item, row) {
             if(this.masterinfo.i_invoiceno == item.i_invoiceno) return;
@@ -290,6 +328,9 @@ export default {
         onChange(item) {
             item.f_edit = "1";
             this.sumField();
+        },
+        async accountEndjob(item) {
+            console.log("aa", this.editJob)
         },
     },
 }
