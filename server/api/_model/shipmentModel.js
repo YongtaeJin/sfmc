@@ -631,6 +631,90 @@ const shipmentModel = {
         
     },
 
+    async getInvoicelistView(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;
+        
+        var values = new Array();
+        let query = `SELECT a.c_com, a.c_vend, MAX(a.n_vend) n_vend,\n` +
+                    `        COUNT(*) m_invoicecnt,\n` +
+                    `        SUM(a.a_amt + a.a_vat) a_invoiceamt,\n` +
+                    `        SUM(IFNULL(a_accamt,0)) a_accamt,\n` +
+                    `        SUM(a.a_amt + a.a_vat) - SUM(IFNULL(a_accamt,0)) a_noaccamt,\n` +
+                    `        ROUND(SUM(IFNULL(a_accamt,0)) / SUM(a.a_amt + a.a_vat) * 100, 2) p_per\n` +
+                    `   FROM tb_invoice a\n` +
+                    `        LEFT OUTER JOIN (SELECT c_com, i_invoiceser, SUM(a_accamt) a_accamt\n` +
+                    `                        FROM tb_account WHERE f_del = 'N'\n` +
+                    `                        GROUP BY c_com, i_invoiceser) b ON a.c_com = b.c_com AND a.i_invoiceser = b.i_invoiceser\n` +
+                    `  WHERE a.c_com = ?\n` +
+                    `    AND a.f_status <> '0'\n`;                    
+        values.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += ` AND a.d_invoice between ? AND ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += ` AND a.d_invoice >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += ` AND a.d_invoice <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query += ` AND a.n_vend like ? \n `
+            values.push(sVend + '%');
+        }       
+        query += `  GROUP BY a.c_com, a.c_vend\n`;        
+        query += `  ORDER BY c_com, n_vend, c_vend`;
+        
+        console.log(query, values);
+        const [rows] = await db.execute(query, values); 
+        
+        return rows;
+    },
+    async getInvoicelistViewdt(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}        
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;
+        var values2 = new Array();
+        let query2 = `SELECT a.c_com, a.i_invoiceser, a.i_invoiceno, a.d_invoice, a.c_vend, a.n_vend, \n` +
+                     `       (a.a_amt + a.a_vat) a_invoiceamt, \n` +
+                     `       (IFNULL(a_accamt,0)) a_accamt, \n` +
+                     `       (a.a_amt + a.a_vat) - (IFNULL(a_accamt,0)) a_noaccamt, \n` +
+                     `       ROUND(IFNULL(a_accamt,0) / (a.a_amt + a.a_vat) * 100, 2) p_per, \n` +
+                     `       b.d_account1, b.d_account2, m_cnt \n` +
+                     `  FROM tb_invoice a \n` +
+                     `       LEFT OUTER JOIN (SELECT c_com, i_invoiceser, SUM(a_accamt) a_accamt, MIN(d_account) d_account1, MAX(d_account) d_account2, COUNT(*) m_cnt \n` +
+                     `                       FROM tb_account WHERE f_del = 'N' \n` +
+                     `                       GROUP BY c_com, i_invoiceser) b ON a.c_com = b.c_com AND a.i_invoiceser = b.i_invoiceser \n` +
+                     ` WHERE a.c_com = ? \n` +
+                     `   AND a.f_status <> '0' \n`;
+                     values2.push(c_com);
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query2 += ` AND a.d_invoice between ? AND ? \n `
+            values2.push(sDate1);
+            values2.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query2 += ` AND a.d_invoice >= ? \n `
+            values2.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query2 += ` AND a.d_invoice <= ? \n `
+            values2.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query2 += ` AND a.n_vend like ? \n `
+            values2.push(sVend + '%');
+        }       
+        query2 += ` ORDER BY a.c_com, a.i_invoiceno, a.d_invoice`;
+
+        console.log(query2, values2);
+        const [rows2] = await db.execute(query2, values2); 
+
+     
+        return rows2;
+    },
+
 }
 async function addOrder(jsonArr, newData) {
     const isDuplicate = jsonArr.some(obj =>

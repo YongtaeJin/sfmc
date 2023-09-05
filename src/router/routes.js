@@ -147,10 +147,12 @@ const routes = [
 		name: 'Account',
 		component: () => import(/* webpackChunkName: "Account" */ '../views/shipment/AccountView.vue')
 	},
-
+	{
+		path: '/shipment/invoicelist',
+		name: 'InvoiceList',
+		component: () => import(/* webpackChunkName: "InvoiceList" */ '../views/shipment/InvoiceListView.vue')
+	},
 	
-	
-
 	{
 		path: '*',
 		name: 'Error',
