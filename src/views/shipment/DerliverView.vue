@@ -165,7 +165,7 @@ export default {
         //     return find !== undefined ? find.label : '';
         // },
         async init() {
-            this.form.sDate1 = getDate(-100, 1);
+            this.form.sDate1 = getDate(-100, 1);            
             this.view();
         },  
         async view() {

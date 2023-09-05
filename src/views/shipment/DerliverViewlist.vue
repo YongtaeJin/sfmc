@@ -57,7 +57,7 @@
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDateft from '../../components/InputForms/InputDateft.vue';
 import { ORDER001, PROD001 } from '../../../util/constval';
-import { comma, previousMonth } from '../../../util/lib';
+import { comma, getDate, previousMonth } from '../../../util/lib';
 export default {
     components: { InputDateft, TooltipBtn },
     name: "DerliverViewList",

@@ -115,7 +115,7 @@ export default {
     methods: {
         async init() {
             this.form.sDate1 = getDate(-100, 1);
-            this.viewInvoice()
+            this.viewInvoice();
         },
         async viewInvoice() {
             this.masterinfo = []; this.selectedM = []; this.itemLists = []; this.itemListsselect = [] ,this.itemInfo = [];
