@@ -24,6 +24,9 @@ const TABLE = {
 	INVOICELI: 'tb_invoiceli',
 	ACCOUNT: 'tb_account',
     OPENLOG: 'tb_openlog',
+	KPI1: 'tb_kpilevel1',
+	KPI2: 'tb_kpilevel2',
+	KPI3: 'tb_kpilevel3',
 };
 
 module.exports = TABLE;

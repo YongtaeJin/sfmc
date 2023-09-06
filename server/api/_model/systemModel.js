@@ -301,7 +301,7 @@ const systemModel = {
         return rows;
     },
     async getCompany(req) {
-        if (req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
+        if (!req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
         const { c_com } = req.query;
         var query = `SELECT max(if(c_code = 'COM1', s_buf1, '')) c1, \n` +
                     `       max(if(c_code = 'COM2', s_buf1, '')) c2, \n` +
@@ -315,6 +315,13 @@ const systemModel = {
         var values = new Array();
         values.push(c_com);        
         const [rows] = await db.execute(query, values);    
+        return rows;
+    },
+    async getSiteKpiInfo(req) {        
+        if (!req.user.c_com ) { throw new Error('권한이 없습니다.'); }  
+        const { c_com } = req.user;
+        const sql = sqlHelper.SelectSimple(TABLE.WORKSITE, { c_com }, [ 'i_company', 'i_kpikey' ]);        
+        const [[rows]] = await db.execute(sql.query, sql.values);    
         return rows;
     },
 

@@ -153,6 +153,23 @@ const routes = [
 		component: () => import(/* webpackChunkName: "InvoiceList" */ '../views/shipment/InvoiceListView.vue')
 	},
 	
+
+	// KPI 
+	{
+		path: '/kpi/level1',
+		name: 'KPILevel1',
+		component: () => import(/* webpackChunkName: "KPILevel1" */ '../views/kpi/Level1View.vue')
+	},
+	{
+		path: '/kpi/level2',
+		name: 'KPILevel2',
+		component: () => import(/* webpackChunkName: "KPILevel2" */ '../views/kpi/Level2View.vue')
+	},
+	{
+		path: '/kpi/level3',
+		name: 'KPILevel3',
+		component: () => import(/* webpackChunkName: "KPILevel3" */ '../views/kpi/Level3View.vue')
+	},
 	{
 		path: '*',
 		name: 'Error',
