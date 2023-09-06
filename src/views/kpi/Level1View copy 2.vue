@@ -9,43 +9,20 @@
             <tooltip-btn label="다음월" @click="nextMon"><v-icon>mdi-chevron-right</v-icon></tooltip-btn> 
             <tooltip-btn label="조회"   @click="view"><v-icon>mdi-magnify</v-icon></tooltip-btn> 
         </v-toolbar>
-        <v-row>
-            <v-col>
-                <v-toolbar height="30px" color="accent">
-                    <!-- <v-toolbar-title>사업자번호:{{ this.siteKpiifno.i_company }} / 인증키값: {{ this.siteKpiifno.i_kpikey }}</v-toolbar-title> -->
-                    <v-toolbar-title>인증키값: {{ this.selectdata.kpiCertKey }}</v-toolbar-title>
-                </v-toolbar>
-                <v-data-table ref="table" :headers="masterHead" :items="masters" @click:row="rowSelectMaster" 
-                    item-key="s_day" single-select v-model="selectedM"                    
-                    hide-default-footer :items-per-page="-1" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="550px" max-height="550px" > 
-                </v-data-table>
-            </v-col>
-            <v-col>
-                
-                <v-toolbar height="30px" color="accent">                
-                <v-toolbar-title>선택날짜: {{ this.selectdata.ocrDttm }}</v-toolbar-title>
-                </v-toolbar>
-
-                <v-toolbar height="100px" color="grey lighten-4">
-                    <v-switch v-model="systmOprYn" :label="`시스템가동 : ${this.selectdata.systmOprYn}`"></v-switch>
-                    <v-spacer/>
-                    <v-btn small :color="systmOprYn ? 'success':'error'" @click="kpi1Test1">KPI 전송</v-btn>
-                </v-toolbar>
-
-                
-                
-                <v-data-table ref="item-table" :headers="itemHead" :items="itemListsselect"                     
-                    item-key="t_no" v-model="selectedD" @click:row="rowSelectDetail" single-select hide-default-footer
-                    :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap"  max-height="140px" height="140px" 
-                    >
-                </v-data-table>
-                <v-textarea v-model="itemInfo.t_req" readonly label="전송내용" hide-details="false"/>
-                <v-textarea v-model="itemInfo.t_res" readonly label="전송결과" hide-details="false"/>
-                
-            </v-col>
-        </v-row>    
+        <v-sheet >
+            <v-calendar
+                ref="calendar"
+                v-model="focus"
+                color="primary"
+                :events="events"
+                :event-color="getEventColor"
+                :type="type"
+                @click:event="showEvent"
+                @click:more="viewDay"
+                @click:date="viewDay"
+                @change="updateRange"
+                ></v-calendar>
+        </v-sheet>
     </v-container>
     
 </template>
@@ -57,6 +34,7 @@ export default {
     components: { TooltipBtn },
     mounted() {        
         this.init();
+        this.$refs.calendar.checkChange();
     }, 
     data() {
         return {
@@ -81,6 +59,16 @@ export default {
                 
             ],
             itemLists: [], itemListsselect: [],  itemInfo: [], selectedD: [],
+
+            focus: '',
+            type: 'month',
+            selectedEvent: {},
+            selectedElement: null,
+            selectedOpen: false,
+            events: [],
+            colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+            names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+     
         }
     },
     computed: {
@@ -108,16 +96,67 @@ export default {
             this.selectdata.kpiCertKey = this.siteKpiifno.i_kpikey;
             
         },
+        viewDay ({ date }) {
+            this.focus = date
+            // this.type = 'day'
+            console.log(date)
+        },
+        getEventColor (event) {return event.color},
         yyyymm() {
             return `${this.ym.y}${String(this.ym.m + 1).padStart(2, '0')}`;
         },
+        showEvent ({ nativeEvent, event }) {
+            const open = () => {
+                this.selectedEvent = event
+                this.selectedElement = nativeEvent.target
+                requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
+            }
+
+            if (this.selectedOpen) {
+                this.selectedOpen = false
+                requestAnimationFrame(() => requestAnimationFrame(() => open()))
+            } else {
+                open()
+            }
+            nativeEvent.stopPropagation()
+        },
+        updateRange ({ start, end }) {
+            const events = []
+
+            const min = new Date(`${start.date}T00:00:00`)
+            const max = new Date(`${end.date}T23:59:59`)
+            const days = (max.getTime() - min.getTime()) / 86400000
+            const eventCount = this.rnd(days, days + 20)
+
+            for (let i = 0; i < eventCount; i++) {
+                const allDay = this.rnd(0, 3) === 0
+                const firstTimestamp = this.rnd(min.getTime(), max.getTime())
+                const first = new Date(firstTimestamp - (firstTimestamp % 900000))
+                const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
+                const second = new Date(first.getTime() + secondTimestamp)
+
+                events.push({
+                    name: this.names[this.rnd(0, this.names.length - 1)],
+                    start: first,
+                    end: second,
+                    color: this.colors[this.rnd(0, this.colors.length - 1)],
+                    timed: !allDay,
+                })
+            }
+            this.events = events
+        },
+        rnd (a, b) {
+            return Math.floor((b - a + 1) * Math.random()) + a
+        },
+
         prevMon() {
             if (this.ym.m == 0) {
                 this.ym.m = 11;
                 this.ym.y = this.ym.y - 1;
             } else {
                 this.ym.m = this.ym.m  - 1;
-            }            
+            }
+            this.$refs.calendar.prev()            
         },
         nextMon(){
             if (this.ym.m == 11) {
@@ -126,6 +165,7 @@ export default {
             } else {
                 this.ym.m = this.ym.m  + 1;
             }
+            this.$refs.calendar.next()
         },
         async view() {   
             this.masterinfo = []; this.selectedM = []; this.itemLists = []; this.itemListsselect = [] ,this.itemInfo = [];         
@@ -135,18 +175,10 @@ export default {
 
 
         async kpi1Test1() {
-            
-            if(this.masterinfo.s_day == undefined) return;
-            const res = await this.$ezNotify.confirm(`날짜 : ${this.masterinfo.s_day}, 시스템 가동 상태 : ${this.systmOprYn ? 'Y':'N'}`, "KPI전송", {icon: "mdi-message-bulleted-off", width: 350,});
-            if(!res) return;
+            console.log("kpi1Test1")
             const rv = await this.$axios.post(`/api/kpi/sendKpi1`, this.selectdata);
-            const idx = this.itemListsselect.push(rv);
-            if (idx >=0 ) {
-                this.itemLists.push(rv);
-                this.masterinfo.m_cnt = this.masterinfo.m_cnt + 1;
-                if (rv.f_err == "N") { this.masterinfo.m_ok = this.masterinfo.m_ok + 1 } else { this.masterinfo.m_no =  this.masterinfo.m_no + 1 }
-
-            }
+            console.log(rv);
+            
         },
         async kpi1Test2() {
             const rv = await this.$axios.post(`/api/kpi/loadKpi1`);
@@ -170,7 +202,7 @@ export default {
             }
         },    
         rowSelectDetail(item, row) {
-            this.itemInfo = item;            
+            this.itemInfo = item;
             if (row) { row.select(true) } else { this.selectedD = [item] };
         },
     }

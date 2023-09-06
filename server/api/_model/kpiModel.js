@@ -104,6 +104,7 @@ const kpiModel = {
       const sql = sqlHelper.Insert(TABLE.KPI1, payload);
       const [row] = await db.execute(sql.query, sql.values);
       await db.execute('COMMIT');
+      payload.t_no = Date.now(); 
       return payload;
     },
 
