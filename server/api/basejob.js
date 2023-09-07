@@ -4,6 +4,14 @@ const { modelCall } = require('../../util/lib');
 const passport = require('passport');
 const jwt = require('../plugins/jwt');
 
+router.get('/getHrbase', async (req, res) => {
+    const result = await modelCall(basejobModel.getHrbase, req);
+	res.json(result);
+});
+router.post('/iuHrbase', async (req, res) => {
+	const result = await modelCall(basejobModel.iuHrbase, req);
+	res.json(result);
+});
 // 거래처 관리
 router.get('/getBaseVned', async (req, res) => {
     const result = await modelCall(basejobModel.getBaseJobVned, req);

@@ -56,6 +56,11 @@ const routes = [
 	},
 	// 기준정보
 	{
+		path: '/base/hrbase',
+		name: 'BasejobHr',
+		component: () => import(/* webpackChunkName: "BasejobHr" */ '../views/basejob/BasejobHrView.vue')
+	},	
+	{
 		path: '/base/vend',
 		name: 'Basejobvend',
 		component: () => import(/* webpackChunkName: "Basejobvend" */ '../views/basejob/BasejobVend.vue')

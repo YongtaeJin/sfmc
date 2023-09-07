@@ -1,4 +1,5 @@
 const db = require('../../plugins/mysql');
+
 const sqlHelper = require('../../../util/sqlHelper');
 const TABLE = require('../../../util/TABLE');
 const jwt = require('../../plugins/jwt');
@@ -16,8 +17,64 @@ function addIDProcesstypeLi(ptypeli) {
     ptypeli.c_id = ptypeli.c_ptype + '_' + ptypeli.c_process;	
 	return ptypeli;
 }
-
+function addEditCol(data) {	
+	data.f_edit = '0';	
+    data.f_editold = '0';	
+	return data;
+}
 const basejobModel = {
+    async getHrbase(req) {     
+        // 권한 확인
+        if (!isGrant(req, LV.ADMIN)) {
+            throw new Error('권한이 없습니다.');
+        }          
+        const { c_com } = req.user;
+        const sql = sqlHelper.SelectSimple(TABLE.HRBASE, {c_com});
+        sql.query = sql.query + ` ORDER BY s_sort ASC `;
+        const [rows] = await db.execute(sql.query, sql.values);       
+        rows.forEach((row, index) => {            
+            addEditCol(row);     // 수정 칼럼 추가 처리 
+        });    
+        return rows;
+    },
+    async iuHrbase(req) {
+        if (!isGrant(req, LV.ADMIN)) {throw new Error('권한이 없습니다.');}        
+        const at = moment().format('LT'); 
+        for (let i = 0; i < req.body.length; i++) {
+            const item = {...req.body[i] };
+
+            const {c_com, i_hrbaseser, f_edit, f_editold } = item;
+            const newdata = f_editold !== "0" ? true : false;
+            const deldata = f_edit == "2" ? true : false;
+            if  (f_edit == "0" && f_editold == "0") continue;
+            delete item.f_edit;
+            delete item.f_editold;
+
+            if (newdata) {
+                item.d_create_at = at;
+                item.n_crnm = req.user.n_name;
+                delete item.d_update_at;
+                delete item.n_upnm;
+            } else {
+                delete item.d_create_at;
+                delete item.n_crnm;
+                item.d_update_at = at;
+                item.n_upnm = req.user.n_name;                    
+            }
+            const sql = deldata ? sqlHelper.DeleteSimple(TABLE.HRBASE, {c_com, i_hrbaseser}) :  newdata ? sqlHelper.Insert(TABLE.HRBASE, item) : sqlHelper.Update(TABLE.HRBASE, item, {c_com, i_hrbaseser});
+            
+            console.log("detial", sql);
+            const res = await db.execute(sql.query, sql.values);
+            if (res.affectedRows < 1) {
+                await db.execute('ROLLBACK');
+                return false;
+            }
+        }
+        await db.execute('COMMIT');
+        return true;
+    },
+
+
     async getBaseJobVned(req) {     
         // 권한 확인
         if (!isGrant(req, LV.ADMIN)) {

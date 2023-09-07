@@ -137,7 +137,7 @@ export default {
         async kpi1Test1() {
             
             if(this.masterinfo.s_day == undefined) return;
-            if(this.siteKpiifno.f_kpichk == "N") return;
+            if(this.siteKpiifno.f_kpichk !== "Y") return;
             const res = await this.$ezNotify.confirm(`날짜 : ${this.masterinfo.s_day}, 시스템 가동 상태 : ${this.systmOprYn ? 'Y':'N'}`, "KPI전송", {icon: "mdi-message-bulleted-off", width: 350,});
             if(!res) return;
             const rv = await this.$axios.post(`/api/kpi/sendKpi1`, this.selectdata);

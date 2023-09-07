@@ -6,6 +6,7 @@ const TABLE = {
 	WORKSITE: 'tb_worksite',
 	GRPCODE: 'tb_grpcode',
 	COMCODE: 'tb_comcode',
+	HRBASE: 'tb_hrbase',
 	VEND: 'tb_vend',
 	ITEM: 'tb_item',
 	PROCESS: 'tb_process',

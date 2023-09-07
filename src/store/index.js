@@ -68,6 +68,14 @@ const store = new Vuex.Store({
 					newTab : false,
 					subItems : [
 						{
+							title : "사원관리",
+							icon : "",
+							to : '/base/hrbase',
+							grant : 8, 
+							newTab : false,
+							subItems : []
+						},
+						{
 							title : "거래처관리",
 							icon : "",
 							to : '/base/vend',

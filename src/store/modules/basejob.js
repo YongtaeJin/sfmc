@@ -9,6 +9,11 @@ export const actions = {
 		const data = await $axios.get(`/api/basejob/duplicateVendCheck/${c_com}/${value1}/${c_vend}/${value2}`);		
 		return data;
     },
+	async iuHrbase( { commit }, form) {		
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/basejob/iuHrbase', form);
+		return data;
+	},
 	async iuBaseVend( { commit }, form) {		
 		const { $axios } = Vue.prototype;
 		const data = await $axios.post('/api/basejob/iuBaseVend', form);
