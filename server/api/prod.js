@@ -19,6 +19,15 @@ router.post('/getProdWork', async (req, res) => {
     const result = await modelCall(prodModel.getProdWork, req);
 	res.json(result);
 });
+router.post('/getProdplan', async (req, res) => {    
+    const result = await modelCall(prodModel.getProdplan, req);
+	res.json(result);
+});
+router.post('/getItemRouterProc', async (req, res) => {    
+    const result = await modelCall(prodModel.getItemRouterProc, req);
+	res.json(result);
+});
+
 router.post('/getProdWorklist', async (req, res) => {    
     const result = await modelCall(prodModel.getProdWorklist, req);
 	res.json(result);

@@ -18,7 +18,7 @@ const prodModel = {
 
         // let where = `SELECT * FROM tb_prodplan \n WHERE c_com = ? \n`;
         let where = `select a.c_com, a.i_order, b.i_orderser, a.i_orderno, \n` +
-                    `       a.s_date, a.f_status, a.n_vend, b.s_sort, b.n_item, b.t_size, b.i_unit, b.m_cnt, b.s_duedate, b.f_work, b.d_plan1, b.d_plan2, b.t_remark \n` +
+                    `       a.s_date, a.f_status, a.n_vend, b.s_sort, b.c_item, b.n_item, b.t_size, b.i_unit, b.m_cnt, b.s_duedate, b.f_work, b.d_plan1, b.d_plan2, b.t_remark \n` +
                     `  from tb_order a \n` +
                     `      join tb_orderli b on a.i_order = b.i_order and a.c_com = b.c_com \n` +
                     ` where a.c_com = ? and a.f_use = 'Y' \n` ;
@@ -94,7 +94,7 @@ const prodModel = {
         var values = new Array();
         
         let where = `select a.c_com, a.i_order, b.i_orderser, a.i_orderno, \n` +
-                    `       a.n_vend, b.s_sort, b.n_item, b.t_size, b.i_unit, b.m_cnt,  b.f_work, b.d_plan1, b.d_plan2, b.t_remark, \n` +
+                    `       a.n_vend, b.s_sort, b.c_item, b.n_item, b.t_size, b.i_unit, b.m_cnt,  b.f_work, b.d_plan1, b.d_plan2, b.t_remark, \n` +
                     `       ifnull((select sum(m_cnt) from tb_prodmake t where t.c_com = b.c_com and t.i_order = b.i_order and t.i_orderser = b.i_orderser and t.f_err = 'N'),0) m_makecnt, \n` +
                     `       ifnull((select sum(m_err) from tb_prodmake t where t.c_com = b.c_com and t.i_order = b.i_order and t.i_orderser = b.i_orderser and t.f_err = 'Y'),0) m_errcnt \n` +
                     `   from tb_order a  \n` +
@@ -124,6 +124,33 @@ const prodModel = {
         
         return rows;
     },
+    // 작업지시 세부 공정계획
+    async getProdplan(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com, i_order, i_orderser } = req.body;
+        const sql = sqlHelper.SelectSimple(TABLE.PRODPLAN, { c_com, i_order, i_orderser}) ;
+        sql.query = sql.query + ` ORDER BY s_sort `;
+
+        const [rows] = await db.execute(sql.query, sql.values);  
+        rows.forEach((row) => {
+            sqlHelper.addEditCol(row);
+        });      
+        return rows;  
+    },
+    async getItemRouterProc(req) {
+        console.log(req.body)
+
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com, c_item } = req.body;
+        const sql = sqlHelper.SelectSimple(TABLE.ROUTEPROC, { c_com, c_item}) ;
+        sql.query = sql.query + ` ORDER BY s_sort `;
+
+        const [rows] = await db.execute(sql.query, sql.values);  
+       
+        return rows;  
+    },
+    
+
     async getProdWorklist(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         const { c_com, i_order, i_orderser } = req.body;

@@ -18,8 +18,8 @@
         </v-card>
         <v-data-table ref="data-table" :headers="itemHead" :items="itemList"                     
                     item-key="i_orderser" single-select 
-                    :item-class= "row_classes" :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap"  max-height="500px" 
+                    :item-class= "row_classes" :items-per-page="-1"  hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap"  max-height="300px"  height="300px" 
                     >
             <template v-slot:header="">
                 <thead align='center'>
@@ -82,6 +82,15 @@
             </template>
            
         </v-data-table>
+        <v-toolbar height="25px" background-color="primary" dark >
+            <v-toolbar-title>세부공정일정</v-toolbar-title>
+            <v-spacer/>
+        </v-toolbar>
+        <v-data-table ref="table" :headers="routerHead" :items="itemRouters" @click:row="rowSelectRouter" 
+            item-key="i_routerser" single-select v-model="selectR"
+            hide-default-footer :items-per-page="-1" :item-class= "row_classes" 
+            class="elevation-1 text-no-wrap" height="150px" max-height="150px" > 
+        </v-data-table>
 
         <ez-dialog ref="dialog_plan" label="생산계획일" persistent @onClose="close_plan" width="350px" >
             <dates-dialog @onEnter="setplandate" :sDate="selected.d_plan1" :eDate="selected.d_plan2">
@@ -125,8 +134,18 @@ export default {
                 {text: '종료일',    value: 'd_plan2', sortable: false, align:'center', width: "60px"},
                 {text: '비고',      value: 't_remark', sortable: false, align:'center', width: "300px"},
             ],
-
             itemList:[], itemInfo:[], selected:[],
+            routerHead: [
+                {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "75"},
+                {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "130"},
+                {text: '작업자',    value: 'n_empnm', sortable: false, align:'center', width: "100"},
+                {text: '수량',      value: 'm_cnt', sortable: false, align:'center', width: "75"},
+                {text: '시작일',    value: 's_date1', sortable: false, align:'center', width: "75"},
+                {text: '종료일',    value: 's_date2', sortable: false, align:'center', width: "75"},
+                {text: '작업일수',  value: 'm_whour', sortable: false, align:'center', width: "75"},
+                {text: '비고',      value: 't_remark', sortable: false, align:'center', width: "120"},
+            ],
+            itemRouters:[], routerInfo:[], selectR:[]
            
         }
     },
@@ -153,6 +172,8 @@ export default {
             this.view();
         },  
         async view() {
+            this.itemInfo=[];
+            this.itemRouters=[]; this.routerInfo=[]; this.selectR=[];
             this.itemList = await this.$axios.post(`/api/prod/getProdPlanlist`, this.form); 
         },
         async add() {
@@ -183,17 +204,22 @@ export default {
                 return "orange";
             } 
         },
-        rowSelect :function (item, row) {       
-            this.itemInfo = item;              
-            if (row) {
-                row.select(true) 
-            } else {
-                this.selected = [item]
-            }
+        rowSelect :function (item, row) {
+            console.log("ddd")
+            if (this.itemInfo.i_orderser == item.i_orderser) return;
+            this.itemInfo = item;
+            if (row) { row.select(true) } else { this.selected = [item] }
+            console.log("a")
+            // this.itemRouters
+
         },
-        selectItem(item) {
+        async selectItem(item) {
+            if (this.itemInfo.i_orderser == item.i_orderser) return;
             this.selected = item;
             this.itemInfo = item;
+            this.itemRouters = await this.$axios.post(`/api/prod/getProdplan`, item); 
+            this.itemRouters = await this.$axios.post(`/api/prod/getItemRouterProc`, item); 
+            
             
         },
         getStatus(item) {
@@ -237,7 +263,12 @@ export default {
             else if (data == "2") {return 'blue';}
             else { return 'green';}
         },
+        rowSelectRouter:function (item, row) {
+            if (this.routerInfo.i_routerser == item.i_routerser) return;
+            this.routerInfo = item;
+            if (row) { row.select(true) } else { this.selectR = [item] }
 
+        },
     }
 
 }
