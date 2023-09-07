@@ -8,9 +8,14 @@ const { LV, isGrant } = require('../../../util/level');
 const { extractNumber, addToUniqueArray } = require('../../../util/lib');
 
 const prodModel = {
+    async getEmplist(req) {
+        const { c_com } = req.user;
+        const query = `SELECT i_empno, n_empnm, n_dept FROM tb_hrbase WHERE c_com = ? ORDER BY c_com, i_empno`;
+        var values = new Array(); values.push(c_com);
+        const [rows] = await db.execute(query, values);     
+        return rows;
+    },
     async getProdPlanlist(req) {
-        // if (req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
-        
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         
         const { c_com } = req.user;
@@ -138,14 +143,15 @@ const prodModel = {
         return rows;  
     },
     async getItemRouterProc(req) {
-        console.log(req.body)
-
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         const { c_com, c_item } = req.body;
         const sql = sqlHelper.SelectSimple(TABLE.ROUTEPROC, { c_com, c_item}) ;
         sql.query = sql.query + ` ORDER BY s_sort `;
 
-        const [rows] = await db.execute(sql.query, sql.values);  
+        const [rows] = await db.execute(sql.query, sql.values); 
+        rows.forEach((row) => {
+            sqlHelper.newAddEditCol(row);
+        }); 
        
         return rows;  
     },

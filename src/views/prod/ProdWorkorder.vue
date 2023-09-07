@@ -83,18 +83,51 @@
            
         </v-data-table>
         <v-toolbar height="25px" background-color="primary" dark >
-            <v-toolbar-title>세부공정일정</v-toolbar-title>
+            <v-toolbar-title>공정별 세부일정</v-toolbar-title>
             <v-spacer/>
         </v-toolbar>
         <v-data-table ref="table" :headers="routerHead" :items="itemRouters" @click:row="rowSelectRouter" 
-            item-key="i_routerser" single-select v-model="selectR"
+            item-key="i_ser" single-select v-model="selectR"
             hide-default-footer :items-per-page="-1" :item-class= "row_classes" 
             class="elevation-1 text-no-wrap" height="150px" max-height="150px" > 
+
+            <template v-slot:[`item.n_empnm`]="{ item }">
+                <v-text-field v-model="item.n_empnm" @input="onChange(item)" v-if=" itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser " readonly dense hide-details class="my-text-field no-padding">
+                    <template v-slot:append> <v-btn @click="getEmpno(item)" x-small icon ><v-icon>mdi-check</v-icon></v-btn> </template>
+                </v-text-field>
+                <div v-else> {{  item.n_empnm }}</div>            
+            </template> 
+            <template v-slot:[`item.m_cnt`]="{ item }">                
+                <input-number v-model="item.m_cnt" @input="onChange(item)" v-if="itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser"></input-number>
+                <div v-else> {{  item.m_cnt }}</div>            
+            </template> 
+            <template v-slot:[`item.s_date1`]="{ item }">
+                <input-date-2 v-model="item.s_date1" @input="onChange(item)" v-if="itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser" :rules="rules.date({required: false})" class="my-text-table"/>
+                <div v-else> {{  item.s_date1 }}</div>   
+            </template>
+            <template v-slot:[`item.s_date2`]="{ item }">
+                <input-date-2 v-model="item.s_date2" @input="onChange(item)" v-if="itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser" :rules="rules.date({required: false})" class="my-text-table"/>
+                <div v-else> {{  item.s_date2 }}</div>   
+            </template>
+            <template v-slot:[`item.m_whour`]="{ item }">                
+                <input-number v-model="item.m_whour" @input="onChange(item)" v-if="itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser"></input-number>
+                <div v-else> {{  item.m_whour }}</div>            
+            </template>             
+            <template v-slot:[`item.t_remark`]="{ item }">
+                <v-text-field v-model="item.t_remark" @input="onChange(item)" v-if=" itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser " dense hide-details class="my-text-field no-padding" />
+                <span v-else>{{item.t_remark}}</span>
+            </template>
+            
         </v-data-table>
 
         <ez-dialog ref="dialog_plan" label="생산계획일" persistent @onClose="close_plan" width="350px" >
             <dates-dialog @onEnter="setplandate" :sDate="selected.d_plan1" :eDate="selected.d_plan2">
             </dates-dialog>
+        </ez-dialog>
+        <ez-dialog ref="dialog_emp" label="작업자선택" persistent @onClose="close_plan" width="350px" >
+            <prod-getemp @onEnter="onEmpEnter">
+
+            </prod-getemp>
         </ez-dialog>
     </v-container>
 </template>
@@ -108,10 +141,14 @@ import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import { PROD001 } from '../../../util/constval';
 import { previousMonth } from '../../../util/lib';
+import validateRules from "../../../util/validateRules";
 import DatesDialog from '../../components/etc/DatesDialog.vue';
+import InputAmt from '../../components/InputForms/InputAmt.vue';
+import InputNumber from '../../components/InputForms/InputNumber.vue';
+import ProdGetemp from './ProdGetemp.vue';
 
 export default {
-    components: { InputDateft, TooltipBtn, EzDialog, InputDate2, InputDate3, DatesDialog},
+    components: { InputDateft, TooltipBtn, EzDialog, InputDate2, InputDate3, DatesDialog, InputAmt, InputNumber, ProdGetemp},
     data() {
         return {
             PROD001,
@@ -145,7 +182,8 @@ export default {
                 {text: '작업일수',  value: 'm_whour', sortable: false, align:'center', width: "75"},
                 {text: '비고',      value: 't_remark', sortable: false, align:'center', width: "120"},
             ],
-            itemRouters:[], routerInfo:[], selectR:[]
+            itemRouters:[], routerInfo:[], selectR:[],
+            emplist:[],
            
         }
     },
@@ -156,6 +194,7 @@ export default {
     watch: {
     },
     computed: {
+        rules: () => validateRules,
     },
     methods: {     
         ...mapActions("prod", ["iuProdPlanlist"]), 
@@ -167,21 +206,17 @@ export default {
             const count = this.itemList.filter((i) => i.i_orderno === item.i_orderno).length;
             return count;
         },
-
         async init() {
-            this.view();
+            this.emplist = await this.$axios.post(`/api/prod/getEmplist`); 
+            this.view();            
         },  
         async view() {
             this.itemInfo=[];
             this.itemRouters=[]; this.routerInfo=[]; this.selectR=[];
-            this.itemList = await this.$axios.post(`/api/prod/getProdPlanlist`, this.form); 
+            this.itemList = await this.$axios.post(`/api/prod/getProdPlanlist`, this.form);             
         },
-        async add() {
-
-        },
-        async del() {
-
-        },
+        async add() {},
+        async del() {},
         async save() {
             // const data = await this.iuProdPlanlist(this.);
             const edititem = this.itemList.filter(obj => obj.f_edit === '1').map(obj => ({...obj}));
@@ -218,9 +253,14 @@ export default {
             this.selected = item;
             this.itemInfo = item;
             this.itemRouters = await this.$axios.post(`/api/prod/getProdplan`, item); 
-            this.itemRouters = await this.$axios.post(`/api/prod/getItemRouterProc`, item); 
-            
-            
+            if (this.itemRouters.length == 0) {
+                this.itemRouters = await this.$axios.post(`/api/prod/getItemRouterProc`, item); 
+                this.itemRouters.forEach((row) => {
+                    row.m_cnt = this.itemInfo.m_cnt;
+                    row.s_date1 = this.itemInfo.d_plan1;
+                    row.s_date2 = this.itemInfo.d_plan2;
+                })
+            }
         },
         getStatus(item) {
             var find = this.PROD001.find(e => e.value === item);
@@ -264,11 +304,27 @@ export default {
             else { return 'green';}
         },
         rowSelectRouter:function (item, row) {
-            if (this.routerInfo.i_routerser == item.i_routerser) return;
+            if (this.routerInfo.i_ser == item.i_ser) return;
             this.routerInfo = item;
             if (row) { row.select(true) } else { this.selectR = [item] }
 
         },
+        onChange(item) {
+            
+        },
+        async getEmpno(item) {
+            this.$refs.dialog_emp.open();
+        },
+        async onEmpEnter(item)   {
+            
+            const idx = this.itemRouters.indexOf(this.routerInfo)
+            this.routerInfo.i_empno = item.i_empno;
+            this.routerInfo.n_empnm = item.n_empnm;
+            if (idx >= 0 ) this.itemRouters.splice(idx, 1, this.routerInfo);
+            
+            this.$refs.dialog_emp.close();
+        }
+
     }
 
 }

@@ -333,8 +333,7 @@ export default {
             this.sumField();
         },
         async accountEndjob() {            
-            const idx = this.masters.indexOf(this.masterinfo);
-            console.log("aaa", idx)
+            const idx = this.masters.indexOf(this.masterinfo);            
             
             if (this.editJob) { 
                 this.$toast.warning(`저장 후 상태 변경 가능 합니다.`);

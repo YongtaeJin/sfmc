@@ -195,6 +195,11 @@ const sqlHelper = {
 		data.f_editold = '0';	
 		return data;
 	},
+	newAddEditCol(data) {	
+		data.f_edit = '1';	
+		data.f_editold = '1';	
+		return data;
+	},
 	async objectSplit(data, f) {	
 		const obj = {};
 		if ( f === 'M' || f === 'm' ) {

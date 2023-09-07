@@ -4,6 +4,11 @@ const { modelCall } = require('../../util/lib');
 const passport = require('passport');
 const jwt = require('../plugins/jwt');
 
+// 임직원 선택
+router.post('/getEmplist', async (req, res) => {    
+    const result = await modelCall(prodModel.getEmplist, req);
+	res.json(result);
+});
 
 router.post('/getProdPlanlist', async (req, res) => {    
     const result = await modelCall(prodModel.getProdPlanlist, req);
