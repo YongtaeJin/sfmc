@@ -13,7 +13,7 @@
             <v-col>
                 <v-toolbar height="30px" color="accent">
                     <!-- <v-toolbar-title>사업자번호:{{ this.siteKpiifno.i_company }} / 인증키값: {{ this.siteKpiifno.i_kpikey }}</v-toolbar-title> -->
-                    <v-toolbar-title>인증키값: {{ this.selectdata.kpiCertKey }}</v-toolbar-title>
+                    <v-toolbar-title>KPI인증상호: {{ this.siteKpiifno.n_kpiconm }}</v-toolbar-title>
                 </v-toolbar>
                 <v-data-table ref="table" :headers="masterHead" :items="masters" @click:row="rowSelectMaster" 
                     item-key="s_day" single-select v-model="selectedM"                    
@@ -61,7 +61,7 @@ export default {
     data() {
         return {
             ym : {y:0, m:0}, 
-            siteKpiifno : {i_company:"",  i_kpikey:""},
+            siteKpiifno : {i_company:"",  i_kpikey:"", f_kpichk:"", n_kpiconm:""},
             form : {s_ym:"", f_tst:"Y"},
             systmOprYn: true,
             selectdata : {t_no: 0, c_com: "", kpiCertKey: "", ocrDttm: "", systmOprYn: "Y", trsDttm: "", f_tst: "Y", t_req: "", t_res: "", f_err: ""},
@@ -137,6 +137,7 @@ export default {
         async kpi1Test1() {
             
             if(this.masterinfo.s_day == undefined) return;
+            if(this.siteKpiifno.f_kpichk == "N") return;
             const res = await this.$ezNotify.confirm(`날짜 : ${this.masterinfo.s_day}, 시스템 가동 상태 : ${this.systmOprYn ? 'Y':'N'}`, "KPI전송", {icon: "mdi-message-bulleted-off", width: 350,});
             if(!res) return;
             const rv = await this.$axios.post(`/api/kpi/sendKpi1`, this.selectdata);

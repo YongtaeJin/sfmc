@@ -94,6 +94,8 @@ const systemModel = {
             delete payload.p_pw;
             delete payload.i_company;
             delete payload.i_kpikey;
+            delete payload.f_kpichk;
+            delete payload.n_kpiconm;
           
             const sql2 = sqlHelper.Update(TABLE.USERS, payload, {c_com, i_id});
             const [row2] = await db.execute(sql2.query, sql2.values);
@@ -320,7 +322,7 @@ const systemModel = {
     async getSiteKpiInfo(req) {        
         if (!req.user.c_com ) { throw new Error('권한이 없습니다.'); }  
         const { c_com } = req.user;
-        const sql = sqlHelper.SelectSimple(TABLE.WORKSITE, { c_com }, [ 'i_company', 'i_kpikey' ]);        
+        const sql = sqlHelper.SelectSimple(TABLE.WORKSITE, { c_com }, [ 'i_company', 'i_kpikey', 'f_kpichk', 'n_kpiconm' ]);
         const [[rows]] = await db.execute(sql.query, sql.values);    
         return rows;
     },

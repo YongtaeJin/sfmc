@@ -5,6 +5,10 @@ const { modelCall } = require('../../util/lib');
 const jwt = require('../plugins/jwt');
 
 
+router.post('/kpichk', async (req, res) => {
+    const result = await modelCall(kpiModel.kpichk, req);
+	res.json(result);
+});
 router.post('/sendKpi1', async (req, res) => {
     const result = await modelCall(kpiModel.sendKpi1, req);
 	res.json(result);

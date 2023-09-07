@@ -35,14 +35,9 @@
         </v-row>
         <v-row no-gutters>
             <v-responsive width="60px">
-                <v-text-field label="사용여부"             
-                    :readonly=true
-                    v-model=form.f_use>                    
+                <v-text-field label="사용여부" :readonly=true v-model=form.f_use>                    
                     <template v-slot:append>                        
-                        <v-btn @click="setUseYN" small icon >
-                            <v-icon>mdi-check</v-icon>
-                            <!-- {{ form.f_use == "Y" ? '미사용' : '사용'}} -->
-                        </v-btn>
+                        <v-btn @click="setUseYN" small icon ><v-icon>mdi-check</v-icon></v-btn>
                     </template>
                 </v-text-field>
             </v-responsive>
@@ -55,12 +50,18 @@
         </v-row>
         <v-row no-gutters>
              <v-responsive width="60px">
-                <v-text-field label="사업자번호"             
-                v-model="form.i_company" />
+                <v-text-field label="사업자번호" v-model="form.i_company" />
             </v-responsive>
             <v-spacer />
-            <v-text-field label="KPI 인증키"             
-                v-model="form.i_kpikey" />
+            <v-text-field label="KPI 인증키" v-model="form.i_kpikey">
+            </v-text-field>            
+        </v-row>
+        <v-row no-gutters>
+            <v-responsive width="130px"></v-responsive>
+            <v-spacer />
+            <v-text-field label="KPI 인증키 등록 회사명" v-model="form.n_kpiconm" readonly color="red">
+                <template v-slot:append> <v-btn @click="kpichk" small icon ><v-icon>mdi-check</v-icon></v-btn> </template>
+            </v-text-field>
         </v-row>
         <v-textarea label="설명" v-model="form.t_remark" />        
         <v-btn type="submit" block>저장</v-btn>
@@ -98,6 +99,7 @@ export default {
     },
     data() {
         return {
+            textColor: 'red',
             valid: true,
             form : {
                 c_com: "",
@@ -108,6 +110,8 @@ export default {
                 p_pw: "",
                 i_company: "",
                 i_kpikey: "",
+                f_kpichk: "",
+                n_kpiconm: "",
                 t_remark: "",
             },
             isNew : false,            
@@ -135,7 +139,7 @@ export default {
     },
     methods: {
         async init() {    
-            // if (this.$refs.form) this.$refs.form.reset();    
+            // if (this.$refs.form) this.$refs.form.reset();               
             if (this.data) {                         
                 this.form = deepCopy(this.data);
                 this.isNew = false;  
@@ -149,6 +153,8 @@ export default {
                     p_pw: "",
                     i_company: "",
                     i_kpikey: "",
+                    f_kpichk: "N",
+                    n_kpiconm: "",
                     t_remark: "",
                 },
                 this.isNew = true;
@@ -161,6 +167,11 @@ export default {
         },
         setUseYN() {
             this.form.f_use = this.form.f_use == "Y" ? "N" : "Y";
+        },
+        async kpichk() {
+            const rv = await this.$axios.post(`/api/kpi/kpichk`, this.form);
+            this.form.n_kpiconm = rv;
+            this.form.f_kpichk = rv.length ? "Y" : "N";
         },
         async save() {            
             this.$refs.form.validate();

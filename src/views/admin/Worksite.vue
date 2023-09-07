@@ -58,6 +58,8 @@ export default {
                 f_use: "",
                 i_company: "",
                 i_kpikey: "",
+                f_kpichk: "",
+                n_kpiconm: "",
                 t_remark: "",
             },
             isLoad: false,
@@ -77,7 +79,8 @@ export default {
             this.items = await this.$axios.get(`/api/system/`);
         },
         async showRowInfo(event, { item } ) {
-            this.item = deepCopy(item);            
+            this.item = deepCopy(item); 
+            
             this.$refs.dialog.open();
         },
         async addWorkSite(item) {

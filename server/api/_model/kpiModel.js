@@ -31,82 +31,91 @@ function getCurrentDateTimeYYYYMMDDHHMMSS() {
 }
 
 const kpiModel = {
-    async load() {
-        // console.log("kpisend",  getCurrentDateTimeYYYYMMDDHHMMSS());
-        //this.kpisend();
-    },
-    async kpisend() {
-        const config = {
-            headers: {
-              'Content-Type': 'application/json; charset=utf-8', // Content-Type을 설정하고 UTF-8로 지정합니다.
-            },
-          };
-        const jsonData = {
-            "KPILEVEL1": [
-                {
-                  "kpiCertKey": "3a25-02d0-a194-4a6f",
-                  "ocrDttm": getCurrentDateYYYYMMDD(),
-                  "systmOprYn": "Y",
-                  "trsDttm": getCurrentDateTimeYYYYMMDDHHMMSS()
-                }
-              ]            
-          };
 
-        const kpiData = JSON.stringify(jsonData, null, 2);
-        console.log("시작");
-        axios.post('http://ssf-kpi.kr:8080/kpiLv1/kpiLv1InsertTst', kpiData, config)
-            .then(response => {
-            console.log('JSON sent successfully:', response.data);
-            })
-            .catch(error => {
-            console.error('Error sending JSON:', error.message);
-            });
-        console.log("끝");
-    },
+  async kpichk(req) {
+    const config = {headers: {'Content-Type': 'application/json; charset=utf-8'} }; // Content-Type을 설정하고 UTF-8로 지정합니다.
+    const payload = {...req.body}
+    const jsonData = { "schKpiCertKey": payload.i_kpikey };
+    const kpiData = JSON.stringify(jsonData, null, 2);
+    const rv = await axios.post('http://ssf-kpi.kr:8080/kpiLv1/certCheck', kpiData, config) .then(response => {return response.data;})  .catch(error => {return error.message;});
+    return rv.length > 0 ?  rv[0].coNm : '';
+  },
 
-
-    async sendKpi1(req) {
+  async load() {
+      // console.log("kpisend",  getCurrentDateTimeYYYYMMDDHHMMSS());
+      //this.kpisend();
+  },
+  async kpisend() {
       const config = {
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8', // Content-Type을 설정하고 UTF-8로 지정합니다.
-        },
-      };
-
-      const payload = {...req.body}
-      delete payload.t_no;
-      payload.trsDttm = getCurrentDateTimeYYYYMMDDHHMMSS();
-
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8', // Content-Type을 설정하고 UTF-8로 지정합니다.
+          },
+        };
       const jsonData = {
-            "KPILEVEL1": [
-                {
-                  "kpiCertKey": payload.kpiCertKey,
-                  "ocrDttm": payload.ocrDttm,
-                  "systmOprYn": payload.systmOprYn,
-                  "trsDttm": payload.trsDttm
-                }
-              ]            
-          };
-      const kpiData = JSON.stringify(jsonData, null, 2);            
-      const rv = await axios.post('http://ssf-kpi.kr:8080/kpiLv1/kpiLv1InsertTst', kpiData, config)
+          "KPILEVEL1": [
+              {
+                "kpiCertKey": "3a25-02d0-a194-4a6f",
+                "ocrDttm": getCurrentDateYYYYMMDD(),
+                "systmOprYn": "Y",
+                "trsDttm": getCurrentDateTimeYYYYMMDDHHMMSS()
+              }
+            ]            
+        };
+
+      const kpiData = JSON.stringify(jsonData, null, 2);
+      console.log("시작");
+      axios.post('http://ssf-kpi.kr:8080/kpiLv1/kpiLv1InsertTst', kpiData, config)
           .then(response => {
-          // console.log('JSON sent successfully:', response.data);
-          payload.f_err = 'N';
-          return response.data;
+          console.log('JSON sent successfully:', response.data);
           })
           .catch(error => {
-            payload.f_err = 'Y';
-            return error.message;
-          // console.error('Error sending JSON:', error.message);
+          console.error('Error sending JSON:', error.message);
           });
-      payload.t_req = kpiData;
-      payload.t_res = rv;
-      
-      const sql = sqlHelper.Insert(TABLE.KPI1, payload);
-      const [row] = await db.execute(sql.query, sql.values);
-      await db.execute('COMMIT');
-      payload.t_no = Date.now(); 
-      return payload;
-    },
+      console.log("끝");
+  },
+
+  async sendKpi1(req) {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8', // Content-Type을 설정하고 UTF-8로 지정합니다.
+      },
+    };
+
+    const payload = {...req.body}
+    delete payload.t_no;
+    payload.trsDttm = getCurrentDateTimeYYYYMMDDHHMMSS();
+
+    const jsonData = {
+          "KPILEVEL1": [
+              {
+                "kpiCertKey": payload.kpiCertKey,
+                "ocrDttm": payload.ocrDttm,
+                "systmOprYn": payload.systmOprYn,
+                "trsDttm": payload.trsDttm
+              }
+            ]            
+        };
+    const kpiData = JSON.stringify(jsonData, null, 2);            
+    const rv = await axios.post('http://ssf-kpi.kr:8080/kpiLv1/kpiLv1InsertTst', kpiData, config)
+        .then(response => {
+        // console.log('JSON sent successfully:', response.data);
+        payload.f_err = 'N';
+        return response.data;
+        })
+        .catch(error => {
+          payload.f_err = 'Y';
+          return error.message;
+        // console.error('Error sending JSON:', error.message);
+        });
+    payload.t_req = kpiData;
+    payload.t_res = rv;
+    
+    const sql = sqlHelper.Insert(TABLE.KPI1, payload);
+    const [row] = await db.execute(sql.query, sql.values);
+    await db.execute('COMMIT');
+    payload.t_no = Date.now(); 
+    return payload;
+  },
 
     async loadKpi1(req) {
       const config = {
