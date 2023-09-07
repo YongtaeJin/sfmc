@@ -11,6 +11,7 @@
                 </v-col>
                 <v-col col="12" sm="9" md="9">
                     <v-select v-model="form.c_process" label="공정코드"
+                        @change="changeSelect"
                         :readonly="!!form.c_ptype"
                         :items="prcoess" item-text="n_process" item-value="c_process" 
                         :rules="[rules.require({ label: '공정코드' })]" >
@@ -18,7 +19,7 @@
                     </v-select>
                 </v-col>
                 <v-col col="12" sm="3" md="3">
-                    <v-text-field v-model="form.m_whour" label="작업시간" :rules="[rules.Num()]" hide-details="false"/>
+                    <v-text-field v-model="form.m_whour" label="작업일" :rules="[rules.Num()]" hide-details="false"/>
                 </v-col>
                 <v-col col="12" sm="5" md="5">
                     <v-checkbox v-model="form.f_jobs" label="첫공정" true-value="Y"  false-value="N" hide-details="false"/>
@@ -69,6 +70,7 @@ export default {
                 c_item: "",
                 s_sort: 0,
                 c_process: "",
+                n_process: "",
                 c_ptype: "",
                 m_whour: "",
                 f_jobs: "",
@@ -102,6 +104,7 @@ export default {
                     c_item: this.route.c_item,
                     s_sort: (this.s_sort | 0) + 1,
                     c_process: "",
+                    n_process: "",
                     c_ptype: "",
                     m_whour: 1,
                     f_jobs: "N",
@@ -124,6 +127,10 @@ export default {
         getText(item) {
             return item.c_process + ' - ' + item.n_process;
         },
+        changeSelect() {
+            var find = this.prcoess.find(e => e.c_process === this.form.c_process);
+            this.form.n_process = find.n_process;
+        }
     },
 }
 </script>

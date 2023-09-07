@@ -53,7 +53,8 @@
                         <div @dblclick="showRowInfoDetail()"> {{ item.c_process }} </div>
                     </template>
                     <template v-slot:[`item.n_process`]="{ item }">
-                        <div @dblclick="showRowInfoDetail()"> {{getProccessName(item.c_process)}} </div>
+                        <div @dblclick="showRowInfoDetail()"> {{ item.n_process }} </div>
+                        <!-- <div @dblclick="showRowInfoDetail()"> {{getProccessName(item.c_process)}} </div> -->
                     </template>
                     <template v-slot:[`item.m_whour`]="{ item }">
                         <div @dblclick="showRowInfoDetail()"> {{ item.m_whour }} </div>                     
@@ -130,8 +131,8 @@ export default {
             headersDetail: [
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},                
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'center', },
-                {text: '공정명',  value: 'n_process', sortable: false, align:'left', },
-                {text: '작업시간',  value: 'm_whour', sortable: false, align:'center',  width: "70px"},
+                {text: '공정명',  value: 'n_process', sortable: false, align:'center', },
+                {text: '작업일',  value: 'm_whour', sortable: false, align:'center',  width: "70px"},
                 {text: '첫공정',  value: 'f_jobs', sortable: false, align:'center', width: "70px" },
                 {text: '마지막공정',  value: 'f_jobf', sortable: false, align:'center',  width: "70px"},
                 {text: '외주',  value: 'f_jobo', sortable: false, align:'center',  width: "70px"},                 
@@ -306,7 +307,7 @@ export default {
             this.procDetail = item;
         },
         async saveRouterProc(form) {
-            this.isLoading = true;
+            this.isLoading = true;        
             const data = await this.iuBaseRouteProc(form);
             this.isLoading = false;
             if (data) {
@@ -314,7 +315,12 @@ export default {
                 var idx = this.routesProcs.indexOf(this.procDetail); 
                 if (idx >= 0 ) this.routesProcs.splice(idx, 1, data);
                 var idx = this.routesProc.indexOf(this.procDetail); 
-                if (idx >= 0 ) this.routesProc.splice(idx, 1, data);
+                if (idx >= 0 ) {
+                    this.routesProc.splice(idx, 1, data);
+                } else {
+                    this.routesProcs.push(data);
+                    this.routesProc.push(data);
+                }
             }
             this.$refs.dialogLi.close();
         }    

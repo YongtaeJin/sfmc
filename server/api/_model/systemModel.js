@@ -302,8 +302,8 @@ const systemModel = {
         const [rows] = await db.execute(sql.query, sql.values);    
         return rows;
     },
-    async getCompany(req) {
-        if (!req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
+    async getCompany(req) {        
+        // if (!req.user.c_com != req.query.c_com) { throw new Error('권한이 없습니다.'); }  
         const { c_com } = req.query;
         var query = `SELECT max(if(c_code = 'COM1', s_buf1, '')) c1, \n` +
                     `       max(if(c_code = 'COM2', s_buf1, '')) c2, \n` +

@@ -508,16 +508,16 @@ const basejobModel = {
         }
         const {c_com, c_item, c_ptype } = payload;
         var dtjob = 0;
-        
-        var sqldt = `insert into tb_routeproc (c_com, c_item, i_ser, s_sort, c_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, n_crnm, d_create_at) ` +
-                    `select c_com, '${c_item}', @ROWNUM1:=@ROWNUM1+1 i_ser, @ROWNUM2:=@ROWNUM2+1 s_sort, c_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, '${req.user.n_name}', now() ` + 
-                    `  from tb_ptypeli , ` +
-                    `       (SELECT @ROWNUM1:=IFNULL((SELECT MAX(i_ser) from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'),0)) R, ` +
-                    `       (SELECT @ROWNUM2:=IFNULL((SELECT MAX(s_sort) from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'),0)) S ` +
-                    ` where c_com = '${c_com}' ` +
-                    `   and c_ptype = '${c_ptype}' ` +
+        // `       (SELECT @ROWNUM1:=IFNULL((SELECT MAX(i_ser) from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'),0)) R, ` +
+        var sqldt = `insert into tb_routeproc (c_com, c_item, i_ser, s_sort, c_process, n_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, n_crnm, d_create_at) \n` +
+                    `select c_com, '${c_item}', @ROWNUM1:=@ROWNUM1+1 i_ser, @ROWNUM2:=@ROWNUM2+1 s_sort, c_process, n_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, '${req.user.n_name}', now() \n` + 
+                    `  from tb_ptypeli , \n` +
+                    `       (SELECT @ROWNUM1:=DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')) R, \n` +
+                    `       (SELECT @ROWNUM2:=IFNULL((SELECT MAX(s_sort) from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'),0)) S \n` +
+                    ` where c_com = '${c_com}' \n` +
+                    `   and c_ptype = '${c_ptype}' \n` +
                     ` order by s_sort, c_process`;
-
+        console.log(sqldt);
         if (!payload.n_crnm) {             
             payload.n_crnm = req.user.n_name;
             payload.d_create_at = at;
@@ -585,11 +585,11 @@ const basejobModel = {
         const payload = {
 			...req.body,
         }
-
+        
         const {c_com, c_item, i_ser } = payload;
         var sql = "";
         var values = new Array();
-        var i_ser_new = 1;
+        const i_ser_new = Date.now(); 
         if (i_ser) {
             sql = `UPDATE tb_routeproc ` +
                   `   SET s_sort = ?, m_whour = ?, f_jobs = ?, f_jobf = ?, f_jobo = ?, n_upnm = ?,  d_update_at = ? ` + 
@@ -605,27 +605,28 @@ const basejobModel = {
             values.push(c_item);
             values.push(i_ser);
         } else {
-            sql = `SELECT IFNULL(MAX(i_ser),0) INTO i_ser from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'`;
-            const [rows] = await db.execute(sql);
+            // sql = `SELECT IFNULL(MAX(i_ser),0) INTO i_ser from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'`;
+            // const [rows] = await db.execute(sql);
             
-            sql = `INSERT INTO tb_routeproc (c_com, c_item, i_ser, s_sort, c_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, n_crnm, d_create_at)` +
-                  ` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            sql = `INSERT INTO tb_routeproc (c_com, c_item, i_ser, s_sort, c_process, n_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, n_crnm, d_create_at)` +
+                  ` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             
-            i_ser_new = rows ? (rows.i_ser + 1) : 1;
+            // i_ser_new = rows ? (rows.i_ser + 1) : 1;
             values.push(c_com);
             values.push(c_item);
             values.push(i_ser_new);
             values.push(payload.s_sort);
             values.push(payload.c_process);
+            values.push(payload.n_process);
             values.push(payload.c_ptype);
-            values.push(payload.m_whour);
-            values.push(payload.f_jobs);
+            values.push(payload.m_whour);            
             values.push(payload.f_jobs);
             values.push(payload.f_jobf);
             values.push(payload.f_jobo);
             values.push(req.user.n_name);
             values.push(at);
         }
+        
         const [row] = await db.execute(sql, values);
         if (row.affectedRows < 1) return '';
 
