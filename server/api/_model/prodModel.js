@@ -373,7 +373,7 @@ const prodModel = {
                     `       join (select i_order, c_com, i_orderser, sum(if(f_err = 'N', if(f_jobf = 'Y',m_cnt,0),0)) m_yescnt, sum(if(f_err = 'N', 0, m_err)) m_nocnt \n` +
                     `                          from tb_prodmake \n` +
                     `                         group by i_order, c_com, i_orderser)  c on b.c_com = c.c_com and b.i_order = c.i_order and b.i_orderser = c.i_orderser \n` +
-                    `       join (select i_order, c_com, i_orderser, count(*) w_workcnt, min(s_workday) s_works, max(s_workday) s_worke \n` +
+                    `       join (select i_order, c_com, i_orderser, DATEDIFF(max(s_workday), min(s_workday)) w_workcnt, min(s_workday) s_works, max(s_workday) s_worke \n` +
                     `                          from (select i_order, c_com, i_orderser, s_workday \n` +
                     `                                  from tb_prodmake \n` +
                     `                                  group by i_order, c_com, i_orderser, s_workday) t \n` +

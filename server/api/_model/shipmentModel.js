@@ -51,7 +51,7 @@ const shipmentModel = {
                     `       c.m_yescnt, ifnull(d.m_shipcnt, 0) m_shipcnt,  d.d_ship  \n` +        
                     ` from  tb_order a \n` +
                     `       join tb_orderli b on a.i_order = b.i_order \n` +
-                    `       join (select i_order, c_com, i_orderser, sum(if(f_err = 'N', m_cnt,0)) m_yescnt, sum(if(f_err = 'N', 0, m_cnt)) m_nocnt \n` +
+                    `       join (select i_order, c_com, i_orderser, sum(if(f_err = 'N', if(f_jobf = 'Y', m_cnt,0),0)) m_yescnt, sum(if(f_err = 'N', 0, m_cnt)) m_nocnt \n` +
                     `               from tb_prodmake \n` +
                     `               group by i_order, c_com, i_orderser)  c on b.c_com = c.c_com and b.i_order = c.i_order and b.i_orderser = c.i_orderser \n` +
                     `       left outer join (select c_com, i_order, i_orderser, sum(m_shipcnt) m_shipcnt, max(d_ship) d_ship \n` +

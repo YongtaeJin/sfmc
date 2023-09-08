@@ -97,12 +97,6 @@ export default {
                 {text: '상태',    value: 'f_work', sortable: false, align:'center', width: "30px"},
             ],
             itemLists:[], itemInfo:[], selected:[],
-            /*
-            a.c_com, a.i_order, b.i_orderser,
-       a.i_orderno, a.n_vend, a.n_order, b.c_item, b.n_item, b.t_size, b.m_cnt m_ocnt, b.s_duedate, 
-       c.m_yescnt, c.m_nocnt, b.d_plan1, b.d_plan2, d.s_works, d.s_worke, d.w_workcnt, b.f_work
-       */
-           
         }
     },
     watch: {
