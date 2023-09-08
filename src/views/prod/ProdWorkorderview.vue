@@ -64,7 +64,7 @@ import EzDialog from '../../components/etc/EzDialog.vue';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import { PROD001 } from '../../../util/constval';
-import { previousMonth } from '../../../util/lib';
+import { getDate, previousMonth } from '../../../util/lib';
 import DatesDialog from '../../components/etc/DatesDialog.vue';
 
 export default {
@@ -114,7 +114,7 @@ export default {
     methods: {     
         ...mapActions("prod", ["iuProdPlanlist"]), 
         async init() {
-            this.form.sDate1=previousMonth();
+            this.form.sDate1=getDate(-100, 1);
             this.view();
         },  
         async view() {            

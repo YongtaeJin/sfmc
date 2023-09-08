@@ -175,7 +175,7 @@ const prodModel = {
         
         let where = `select a.c_com, a.i_order, b.i_orderser, a.i_orderno, \n` +
                     `       a.n_vend, b.s_sort, b.c_item, b.n_item, b.t_size, b.i_unit, b.m_cnt,  b.f_work, b.d_plan1, b.d_plan2, b.t_remark, \n` +
-                    `       ifnull((select sum(m_cnt) from tb_prodmake t where t.c_com = b.c_com and t.i_order = b.i_order and t.i_orderser = b.i_orderser and t.f_err = 'N'),0) m_makecnt, \n` +
+                    `       ifnull((select sum(m_cnt) from tb_prodmake t where t.c_com = b.c_com and t.i_order = b.i_order and t.i_orderser = b.i_orderser and t.f_err = 'N' and t.f_jobf = 'Y'),0) m_makecnt, \n` +
                     `       ifnull((select sum(m_err) from tb_prodmake t where t.c_com = b.c_com and t.i_order = b.i_order and t.i_orderser = b.i_orderser and t.f_err = 'Y'),0) m_errcnt \n` +
                     `   from tb_order a  \n` +
                     `        join tb_orderli b on a.i_order = b.i_order and a.c_com = b.c_com and b.f_work > '1' \n` +
@@ -231,7 +231,6 @@ const prodModel = {
         return rows;  
     },
     
-
     async getProdWorklist(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         const { c_com, i_order, i_orderser } = req.body;
@@ -246,6 +245,29 @@ const prodModel = {
         });      
         return rows;        
     },
+    async getProdWorkProcess(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com, i_order, i_orderser } = req.body;
+        var values = new Array();
+        let query = `SELECT a.c_com, a.i_order, a.i_orderser, a.c_item, a.i_ser, a.s_sort, a.s_date1, a.s_date2, a.m_cnt, a.i_empno, a.n_empnm, a.n_item, a.c_process, a.n_process, a.c_ptype, a.m_whour, a.f_jobs, a.f_jobf, a.f_jobo, \n`+
+                    `       IFNULL(b.m_cnt, 0) m_make, IFNULL(b.m_ok, 0) m_ok, IFNULL(b.m_no, 0) m_no, (IFNULL(b.m_cnt, 0) - IFNULL(b.m_ok, 0)) m_dif  \n`+
+                    `  FROM tb_prodplan a \n`+
+                    `       LEFT OUTER JOIN (SELECT c_com, i_order, i_orderser, c_item, i_ser, sum(m_cnt) m_cnt, sum(IF(f_err = 'N', m_cnt, 0)) m_ok, sum(IF(f_err <> 'N', m_err, 0)) m_no \n`+
+                    `                          FROM tb_prodmake \n`+
+                    `                         GROUP BY  c_com, i_order, i_orderser, c_item, i_ser) b \n`+
+                    `       ON a.c_com = b.c_com AND a.i_order = b.i_order AND a.i_orderser = b.i_orderser AND a.c_item = b.c_item AND a.i_ser = b.i_ser \n`+
+                    ` WHERE a.c_com = ? \n`+
+                    `   AND a.i_order = ? \n`+
+                    `   AND a.i_orderser = ? \n`+
+                    ` ORDER BY a.c_com, a.i_order, a.i_orderser, a.c_item, a.i_ser, a.s_sort`
+        values.push(c_com);  
+        values.push(i_order);
+        values.push(i_orderser);
+        console.log(query);
+        const [rows] = await db.execute(query, values); 
+        return rows; 
+    },
+
     async iuProdWorklist(req) {
         const { c_com } = req.user;
         const item = req.body;

@@ -51,26 +51,7 @@
         <p></p>
         <div>
             <v-row>
-                <v-col col="12" sm="6" md="6">
-                    <v-toolbar height="25px" background-color="primary" dark>
-                        <v-toolbar-title class="v-subtitle">세부공정 생산실적</v-toolbar-title>
-                    </v-toolbar>
-                    <v-data-table ref="proc-table" :headers="procHead" :items="procItems"                     
-                        item-key="i_ser" v-model="errRow" single-select @click:row="rowSelectProc"                        
-                        hide-default-footer
-                        :item-class= "row_classes" :items-per-page="-1" 
-                        class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
-                        >
-                        <template v-slot:[`item.n_process`]="{ item }">
-                            <v-chip v-if="item.f_jobf=='Y'" x-small :color="getColor('a')" dark > {{item.n_process}} </v-chip>
-                            <span v-else >{{item.n_process}}</span>
-                        </template>
-                        <template v-slot:[`item.s_date1`]="{ item }">{{ item.s_date1.substr(5) }}</template>
-                        <template v-slot:[`item.s_date2`]="{ item }">{{ item.s_date2.substr(5) }}</template>
-
-                    </v-data-table>
-                </v-col>
-                <v-col col="12" sm="3" md="3">
+                <v-col>
                     <v-toolbar height="25px" background-color="primary" dark>
                         <v-toolbar-title class="v-subtitle">작업실적 등록</v-toolbar-title>
                         <v-spacer/>            
@@ -101,7 +82,7 @@
                         </template>
                     </v-data-table>
                 </v-col>
-                <v-col col="12" sm="3" md="3">
+                <v-col>
                     <v-toolbar height="25px" background-color="primary" dark>
                         <v-toolbar-title class="v-subtitle">불량 등록</v-toolbar-title>
                         <v-spacer/>            
@@ -143,7 +124,6 @@
                 </v-col>
             </v-row>
         </div>
-        
 
     </v-container>
 </template>
@@ -190,37 +170,20 @@ export default {
             itemList:[], itemInfo:[], selected:[],
             itemMakeHead: [
                 {text: '작업일',    value: 's_workday', sortable: false, align:'center', width: "60px"},
-                // {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},
-                // {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "80px"},
-                // {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "60px"},
+                {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "60px"},
                 {text: '생산수량',  value: 'm_cnt', sortable: false, align:'center', width: "50px"},
-                // {text: '작업일수',  value: 'm_whour', sortable: false, align:'center', width: "55px"},
-                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "80px"},
+                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "100px"},
             ],
             itemErrHead: [
                 {text: '작업일',    value: 's_workday', sortable: false, align:'center', width: "60px"},
-                // {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},
-                // {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "80px"},
-                // {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "50px"},
-                {text: '불량수량',  value: 'm_err', sortable: false, align:'center', width: "50px"},                
+                {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "50px"},
+                {text: '불량수량',  value: 'm_err', sortable: false, align:'center', width: "50px"},
+                {text: '불량공정',  value: 'i_process', sortable: false, align:'center', width: "55px"},
                 {text: '불량원인',  value: 'f_cause', sortable: false, align:'center', width: "55px"},
-                // {text: '작업일수',  value: 'm_whour', sortable: false, align:'center', width: "55px"},
-                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "80px"},
+                {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "100px"},
             ],
             itemProd:[], setItemProd:[],
             itemMake:[], itemErr:[], makeRow:[], errRow:[],
-            procHead: [
-                // {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},
-                {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "80px"},
-                {text: '작업자',    value: 'n_empnm', sortable: false, align:'center', width: "50px"},
-                {text: '시작일',    value: 's_date1', sortable: false, align:'center', width: "50px"},
-                {text: '종료일',    value: 's_date2', sortable: false, align:'center', width: "50px"},
-                {text: '계획수량',  value: 'm_cnt', sortable: false, align:'center', width: "50px"},
-                // {text: '작업수량',  value: 'm_make', sortable: false, align:'center', width: "50px"},
-                {text: '양품',      value: 'm_ok', sortable: false, align:'center', width: "50px"},                
-                {text: '불량',      value: 'm_no', sortable: false, align:'center', width: "55px"},
-            ],
-            procItems:[], procInfo:[], procS:[],
            
         }
     },
@@ -257,7 +220,6 @@ export default {
         async view() {
             this.itemInfo = [];
             this.itemProd = []; this.itemMake = []; this.itemErr = []; this.makeRow =[]; this.errRow = [];
-            this.procItems = []; this.procInfo =[]; this.procS = [];
             this.itemList = await this.$axios.post(`/api/prod/getProdWork`, this.form); 
         },
         async add() {
@@ -284,8 +246,8 @@ export default {
                     item.f_editold = '0';
                 }
             }
-            this.setProdList('Y', this.procInfo.i_ser);
-            this.setProdList('N', this.procInfo.i_ser); 
+            this.setProdList('Y');
+            this.setProdList('N'); 
             this.$toast.info(`저장 하였습니다.`);
         },
         getColor (data) {
@@ -311,11 +273,9 @@ export default {
             this.prodselect.i_order = this.itemInfo.i_order;
             this.prodselect.i_orderser = this.itemInfo.i_orderser; 
 
-            this.procItems = await this.$axios.post(`/api/prod/getProdWorkProcess`, this.prodselect); 
             this.itemProd = await this.$axios.post(`/api/prod/getProdWorklist`, this.prodselect); 
-            
-             this.setProdList('Y');
-             this.setProdList('N');            
+            // this.setProdList('Y');
+            // this.setProdList('N');            
         },
         getStatus(item) {
             var find = this.PROD001.find(e => e.value === item);
@@ -326,11 +286,11 @@ export default {
         },
         async makeDel() {            
             if ( this.makeRow[0] == undefined ) return;
-            // const idx = this.delmake('N', this.makeRow[0].i_orderser, this.makeRow[0].i_makeser);
-            this.delmake('N', this.setItemProd)
+            const idx = this.delmake('N', this.makeRow[0].i_orderser, this.makeRow[0].i_makeser);
         },
         async errAdd() {
-            const idx = this.addmake('Y'); 
+            const idx = this.addmake('Y');  
+            
         },
         async errDel() {
             if ( this.errRow[0] == undefined ) return;
@@ -345,50 +305,35 @@ export default {
             row.select(true);
             this.setItemProd = item;
         },
-        setProdList(gubun, iser) {
+        setProdList(gubun) {
             if (gubun == 'N') {
-                this.itemMake = this.itemProd.filter(function(item) { return item.i_ser === iser && item.f_err === 'N'; });
+                this.itemMake = this.itemProd.filter(function(item) { return item.f_err === 'N'; });
             } else {
-                this.itemErr = this.itemProd.filter(function(item) { return item.i_ser === iser && item.f_err === 'Y'; });                
+                this.itemErr = this.itemProd.filter(function(item) { return item.f_err === 'Y'; });                
             }
         },
 
         addmake(gubun) {
             if (this.itemInfo.c_com == undefined) return -1;
-            if (this.procInfo.c_com == undefined) return -1;
             if (!this.ordStatus) return; // 지시 상태 추가처리
             const obj = {}
-            obj.c_com = this.procInfo.c_com;
-            obj.i_order = this.procInfo.i_order;
-            obj.i_orderser = this.procInfo.i_orderser;
+            obj.c_com = this.itemInfo.c_com;
+            obj.i_order = this.itemInfo.i_order;
+            obj.i_orderser = this.itemInfo.i_orderser;
             obj.i_makeser = Date.now();
             obj.s_workday = getDate();
             obj.f_err     = gubun;
-            obj.m_cnt     = gubun == 'N' ? Number(this.procInfo.m_cnt) - Number(this.procInfo.m_ok) : 0;
+            obj.m_cnt     = gubun == 'N' ? Number(this.itemInfo.m_cnt) - Number(this.itemInfo.m_makecnt) : 0;
             obj.m_err     = gubun == 'N' ? 0 : 1;
             obj.i_process = '';
             obj.f_cause   = '';
-
-            obj.i_empno   = this.procInfo.i_empno;
-            obj.n_empnm   = this.procInfo.n_empnm;
-            obj.c_item    = this.procInfo.c_item;
-            obj.i_ser     = this.procInfo.i_ser;
-            obj.n_item    = this.procInfo.n_item;
-            obj.c_process = this.procInfo.c_process;
-            obj.n_process = this.procInfo.n_process;
-            obj.c_ptype   = this.procInfo.c_ptype;
-            obj.m_whour   = 0;
-            obj.f_jobs    = this.procInfo.f_jobs;
-            obj.f_jobf    = this.procInfo.f_jobf;
-            obj.f_jobo    = this.procInfo.f_jobo;
-            
-            
+            obj.n_name    = '';
             obj.f_edit    = '1'; 
             obj.f_editold = '1';
-            const idx = this.itemProd.push(obj)            
-            if (idx > -1) this.setProdList(gubun, this.procInfo.i_ser);
+            const idx = this.itemProd.push(obj)
+
+            if (idx > -1) this.setProdList(gubun);
             
-            this.calculateTotal();
             return idx;
         },
         delmake(gubun, i_orderser, i_makeser) {
@@ -409,33 +354,18 @@ export default {
         },
         calculateTotal() {
             let makecnt = 0, errcnt = 0;            
-            let delcnt = 0;
-            let procmakecnt = 0, procerrcnt = 0;
+            let delcnt = 0
             for (const item of this.itemProd) {
                 if (item.f_edit == '2') {
                     delcnt ++;
                     continue;
-                }                
-                if (item.f_jobf == 'Y') makecnt += Number(item.m_cnt)            
-                errcnt += Number(item.m_err);                
-            } 
+                }
+                makecnt += Number(item.m_cnt);
+                errcnt += Number(item.m_err);
+            }            
             this.itemInfo.m_makecnt = makecnt;
             this.itemInfo.m_errcnt = errcnt;
             this.itemInfo.f_work = this.itemProd.length == delcnt ? '2' : '3';
-
-            // 세부공정별 집계
-            if(this.procInfo.i_ser !== undefined) {
-                for (const item of this.itemMake) {
-                    if (item.f_edit == '2') continue;
-                    procmakecnt += Number(item.m_cnt);
-                }
-                for (const item of this.itemErr) {
-                    if (item.f_edit == '2') continue;
-                    procerrcnt += Number(item.m_err);
-                }
-                this.procInfo.m_ok = procmakecnt;
-                this.procInfo.m_no = procerrcnt;
-            }
         },
         onChangeDetail() {
             this.setItemProd.f_edit = "1";
@@ -455,13 +385,7 @@ export default {
                 const rv = this.iuProdWorkset(item)
                 if(rv) this.$toast.info(`작업 상태 처리 하였습니다...`);
             }
-        },
-        rowSelectProc:function (item, row) {                
-            row.select(true);
-            this.procInfo = item;
-            this.setProdList('Y', item.i_ser);
-            this.setProdList('N', item.i_ser);
-        },
+        }
   },
 }
 </script>

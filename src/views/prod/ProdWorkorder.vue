@@ -91,6 +91,18 @@
             hide-default-footer :items-per-page="-1" :item-class= "row_classes" 
             class="elevation-1 text-no-wrap" height="150px" max-height="150px" > 
 
+            <template v-slot:[`item.f_jobf`]="{ item }">    
+                <div @dblclick="handleDoubleClick(item, 'f_jobf')">
+                <v-icon v-if="item.f_jobf=='Y'" small color=#008000> mdi-check </v-icon>
+                <v-icon v-else x-small >mdi-minus</v-icon>
+                </div>
+            </template> 
+            <template v-slot:[`item.f_jobo`]="{ item }">                
+                <v-icon v-if="item.f_jobo=='Y'" small color=#008000> mdi-check </v-icon>
+                <v-icon v-else x-small >mdi-minus</v-icon>
+            </template>    
+
+
             <template v-slot:[`item.n_empnm`]="{ item }">
                 <v-text-field v-model="item.n_empnm" @input="onChange(item)" v-if=" itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser " readonly dense hide-details class="my-text-field no-padding">
                     <template v-slot:append> <v-btn @click="getEmpno(item)" x-small icon ><v-icon>mdi-check</v-icon></v-btn> </template>
@@ -173,6 +185,8 @@ export default {
             ],
             itemList:[], itemInfo:[], selected:[],
             routerHead: [
+                {text: '외주',  value: 'f_jobo', sortable: false, align:'center', width: "40"},
+                {text: '마지막',  value: 'f_jobf', sortable: false, align:'center', width: "40"},
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "75"},
                 {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "130"},
                 {text: '작업자',    value: 'n_empnm', sortable: false, align:'center', width: "100"},
@@ -340,7 +354,22 @@ export default {
             if (idx >= 0 ) this.itemRouters.splice(idx, 1, this.routerInfo);            
             
             this.$refs.dialog_emp.close();
-        }
+        },
+        handleDoubleClick(item, col) {
+            if (this.itemInfo.f_work !== '1') return;
+            switch (col) {
+                case 'f_jobs' :
+                    item.f_jobs = item.f_jobs == 'Y' ? 'N' : 'Y';
+                    break;
+                case 'f_jobf' :
+                    item.f_jobf = item.f_jobf == 'Y' ? 'N' : 'Y';
+                    break;
+                case 'f_jobo' :
+                    item.f_jobo = item.f_jobo == 'Y' ? 'N' : 'Y';
+                    break;
+            } 
+            item.f_edit = "1";
+        },
 
     }
 

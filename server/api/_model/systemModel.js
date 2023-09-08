@@ -66,6 +66,10 @@ const systemModel = {
 
             delete payload.n_com;
             delete payload.p_pw;
+            delete payload.i_company;
+            delete payload.i_kpikey;
+            delete payload.f_kpichk;
+            delete payload.n_kpiconm;
             const sql2 = sqlHelper.Insert(TABLE.USERS, payload);
             const [row2] = await db.execute(sql2.query, sql2.values);
         } 

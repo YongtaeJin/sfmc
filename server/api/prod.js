@@ -36,7 +36,10 @@ router.post('/getItemRouterProc', async (req, res) => {
     const result = await modelCall(prodModel.getItemRouterProc, req);
 	res.json(result);
 });
-
+router.post('/getProdWorkProcess', async (req, res) => {    
+    const result = await modelCall(prodModel.getProdWorkProcess, req);
+	res.json(result);
+});
 router.post('/getProdWorklist', async (req, res) => {    
     const result = await modelCall(prodModel.getProdWorklist, req);
 	res.json(result);
