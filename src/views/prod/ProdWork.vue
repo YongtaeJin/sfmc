@@ -84,19 +84,19 @@
                         class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
                         >
                         <template v-slot:[`item.s_workday`]="{ item }">
-                            <input-date-2 v-model="item.s_workday" v-if="ordStatus"  @input="onChangeDetail" :rules="rules.date({required: false})" class="my-text-table"/>
+                            <input-date-2 v-model="item.s_workday" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser"  @input="onChangeDetail" :rules="rules.date({required: false})" class="my-text-table"/>
                             <span v-else>{{item.s_workday}}</span>
                         </template>
                         <template v-slot:[`item.n_name`]="{ item }">
-                            <v-text-field v-model="item.n_name" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <v-text-field v-model="item.n_name" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
                             <span v-else>{{item.n_name}}</span>
                         </template>
                         <template v-slot:[`item.m_cnt`]="{ item }">
-                            <input-amt v-model="item.m_cnt" @input="onChangeDetail" v-if="ordStatus" ></input-amt>
+                            <input-amt v-model="item.m_cnt" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" ></input-amt>
                             <span v-else>{{item.m_cnt}}</span>
                         </template>
                         <template v-slot:[`item.t_remark`]="{ item }">
-                            <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
                             <span v-else>{{item.t_remark}}</span>
                         </template>
                     </v-data-table>
@@ -116,27 +116,27 @@
                         >
 
                         <template v-slot:[`item.s_workday`]="{ item }">
-                            <input-date-2 v-model="item.s_workday" v-if="ordStatus"  @input="onChangeDetail" :rules="rules.date({required: false})" class="my-text-table"/>
+                            <input-date-2 v-model="item.s_workday" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser"  @input="onChangeDetail" :rules="rules.date({required: false})" class="my-text-table"/>
                             <span v-else>{{item.s_workday}}</span>
                         </template>
                         <template v-slot:[`item.n_name`]="{ item }">
-                            <v-text-field v-model="item.n_name" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <v-text-field v-model="item.n_name" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
                             <span v-else>{{item.n_name}}</span>
                         </template>
                         <template v-slot:[`item.m_err`]="{ item }">
-                            <input-amt v-model="item.m_err" @input="onChangeDetail" v-if="ordStatus" ></input-amt>
+                            <input-amt v-model="item.m_err" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" ></input-amt>
                             <span v-else>{{item.m_err}}</span>
                         </template>
                         <template v-slot:[`item.i_process`]="{ item }">
-                            <v-text-field v-model="item.i_process" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <v-text-field v-model="item.i_process" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
                             <span v-else>{{item.i_process}}</span>
                         </template>
                         <template v-slot:[`item.f_cause`]="{ item }">
-                            <v-text-field v-model="item.f_cause" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <v-text-field v-model="item.f_cause" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
                             <span v-else>{{item.f_cause}}</span>
                         </template>
                         <template v-slot:[`item.t_remark`]="{ item }">
-                            <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="ordStatus" dense hide-details class="my-text-field no-padding" />
+                            <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
                             <span v-else>{{item.t_remark}}</span>
                         </template>
                     </v-data-table>
@@ -193,7 +193,7 @@ export default {
                 // {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},
                 // {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "80px"},
                 // {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "60px"},
-                {text: '생산수량',  value: 'm_cnt', sortable: false, align:'center', width: "50px"},
+                {text: '생산수량',  value: 'm_cnt', sortable: false, align:'center', width: "40px"},
                 // {text: '작업일수',  value: 'm_whour', sortable: false, align:'center', width: "55px"},
                 {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "80px"},
             ],
@@ -202,7 +202,7 @@ export default {
                 // {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},
                 // {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "80px"},
                 // {text: '작업자',    value: 'n_name', sortable: false, align:'center', width: "50px"},
-                {text: '불량수량',  value: 'm_err', sortable: false, align:'center', width: "50px"},                
+                {text: '불량수량',  value: 'm_err', sortable: false, align:'center', width: "40px"},                
                 {text: '불량원인',  value: 'f_cause', sortable: false, align:'center', width: "55px"},
                 // {text: '작업일수',  value: 'm_whour', sortable: false, align:'center', width: "55px"},
                 {text: '비고',     value: 't_remark', sortable: false, align:'center', width: "80px"},
@@ -326,7 +326,6 @@ export default {
         },
         async makeDel() {            
             if ( this.makeRow[0] == undefined ) return;
-            // const idx = this.delmake('N', this.makeRow[0].i_orderser, this.makeRow[0].i_makeser);
             this.delmake('N', this.setItemProd)
         },
         async errAdd() {
@@ -334,7 +333,7 @@ export default {
         },
         async errDel() {
             if ( this.errRow[0] == undefined ) return;
-            const idx = this.delmake('Y', this.errRow[0].i_orderser, this.errRow[0].i_makeser);            
+            this.delmake('Y', this.setItemProd)
         },
         
         rowSelectMake:function (item, row) {                            
@@ -391,17 +390,16 @@ export default {
             this.calculateTotal();
             return idx;
         },
-        delmake(gubun, i_orderser, i_makeser) {
-            if (this.itemInfo.i_orderser == undefined) return -1;
-            if (i_orderser == undefined || this.itemInfo.c_com == undefined) return -1; 
-            if (!this.ordStatus) return; // 지시 상태만 삭제처리         
-            const idx = this.itemProd.findIndex(item => item.i_orderser == i_orderser && item.i_makeser == i_makeser);
+        delmake(gubun, item) {
+            if (!this.ordStatus) return; // 지시 상태만 삭제처리 
+        
+            const idx = this.itemProd.findIndex(row => row.i_orderser == item.i_orderser && row.i_makeser == item.i_makeser);
             if (idx > -1 ) {
                 if (this.itemProd[idx].f_editold == "0") {
                     this.itemProd[idx].f_edit = this.itemProd[idx].f_edit == "0" ? "2" : "1";
                 } else {
                     this.itemProd.splice(idx, 1);
-                    this.setProdList(gubun);
+                    this.setProdList(gubun, item.i_ser);
                 }
             }
             this.calculateTotal();
@@ -461,6 +459,7 @@ export default {
             this.procInfo = item;
             this.setProdList('Y', item.i_ser);
             this.setProdList('N', item.i_ser);
+            this.setItemProd =[];
         },
   },
 }

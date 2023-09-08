@@ -358,6 +358,7 @@ const prodModel = {
         return true;
     },
 
+    // 생산실적조회
     async getProdWorkview(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         const { c_com } = req.user;
@@ -369,7 +370,7 @@ const prodModel = {
                     `       c.m_yescnt, c.m_nocnt, b.d_plan1, b.d_plan2, d.s_works, d.s_worke, d.w_workcnt, b.f_work \n` +
                     `  from tb_order a \n` +
                     `       join tb_orderli b on a.i_order = b.i_order and a.c_com = b.c_com \n` +
-                    `       join (select i_order, c_com, i_orderser, sum(if(f_err = 'N', m_cnt,0)) m_yescnt, sum(if(f_err = 'N', 0, m_cnt)) m_nocnt \n` +
+                    `       join (select i_order, c_com, i_orderser, sum(if(f_err = 'N', if(f_jobf = 'Y',m_cnt,0),0)) m_yescnt, sum(if(f_err = 'N', 0, m_err)) m_nocnt \n` +
                     `                          from tb_prodmake \n` +
                     `                         group by i_order, c_com, i_orderser)  c on b.c_com = c.c_com and b.i_order = c.i_order and b.i_orderser = c.i_orderser \n` +
                     `       join (select i_order, c_com, i_orderser, count(*) w_workcnt, min(s_workday) s_works, max(s_workday) s_worke \n` +
