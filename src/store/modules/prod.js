@@ -13,6 +13,11 @@ export const actions = {
 		const data = await $axios.post('/api/prod/iuProdPlanlist', items);
 		return data;
 	},
+	async iuProdPlanlist2( { commit }, items) {
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/prod/iuProdPlanlist2', items);
+		return data;
+	},
 	async iuProdWorklist( { commit }, items) {
 		const { $axios } = Vue.prototype;		
 		const data = await $axios.post('/api/prod/iuProdWorklist', items);

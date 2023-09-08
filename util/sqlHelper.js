@@ -201,7 +201,7 @@ const sqlHelper = {
 		return data;
 	},
 	async objectSplit(data, f) {	
-		const obj = {};
+		const obj = {};	
 		if ( f === 'M' || f === 'm' ) {
 			const objKeys = Object.keys(data).filter((key) => isNaN(key));
 			const values = objKeys.map((key) => data[key]);

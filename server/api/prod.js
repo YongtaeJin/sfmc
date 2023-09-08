@@ -19,6 +19,10 @@ router.post('/iuProdPlanlist', async (req, res) => {
     const result = await modelCall(prodModel.iuProdPlanlist, req);
 	res.json(result);
 });
+router.post('/iuProdPlanlist2', async (req, res) => {
+    const result = await modelCall(prodModel.iuProdPlanlist2, req);
+	res.json(result);
+});
 
 router.post('/getProdWork', async (req, res) => {    
     const result = await modelCall(prodModel.getProdWork, req);

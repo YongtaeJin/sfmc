@@ -90,6 +90,81 @@ const prodModel = {
         await db.execute('COMMIT');
         return  rv;
     },
+    async iuProdPlanlist2(req) {
+        const { c_com } = req.user;
+        
+        const master = {...req.body.master}
+        const detail = {...req.body.detail}
+        const n_plan = req.user.n_name;
+        const d_plan_at = moment().format('LT');
+        const at = moment().format('LT'); 
+
+        let sql;
+        let rv = [];
+        let order = []; 
+                
+        const masterdb = await sqlHelper.objectSplit(master, "d");
+        const detaildb = await sqlHelper.objectSplit(detail, "d");
+        for (let i = 0; i < masterdb.length; i++) {
+            const {c_com, i_order, i_orderser, f_work, d_plan1, d_plan2, t_remark, f_edit, f_editold} = masterdb[i];
+            if (f_edit !== "1" || f_editold !== "0") continue;            
+        
+            sql = sqlHelper.Update(TABLE.ORDERLI, {f_work, d_plan1, d_plan2, t_remark, n_plan, d_plan_at}, {c_com, i_order, i_orderser});           
+            const [row] = await db.execute(sql.query, sql.values); 
+            if (row.affectedRows > 0) {
+                rv[rv.length] = i_orderser;
+                addToUniqueArray(order, i_order);                
+            } else {
+                db.execute('ROLLBACK'); return false;
+            }
+        }
+        // 발주정보 확인 하여 발주 상태 저장 
+        console.log("발주정보 확인 하여 발주 상태 저장 ");
+        for (let i = 0; i < order.length; i++) {
+            sql.query = `update tb_order a \n ` +
+                  `  set a.f_status = (select if(sum(if(f_work = '1', 0, 1)) > 0, 'P', 'S') \n ` +
+                  `                      from tb_orderli t \n ` +
+                  `                      where a.c_com = t.c_com and t.i_order = a.i_order) \n ` +
+                  `  where a.c_com = '${c_com}' \n ` +
+                  `    and a.i_order = '${order[i]}' \n ` +
+                  `   and a.f_status in ('P', 'S') `;
+            const res = await db.execute(sql.query);             
+            if (res.affectedRows < 1) { db.execute('ROLLBACK'); return false;}
+        }
+       
+        // 공정별 세부일정 저장
+        console.log("공정별 세부일정 저장 ");
+        detaildb.forEach((row, index) => {
+            if(row.f_edit !== "0" || row.f_editold !== "0") {
+                const {c_com, i_order, i_orderser, c_item, i_ser} = row;
+                const newdata = row.f_editold !== "0" ? true : false;
+                const deldata = row.f_edit == "2" ? true : false;
+                delete row.f_edit;
+                delete row.f_editold;
+                if (newdata) {
+                    row.d_create_at = at;
+                    row.n_crnm = req.user.n_name;
+                    delete row.d_update_at;
+                    delete row.n_upnm;
+                } else {
+                    delete row.d_create_at;
+                    delete row.n_crnm;
+                    row.d_update_at = at;
+                    row.n_upnm = req.user.n_name;                    
+                }
+                
+                const sql = deldata ? sqlHelper.DeleteSimple(TABLE.PRODPLAN, {c_com, i_order, i_orderser, c_item, i_ser}) :  newdata ? sqlHelper.Insert(TABLE.PRODPLAN, row) : sqlHelper.Update(TABLE.PRODPLAN, row, {c_com, i_order, i_orderser, c_item, i_ser});                
+                console.log("detial", sql);                
+                const res = sqlDbExecute(sql)    
+                if (res.affectedRows < 1) {
+                    db.execute('ROLLBACK');
+                    return false;
+                }                
+            }
+        });
+        await db.execute('COMMIT');
+        return true;
+    },
 
     async getProdWork(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인

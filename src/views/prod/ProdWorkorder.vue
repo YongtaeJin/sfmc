@@ -86,7 +86,7 @@
             <v-toolbar-title>공정별 세부일정</v-toolbar-title>
             <v-spacer/>
         </v-toolbar>
-        <v-data-table ref="table" :headers="routerHead" :items="itemRouters" @click:row="rowSelectRouter" 
+        <v-data-table ref="table" :headers="routerHead" :items="itemRouterFilter" @click:row="rowSelectRouter" 
             item-key="i_ser" single-select v-model="selectR"
             hide-default-footer :items-per-page="-1" :item-class= "row_classes" 
             class="elevation-1 text-no-wrap" height="150px" max-height="150px" > 
@@ -140,7 +140,7 @@ import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDate2 from '../../components/InputForms/InputDate2.vue';
 import InputDate3 from '../../components/InputForms/InputDate3.vue';
 import { PROD001 } from '../../../util/constval';
-import { previousMonth } from '../../../util/lib';
+import { getDate, previousMonth } from '../../../util/lib';
 import validateRules from "../../../util/validateRules";
 import DatesDialog from '../../components/etc/DatesDialog.vue';
 import InputAmt from '../../components/InputForms/InputAmt.vue';
@@ -182,13 +182,15 @@ export default {
                 {text: '작업일수',  value: 'm_whour', sortable: false, align:'center', width: "75"},
                 {text: '비고',      value: 't_remark', sortable: false, align:'center', width: "120"},
             ],
-            itemRouters:[], routerInfo:[], selectR:[],
+            itemRouters:[], itemRouterFilter:[], routerInfo:[], selectR:[],
             emplist:[],
+            edit: false,
            
         }
     },
     mounted() {
-        this.form.sDate1=previousMonth();
+        // this.form.sDate1=previousMonth();
+        this.form.sDate1=getDate(-100, 1);
         this.init();
     },
     watch: {
@@ -197,7 +199,7 @@ export default {
         rules: () => validateRules,
     },
     methods: {     
-        ...mapActions("prod", ["iuProdPlanlist"]), 
+        ...mapActions("prod", ["iuProdPlanlist2"]), 
         shouldMergeRow(item) {
             const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemList.indexOf(item);
@@ -212,24 +214,27 @@ export default {
         },  
         async view() {
             this.itemInfo=[];
-            this.itemRouters=[]; this.routerInfo=[]; this.selectR=[];
-            this.itemList = await this.$axios.post(`/api/prod/getProdPlanlist`, this.form);             
+            this.itemRouters=[]; this.routerInfo=[]; this.itemRouterFilter=[]; this.selectR=[];
+            this.itemList = await this.$axios.post(`/api/prod/getProdPlanlist`, this.form);                      
         },
         async add() {},
         async del() {},
         async save() {
-            // const data = await this.iuProdPlanlist(this.);
             const edititem = this.itemList.filter(obj => obj.f_edit === '1').map(obj => ({...obj}));
-            if (edititem.length) {
-                const data = await this.iuProdPlanlist(edititem);                
-                data.forEach((row, index) => {
-                    const idx = this.itemList.findIndex(obj => obj.i_orderser == row);
-                    if (idx >= 0) {
-                        this.itemList[idx].f_edit = "0";
-                        this.itemList[idx].f_editold = "0";
-                    }
-                });
-                if (data.length > 0) {
+            const edititemdt = this.itemRouters.filter(obj => obj.f_edit === '1').map(obj => ({...obj}));
+
+            if (edititem.length || edititemdt.length) {            
+                const plandata = {master:edititem, detail: edititemdt }  // 수주정보 비고란 + 공정별세부일정\\                
+                const data = await this.iuProdPlanlist2(plandata);                
+                if (data) {
+                    this.itemList.forEach((row, index) => {
+                        row.f_edit = "0";
+                        row.f_editold = "0";
+                    })
+                    this.itemRouters.forEach((row, index) => {
+                        row.f_edit = "0";
+                        row.f_editold = "0";
+                    })
                     this.$toast.info(`저장 하였습니다.`);
                 }
             }
@@ -252,14 +257,26 @@ export default {
             if (this.itemInfo.i_orderser == item.i_orderser) return;
             this.selected = item;
             this.itemInfo = item;
-            this.itemRouters = await this.$axios.post(`/api/prod/getProdplan`, item); 
-            if (this.itemRouters.length == 0) {
-                this.itemRouters = await this.$axios.post(`/api/prod/getItemRouterProc`, item); 
-                this.itemRouters.forEach((row) => {
-                    row.m_cnt = this.itemInfo.m_cnt;
-                    row.s_date1 = this.itemInfo.d_plan1;
-                    row.s_date2 = this.itemInfo.d_plan2;
-                })
+
+            this.itemRouterFilter = this.itemRouters.filter(obj => obj.c_com == item.c_com && obj.i_order == item.i_order && obj.i_orderser == item.i_orderser).map(obj => ({...obj}));
+            
+            if (this.itemRouterFilter.length == 0) { 
+                this.itemRouterFilter = await this.$axios.post(`/api/prod/getProdplan`, item); 
+                if (this.itemRouterFilter.length) {                    
+                    this.itemRouters = [...this.itemRouters, ...this.itemRouterFilter];
+                } else {
+                    if (parseInt(this.itemInfo.f_work) < 2 )  {
+                        this.itemRouterFilter = await this.$axios.post(`/api/prod/getItemRouterProc`, item); 
+                        this.itemRouterFilter.forEach((row) => {
+                            row.i_order  = this.itemInfo.i_order;
+                            row.i_orderser = this.itemInfo.i_orderser;
+                            row.m_cnt = this.itemInfo.m_cnt;
+                            row.s_date1 = this.itemInfo.d_plan1;
+                            row.s_date2 = this.itemInfo.d_plan2;
+                        })                    
+                        this.itemRouters = [...this.itemRouters, ...this.itemRouterFilter];
+                    }
+                }
             }
         },
         getStatus(item) {
@@ -310,17 +327,17 @@ export default {
 
         },
         onChange(item) {
-            
+            item.f_edit = "1";
         },
         async getEmpno(item) {
             this.$refs.dialog_emp.open();
         },
-        async onEmpEnter(item)   {
-            
+        async onEmpEnter(item)   {            
             const idx = this.itemRouters.indexOf(this.routerInfo)
             this.routerInfo.i_empno = item.i_empno;
             this.routerInfo.n_empnm = item.n_empnm;
-            if (idx >= 0 ) this.itemRouters.splice(idx, 1, this.routerInfo);
+            this.routerInfo.f_edit = "1";
+            if (idx >= 0 ) this.itemRouters.splice(idx, 1, this.routerInfo);            
             
             this.$refs.dialog_emp.close();
         }

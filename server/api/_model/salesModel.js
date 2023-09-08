@@ -147,6 +147,9 @@ const salesModel = {
         // f_edit =  0:변경없음, 1:수정, 2:삭제
         const master = objectSplit(req.body, 'm');
         const detail = objectSplit(req.body, 'd');        
+        console.log(req.body)
+        console.log(master)
+        console.log(detail)
         
         const {c_com, i_ser } = master;
         
