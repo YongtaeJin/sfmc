@@ -37,10 +37,10 @@
                     <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td>
                     <td :rowspan="getRowspan(item)">{{ item.s_date }}</td>
                     <td class="left-align" :rowspan="getRowspan(item)">{{ item.n_vend }}</td>  
-                    <td :rowspan="getRowspan(item)">{{ item.c_item }}</td>  
-                    <td class="left-align" :rowspan="getRowspan(item)">{{ item.n_item }}</td>  
-                    <td class="left-align" :rowspan="getRowspan(item)">{{ item.t_size }}</td>  
-                    <td :rowspan="getRowspan(item)">{{ item.m_cnt }}</td>
+                    <td> {{ item.c_item }}</td>  
+                    <td> {{ item.n_item }}</td>  
+                    <td> {{ item.t_size }}</td>  
+                    <td> {{ item.m_cnt }}</td>
                     <td> {{ item.n_process }}</td>  
                     <td> <v-chip x-small :color="getColor(item)">{{ getStatus(item) }}</v-chip></td>  
                     <td> {{ item.s_dplan1 }}</td>
@@ -55,6 +55,10 @@
 
                 </tr>
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
+                    <td> {{ item.c_item }}</td>  
+                    <td> {{ item.n_item }}</td>  
+                    <td> {{ item.t_size }}</td>  
+                    <td> {{ item.m_cnt }}</td>
                     <td> {{ item.n_process }}</td> 
                     <td> <v-chip x-small :color="getColor(item)">{{ getStatus(item) }}</v-chip></td>  
                     <td> {{ item.s_dplan1 }}</td>

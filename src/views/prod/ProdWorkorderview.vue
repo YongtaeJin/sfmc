@@ -32,7 +32,7 @@
                 </thead>
                 
             </template>
-            <template v-slot:item="{ item,index }">
+            <template v-slot:item="{ item }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
                     <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td>
                     <td :rowspan="getRowspan(item)">{{ item.s_date }}</td>
@@ -52,8 +52,9 @@
                     <td> {{ item.s_workday1 }}</td>
                     <td> {{ item.s_workday2 }}</td>
                     <td> {{ item.m_workcnt }}</td>
-
                 </tr>
+
+
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
                     <td> {{ item.c_item }}</td>  
                     <td> {{ item.n_item }}</td>  
@@ -139,13 +140,13 @@ export default {
     methods: {     
         ...mapActions("prod", ["iuProdPlanlist"]), 
         shouldMergeRow(item) {
-            const index = this.itemLists.findIndex((i) => i.i_orderser === item.i_orderser);
+            const index = this.itemLists.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemLists.indexOf(item);
         },
         getRowspan(item) {
-            const count = this.itemLists.filter((i) => i.i_orderser === item.i_orderser).length;
+            const count = this.itemLists.filter((i) => i.i_orderno === item.i_orderno).length;
             return count;
-        },
+        },        
         async init() {
             this.form.sDate1=getDate(-100, 1);
             this.view();

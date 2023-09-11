@@ -418,25 +418,25 @@ const prodModel = {
                     `                                SUM(IF(f_err = 'N', m_cnt, 0)) m_yescnt, SUM(IF(f_err = 'N', 0, m_err)) m_nocnt \n ` +
                     `                           FROM tb_prodmake \n ` +
                     `                          GROUP BY c_com, i_order, i_orderser, c_item, i_ser) d \n ` +
-                    `                        ON c.c_com = d.c_com AND c.i_order = d.i_order AND c.i_orderser = d.i_orderser AND c.c_item = d.c_item and c.i_ser = d.i_ser `;
-                    // ` WHERE a.c_com = ? \n` ;
+                    `                        ON c.c_com = d.c_com AND c.i_order = d.i_order AND c.i_orderser = d.i_orderser AND c.c_item = d.c_item and c.i_ser = d.i_ser \n` +
+                    ` WHERE a.c_com = ? \n` ;
 
-        // values.push(c_com);        
-        // if (sDate1.length > 0 && sDate2.length > 0 ) {
-        //     query += ` AND b.d_plan2 BETWEEN ? AND ? \n `
-        //     values.push(sDate1);
-        //     values.push(sDate2);
-        // } else if (sDate1.length > 0) {
-        //     query += ` AND b.d_plan2 >= ? \n `
-        //     values.push(sDate1);
-        // } else if (sDate2.length > 0) {
-        //     query += ` AND b.d_plan2 <= ? \n `
-        //     values.push(sDate2);
-        // }
-        // if (sVend.length > 0) {
-        //     query += ` AND a.n_vend LIKE ? \n `
-        //     values.push(sVend + '%');
-        // }
+        values.push(c_com);        
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += ` AND b.d_plan2 BETWEEN ? AND ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += ` AND b.d_plan2 >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += ` AND b.d_plan2 <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query += ` AND a.n_vend LIKE ? \n `
+            values.push(sVend + '%');
+        }
         query += ` ORDER BY a.c_com, a.i_orderno, b.s_sort, c.s_sort, a.s_date` ;
         console.log(query, values);
         const [rows] = await db.execute(query, values);         
