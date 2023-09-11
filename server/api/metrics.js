@@ -1,12 +1,16 @@
 const router = require('express').Router();
-const shipmentModel = require('./_model/shipmentModel');
+const metricsModel = require('./_model/metricsModel');
 const { modelCall } = require('../../util/lib');
 const passport = require('passport');
 const jwt = require('../plugins/jwt');
 
 
-router.post('/getDerliverlist', async (req, res) => {    
-    const result = await modelCall(shipmentModel.getDerliverlist, req);
+router.post('/getDerliverrate', async (req, res) => {    
+    const result = await modelCall(metricsModel.getDerliverrate, req);
+	res.json(result);
+});
+router.post('/getDerliverratedt', async (req, res) => {    
+    const result = await modelCall(metricsModel.getDerliverratedt, req);
 	res.json(result);
 });
 
