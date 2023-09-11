@@ -36,8 +36,6 @@
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
                 </v-data-table>
-
-                
             </v-col>
         </v-row>
     </v-container>  

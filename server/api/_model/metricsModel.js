@@ -91,7 +91,81 @@ const metricsModel = {
         console.log(query2)
         const [rows2] = await db.execute(query2, values);   
         return rows2;
+    },
 
+    async getDefectraterate(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2 } = req.body;  
+
+        var values = new Array();
+        values.push(c_com); 
+        // 공정별 불량율
+        let query = `SELECT a.c_com, a.c_process, MAX(c1.n_process) n_process, SUM(a.m_cnt) m_cnt,  SUM(IFNULL(b.m_err,0)) m_err, \n` +
+                    `        ROUND(SUM(IFNULL(b.m_err,0)) / SUM(a.m_cnt) * 100,2) p_per \n` +                    
+                    `    FROM tb_prodplan a \n` +
+                    `        LEFT OUTER JOIN (SELECT c_com, i_order, i_orderser, c_item, i_ser, SUM(IFNULL(m_err,0)) m_err \n` +
+                    `                            FROM tb_prodmake \n` +
+                    `                            WHERE f_err = 'Y' \n` +
+                    `                            GROUP BY c_com, i_order, i_orderser, c_item, i_ser) b \n` +
+                    `                        ON a.c_com = b.c_com AND a.i_order = b.i_order AND a.i_orderser = b.i_orderser AND a.c_item = b.c_item AND a.i_ser = b.i_ser \n` +
+                    `        LEFT OUTER JOIN tb_process c1 ON a.c_com = c1.c_com AND a.c_process = c1.c_process \n` +
+                    `    WHERE a.c_com = ? \n`;
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += `    AND a.s_date1 BETWEEN ? and ? \n `;  
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += `    AND a.s_date1 >= ? \n `;            
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += `    AND a.s_date1 <= ? \n `;   
+            values.push(sDate2);
+        }       
+        query +=    `    GROUP BY a.c_com, a.c_process \n`;
+        query +=    `    ORDER BY a.c_com, MAX(c1.s_sort)`;
+
+        console.log(query);
+        const [rows] = await db.execute(query, values);   
+        return rows;
+    },
+    async getDefectraterate2(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2 } = req.body;  
+
+        var values = new Array();
+        values.push(c_com); 
+        // 공정별 불량율
+        let query = `SELECT a.c_com, a.c_item, MAX(a.n_item) n_item, SUM(a.m_cnt) m_ordcnt, SUM(IFNULL(b.m_err,0)) m_err, ROUND(SUM(IFNULL(b.m_err,0)) / SUM(a.m_cnt) * 100, 2) p_per \n` +
+                    `  FROM tb_orderli a \n` +
+                    `       JOIN (SELECT a.c_com, a.i_order, a.i_orderser, SUM(a.m_cnt) m_cnt,  SUM(IFNULL(b.m_err,0)) m_err \n` +
+                    `               FROM tb_prodplan a \n` +
+                    `                    LEFT OUTER JOIN (SELECT c_com, i_order, i_orderser, c_item, i_ser, SUM(IFNULL(m_err,0)) m_err \n` +
+                    `                                       FROM tb_prodmake \n` +
+                    `                                       WHERE f_err = 'Y' \n` +
+                    `                                       GROUP BY c_com, i_order, i_orderser, c_item, i_ser) b \n` +
+                    `                                     ON a.c_com = b.c_com AND a.i_order = b.i_order AND a.i_orderser = b.i_orderser AND a.c_item = b.c_item AND a.i_ser = b.i_ser \n` +
+                    `              WHERE a.c_com = ? \n`;
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += `                AND a.s_date1 BETWEEN ? and ? \n `;  
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += `                AND a.s_date1 >= ? \n `;            
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += `                AND a.s_date1 <= ? \n `;   
+            values.push(sDate2);
+        }     
+        query +=    `              GROUP BY a.c_com, a.i_order, a.i_orderser \n` +
+                    `            ) b ON a.c_com = b.c_com AND a.i_order = b.i_order AND a.i_orderser = b.i_orderser \n` +
+                    `       LEFT OUTER JOIN tb_item c1 ON a.c_com = c1.c_com AND a.c_item = c1.c_item \n` +
+                    `  GROUP BY a.c_com, a.c_item \n`;
+                    `  ORDER BY a.c_com, MAX(c1.s_sort)`;
+
+        const [rows] = await db.execute(query, values);   
+        return rows;
     },
 }
 
