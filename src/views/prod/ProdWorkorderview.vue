@@ -21,38 +21,54 @@
                     :item-class= "row_classes" :items-per-page="-1" 
                     class="elevation-1 text-no-wrap"  max-height="500px" height="500px" 
                     >
+            <template v-slot:header="">
+                <thead align='center'>
+                    <tr>
+                        <th colspan="3" class="text-center">수주정보</th>
+                        <th colspan="4" class="text-center">제품정보</th>
+                        <th colspan="6" class="text-center">생산계획</th>
+                        <th colspan="5" class="text-center">생산실적</th>
+                    </tr>
+                </thead>
+                
+            </template>
             <template v-slot:item="{ item,index }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
-                    <td> {{ index + 1 }}</td>                    
-                    <td> {{ item.c_item }}</td>
-                    <td class="left-align"> {{ item.n_item }}</td>
-                    <td> {{ item.t_size }}</td>
-                    <td><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
-                    <td> {{ item.d_plan1 }}</td>
-                    <td> {{ item.d_plan2 }}</td>
-                    <td> {{ item.m_ocnt }}</td>
+                    <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td>
+                    <td :rowspan="getRowspan(item)">{{ item.s_date }}</td>
+                    <td class="left-align" :rowspan="getRowspan(item)">{{ item.n_vend }}</td>  
+                    <td :rowspan="getRowspan(item)">{{ item.c_item }}</td>  
+                    <td class="left-align" :rowspan="getRowspan(item)">{{ item.n_item }}</td>  
+                    <td class="left-align" :rowspan="getRowspan(item)">{{ item.t_size }}</td>  
+                    <td :rowspan="getRowspan(item)">{{ item.m_cnt }}</td>
+                    <td> {{ item.n_process }}</td>  
+                    <td> <v-chip x-small :color="getColor(item)">{{ getStatus(item) }}</v-chip></td>  
+                    <td> {{ item.s_dplan1 }}</td>
+                    <td> {{ item.s_dplan2 }}</td>                    
+                    <td> {{ item.m_planday }}</td>
+                    <td> {{ item.m_plancnt }}</td>
                     <td> {{ item.m_yescnt }}</td>
                     <td> {{ item.m_nocnt }}</td>
-                    <td> {{ item.s_works }}</td>
-                    <td> {{ item.s_worke }}</td>
-                    
-                </tr>   
-                <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
-                    <td> {{ index + 1 }}</td>
-                    <td> {{ item.c_item }}</td>
-                    <td class="left-align"> {{ item.n_item }}</td>
-                    <td> {{ item.t_size }}</td>
-                    <td><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
-                    <td> {{ item.d_plan1 }}</td>
-                    <td> {{ item.d_plan2 }}</td>
-                    <td> {{ item.m_ocnt }}</td>
-                    <td> {{ item.m_yescnt }}</td>
-                    <td> {{ item.m_nocnt }}</td>
-                    <td> {{ item.s_works }}</td>
-                    <td> {{ item.s_worke }}</td>
-                   
+                    <td> {{ item.s_workday1 }}</td>
+                    <td> {{ item.s_workday2 }}</td>
+                    <td> {{ item.m_workcnt }}</td>
+
                 </tr>
-            </template> 
+                <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
+                    <td> {{ item.n_process }}</td> 
+                    <td> <v-chip x-small :color="getColor(item)">{{ getStatus(item) }}</v-chip></td>  
+                    <td> {{ item.s_dplan1 }}</td>
+                    <td> {{ item.s_dplan2 }}</td>                    
+                    <td> {{ item.m_planday }}</td>
+                    <td> {{ item.m_plancnt }}</td>
+                    <td> {{ item.m_yescnt }}</td>
+                    <td> {{ item.m_nocnt }}</td>
+                    <td> {{ item.s_workday1 }}</td>
+                    <td> {{ item.s_workday2 }}</td>
+                    <td> {{ item.m_workcnt }}</td>                    
+                </tr>
+            </template>
+
         </v-data-table> 
     </v-container>
 </template>
@@ -80,22 +96,27 @@ export default {
                 sDate1:"", sDate2:"", sVend:"",
             },
             itemHead: [
-                {text: 'No',       sortable: false, align:'center', width: "25"},
-                // {text: '수주번호',   value: 'i_orderno', sortable: false, align:'center', width: "75"},
-                // {text: '수주일',     value: 's_date', sortable: false, align:'center', width: "60px"},
-                // {text: '발주처',     value: 'n_vend', sortable: false, align:'center', width: "120px"},
-                {text: '품번',      value: 'c_item', sortable: false, align:'center', width: "130px"},
-                {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "130px"},
-                {text: '규격(사양)', value: 't_size', sortable: false, align:'center', width: "100px"},
-                // {text: '단위',      value: 'i_unit', sortable: false, align:'center', width: "50px"},
-                {text: '상태',    value: 'f_work', sortable: false, align:'center', width: "30px"},
-                {text: '계획시작일',    value: 'd_plan1', sortable: false, align:'center', width: "60px"},
-                {text: '계획완료일',    value: 'd_plan2', sortable: false, align:'center', width: "60px"},
-                {text: '계획수량',      value: 'm_ocnt', sortable: false, align:'center', width: "30px"},
-                {text: '양품수량',      value: 'm_yescnt', sortable: false, align:'center', width: "30px"},
-                {text: '불량수량',      value: 'm_nocnt', sortable: false, align:'center', width: "30px"},                
-                {text: '생산시작일',    value: 's_works', sortable: false, align:'center', width: "60px"},
-                {text: '생산종료일',    value: 's_worke', sortable: false, align:'center', width: "30px"},
+                {text: '수주번호',   value: 'i_orderno', sortable: false, align:'center', width: "75"},
+                {text: '수주일',     value: 's_date', sortable: false, align:'center', width: "60px"},
+                {text: '발주처',     value: 'n_vend', sortable: false, align:'center', width: "100px"},
+
+                {text: '품번',       value: 'c_item', sortable: false, align:'center', width: "60px"},
+                {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "90px"},
+                {text: '규격(사양)', value: 't_size', sortable: false, align:'center', width: "80px"},                                
+                {text: '수주수량',   value: 'm_cnt', sortable: false, align:'center', width: "30px"},
+
+                {text: '공정',       value: 'n_process', sortable: false, align:'center', width: "60px"},
+                {text: '상태',       value: 'f_work', sortable: false, align:'center', width: "30px"},
+                {text: '계획시작일',  value: 'd_plan1', sortable: false, align:'center', width: "60px"},
+                {text: '계획완료일',  value: 'd_plan2', sortable: false, align:'center', width: "60px"},
+                {text: '계획일수',    value: 'm_planday', sortable: false, align:'center', width: "30px"},                
+                {text: '계획수량',    value: 'm_plancnt', sortable: false, align:'center', width: "30px"},
+
+                {text: '양품수량',    value: 'm_yescnt', sortable: false, align:'center', width: "30px"},
+                {text: '불량수량',    value: 'm_nocnt', sortable: false, align:'center', width: "30px"},                
+                {text: '생산시작일',  value: 's_workday1', sortable: false, align:'center', width: "60px"},
+                {text: '생산종료일',  value: 's_workday2', sortable: false, align:'center', width: "60px"},
+                {text: '생산일수',    value: 'm_workcnt', sortable: false, align:'center', width: "30px"},
                 
             ],
             itemLists:[], itemInfo:[], selected:[],
@@ -113,6 +134,14 @@ export default {
     },
     methods: {     
         ...mapActions("prod", ["iuProdPlanlist"]), 
+        shouldMergeRow(item) {
+            const index = this.itemLists.findIndex((i) => i.i_orderser === item.i_orderser);
+            return index === this.itemLists.indexOf(item);
+        },
+        getRowspan(item) {
+            const count = this.itemLists.filter((i) => i.i_orderser === item.i_orderser).length;
+            return count;
+        },
         async init() {
             this.form.sDate1=getDate(-100, 1);
             this.view();
@@ -120,7 +149,7 @@ export default {
         async view() {            
             // this.itemInfo = [];
             // this.itemProd = []; this.itemMake = []; this.itemErr = []; this.makeRow =[]; this.errRow = [];
-            this.itemLists = await this.$axios.post(`/api/prod/getProdWorkview`, this.form); 
+            this.itemLists = await this.$axios.post(`/api/prod/getProdWorkview2`, this.form); 
         },
         async add() {
 
@@ -135,15 +164,19 @@ export default {
                 return "orange";
             } 
         },
-        getColor (data) {
-            if(data == "1") { return 'red'; } 
-            else if (data == "2") {return 'blue';}
+        getColor (item) {
+            const data = item.m_yescnt >= item.m_cnt ? '완료' : item.m_nocnt + item.m_yescnt == 0 ? '준비' : '생산';
+            if(data == "준비") { return 'red'; } 
+            else if (data == "생산") {return 'blue';}
             else { return 'green';}
+
         },
         getStatus(item) {
-            var find = this.PROD001.find(e => e.value === item);
-            return find !== undefined ? find.label : '';
+            // var find = this.PROD001.find(e => e.value === item);
+            // return find !== undefined ? find.label : '';
+            return item.m_yescnt >= item.m_cnt ? '완료' : item.m_nocnt + item.m_yescnt == 0 ? '준비' : '생산';
         },
+        
         shouldMergeRow(item) {
             const index = this.itemLists.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemLists.indexOf(item);

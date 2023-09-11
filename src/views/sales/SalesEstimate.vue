@@ -295,7 +295,7 @@ export default {
             }
         },
         async init() {  
-            this.form.sDate1=previousMonth();
+            this.form.sDate1=getDate(-100, 1);
             var query = qs.stringify({c_com: this.$store.state.user.member.c_com, c_gcode: "BUSINESS", c_code: "ESTIMATE01", col: "m_buf1"});
             
             var data = await this.$axios.get(`/api/sales/getSaleEstimateInit?${query}`);

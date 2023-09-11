@@ -54,7 +54,7 @@
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import InputDateft from '../../components/InputForms/InputDateft.vue';
 import { ESTI001 } from '../../../util/constval';
-import { previousMonth } from '../../../util/lib';
+import { getDate, previousMonth } from '../../../util/lib';
 export default {
   components: { InputDateft, TooltipBtn },
     name: "EstimateList",
@@ -113,7 +113,7 @@ export default {
             return find !== undefined ? find.label : '';
         },
         async init() {
-            this.form.sDate1=previousMonth();
+            this.form.sDate1=getDate(-100, 1);
             this.view();
         },
         async view() {

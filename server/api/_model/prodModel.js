@@ -397,9 +397,50 @@ const prodModel = {
             values.push(sVend + '%');
         }
         query += ` order by a.i_order, b.s_sort, b.i_orderser \n` ;
-
+        console.log(query)
         const [rows] = await db.execute(query, values);         
         return rows;        
+    },
+    // 공정진행현황
+    async getProdWorkview2(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;        
+        var values = new Array();
+        let query = `SELECT a.c_com, a.i_order, a.i_orderno, a.s_date, a.f_use, a.f_order, a.f_status, a.c_vend, a.n_vend, a.n_order, \n ` +
+                    `        b.i_orderser, b.f_work, b.c_item, b.s_duedate, b.n_item, b.t_size, b.i_unit, b.i_type, b.m_cnt, b.d_plan1, b.d_plan2, \n` +
+                    `        c.c_process, c.n_process, c.s_date1 s_dplan1, c.s_date2 s_dplan2, DATEDIFF(c.s_date2, c.s_date1) m_planday,  c.m_cnt m_plancnt, \n ` +
+                    `        IFNULL(d.m_yescnt, 0) m_yescnt, IFNULL(d.m_nocnt, 0) m_nocnt, d.s_workday1, d.s_workday2, IFNULL(d.m_workcnt, 0) m_workcnt \n ` +
+                    `  FROM tb_order a \n ` +
+                    `        JOIN tb_orderli b ON a.c_com = b.c_com AND a.i_order = b.i_order \n ` +
+                    `        JOIN tb_prodplan c ON b.c_com = c.c_com AND b.i_order = c.i_order AND b.i_orderser = c.i_orderser AND b.c_item = c.c_item \n ` +
+                    `        LEFT OUTER JOIN (SELECT c_com, i_order, i_orderser, c_item, i_ser, MIN(s_workday) s_workday1, MAX(s_workday) s_workday2, DATEDIFF(MAX(s_workday), MIN(s_workday)) m_workcnt, \n ` +
+                    `                                SUM(IF(f_err = 'N', m_cnt, 0)) m_yescnt, SUM(IF(f_err = 'N', 0, m_err)) m_nocnt \n ` +
+                    `                           FROM tb_prodmake \n ` +
+                    `                          GROUP BY c_com, i_order, i_orderser, c_item, i_ser) d \n ` +
+                    `                        ON c.c_com = d.c_com AND c.i_order = d.i_order AND c.i_orderser = d.i_orderser AND c.c_item = d.c_item and c.i_ser = d.i_ser \n ` ;
+                    ` WHERE a.c_com = ? \n` ;
+
+        values.push(c_com);        
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += ` AND b.d_plan2 BETWEEN ? AND ? \n `
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += ` AND b.d_plan2 >= ? \n `
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += ` AND b.d_plan2 <= ? \n `
+            values.push(sDate2);
+        }
+        if (sVend.length > 0) {
+            query += ` AND a.n_vend LIKE ? \n `
+            values.push(sVend + '%');
+        }
+        query += ` ORDER BY a.c_com, a.i_orderno, b.s_sort, c.s_sort, a.s_date` ;
+        console.log(query, values);
+        const [rows] = await db.execute(query, values);         
+        return rows;    
     },
 
 }
