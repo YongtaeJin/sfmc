@@ -418,7 +418,7 @@ const prodModel = {
                     `                                SUM(IF(f_err = 'N', m_cnt, 0)) m_yescnt, SUM(IF(f_err = 'N', 0, m_err)) m_nocnt \n ` +
                     `                           FROM tb_prodmake \n ` +
                     `                          GROUP BY c_com, i_order, i_orderser, c_item, i_ser) d \n ` +
-                    `                        ON c.c_com = d.c_com AND c.i_order = d.i_order AND c.i_orderser = d.i_orderser AND c.c_item = d.c_item and c.i_ser = d.i_ser \n ` ;
+                    `                        ON c.c_com = d.c_com AND c.i_order = d.i_order AND c.i_orderser = d.i_orderser AND c.c_item = d.c_item and c.i_ser = d.i_ser \n` +
                     ` WHERE a.c_com = ? \n` ;
 
         values.push(c_com);        
