@@ -157,6 +157,29 @@ const routes = [
 		name: 'InvoiceList',
 		component: () => import(/* webpackChunkName: "InvoiceList" */ '../views/shipment/InvoiceListView.vue')
 	},
+
+	// 현황분석
+	{
+		path: '/metrics/derliver',
+		name: 'Derliverrate',
+		component: () => import(/* webpackChunkName: "Derliverrate" */ '../views/metrics/DerliverrateView.vue')
+	},
+	{
+		path: '/metrics/defectrate',
+		name: 'DefectrateRate',
+		component: () => import(/* webpackChunkName: "DefectrateRate" */ '../views/metrics/DefectraterateView.vue')
+	},
+	{
+		path: '/metrics/Clientsalerate',
+		name: 'Clientsalerate',
+		component: () => import(/* webpackChunkName: "Clientsalerate" */ '../views/metrics/ClientsalerateView.vue')
+	},
+	{
+		path: '/metrics/Periodsalerate',
+		name: 'Periodsalerate',
+		component: () => import(/* webpackChunkName: "Periodsalerate" */ '../views/metrics/Periodsalerate.vue')
+	},
+
 	
 
 	// KPI 
