@@ -48,10 +48,25 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col>
+            <v-col v-if="!itemSelect">
                 <v-toolbar height="25px" color="accent" >
-                    <v-toolbar-title>불량 List</v-toolbar-title>                    
+                    <v-toolbar-title>{{getProcName}}</v-toolbar-title>                    
                 </v-toolbar>
+                <v-data-table ref="table_proc" :headers="ProcHead" :items="procFilter" 
+                    item-key="i_makeser" single-select v-model="procS" @click:row="rowSelectProc" 
+                    :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" >                     
+                </v-data-table> 
+            </v-col>
+            <v-col v-if="itemSelect">
+                <v-toolbar height="25px" color="accent" >
+                    <v-toolbar-title>{{getItemName}}</v-toolbar-title>                    
+                </v-toolbar>
+                <v-data-table ref="table_item" :headers="ItemHead" :items="itemFilter" 
+                    item-key="i_makeser" single-select v-model="itemS" @click:row="rowSelectItem" 
+                    :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" >                     
+                </v-data-table>
             </v-col>
         </v-row>
    </v-container>  
@@ -71,6 +86,7 @@ export default {
        return {
            comma, 
            form : {sDate1:"", sDate2:"", sVend:"",},
+           itemSelect: false,
            Head1: [
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},                
                 {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "60px"},
@@ -80,39 +96,102 @@ export default {
             ],
             Head2: [
                 {text: '품목코드',  value: 'c_item', sortable: false, align:'center', width: "50px"},                
-                {text: '품목명',    value: 'n_item', sortable: false, align:'center', width: "100px"},
+                {text: '항목(폼목)',    value: 'n_item', sortable: false, align:'center', width: "100px"},
                 {text: '지시수량',  value: 'm_ordcnt', sortable: false, align:'center', width: "50px"},
                 {text: '불량수량',  value: 'm_err', sortable: false, align:'center', width: "50px" },                
                 {text: '불량률',    value: 'p_per', sortable: false, align:'center', width: "50px"},
             ],
             headItem1:[], headItem1Info:[], selectedM1: [], headItem2:[], headItem2Info:[], selectedM2: [],
+
+            ProcHead:[
+                {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},                
+                {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "60px"},
+                {text: '작업일',    value: 's_workday', sortable: false, align:'center', width: "60px"},
+                {text: '발주번호',    value: 'i_orderno', sortable: false, align:'center', width: "60px"},
+                {text: '거래처',     value: 'n_vend', sortable: false, align:'center', width: "80px"},
+                {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "90px"},
+                {text: '작업자',    value: 'n_empnm', sortable: false, align:'center', width: "60px"},
+                {text: '불량수량',    value: 'm_err', sortable: false, align:'center', width: "50px"},
+                {text: '불량원인',    value: 'f_cause', sortable: false, align:'center', width: "60px"},
+            ],
+            procItems:[], procFilter:[], procInfo:[], procS:[],
+            ItemHead:[
+                {text: '폼목코드',    value: 'c_item', sortable: false, align:'center', width: "50px"},
+                {text: '항목(폼목)',  value: 'n_item', sortable: false, align:'center', width: "100px"},
+                {text: '작업일',    value: 's_workday', sortable: false, align:'center', width: "60px"},
+                {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},
+                {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "60px"},                
+                {text: '발주번호',    value: 'i_orderno', sortable: false, align:'center', width: "60px"},
+                {text: '거래처',     value: 'n_vend', sortable: false, align:'center', width: "80px"},
+                {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "90px"},
+                {text: '작업자',    value: 'n_empnm', sortable: false, align:'center', width: "60px"},
+                {text: '불량수량',    value: 'm_err', sortable: false, align:'center', width: "50px"},
+                {text: '불량원인',    value: 'f_cause', sortable: false, align:'center', width: "60px"},
+            ],
+
+            itemItems:[], itemFilter:[], itemInfo:[], itemS:[],
        }
-   },
-   methods: {
+    },
+    watch: {
+        headItem1Info() {
+            // console.log(this.headItem1Info.n_process)
+        }
+    },
+    computed: {
+        getProcName() {
+            return `불량 ${this.headItem1Info.n_process !== undefined ? this.headItem1Info.n_process : ''} 공정 List`
+        },
+        getItemName() {
+            return `불량 ${this.headItem2Info.n_item !== undefined ? this.headItem2Info.n_item : ''} 폼목 List`
+        },
+    },
+    methods: {
         async init() {
             this.form.sDate1 = getDate(-365, 1);
             await this.view();
         },
         async view() {
             this.headItem1 = await this.$axios.post(`/api/metrics/getDefectraterate`, this.form); 
+            this.procItems = await this.$axios.post(`/api/metrics/getDefectrateratedt`, this.form); 
             this.headItem2 = await this.$axios.post(`/api/metrics/getDefectraterate2`, this.form); 
+            this.itemItems = await this.$axios.post(`/api/metrics/getDefectrateratedt2`, this.form); 
 
         },
         rowSelectHead1 :function (item, row) {                  
+            this.itemSelect = false;
+            if (this.headItem1Info.n_process == item.n_process) return;
             this.headItem1Info = item;  
-            if (row) {
-                row.select(true) 
+            if (row) {row.select(true) } else {this.selectedM1 = [item]}
+
+            if (this.procItems.length > 0) {
+                this.procFilter = this.procItems.filter((r) => {
+                    return r.c_process == item.c_process && r.c_com == item.c_com;
+                }); 
             } else {
-                this.selectedM1 = [item]
+                this.procFilter = [];
+            }
+
+        },
+        rowSelectHead2 :function (item, row) {       
+            this.itemSelect = true;  
+            this.headItem2Info = item;  
+            if (row) {row.select(true) } else {this.selectedM2 = [item]};
+
+            if (this.itemItems.length > 0) {
+                this.itemFilter = this.itemItems.filter((r) => {
+                    return r.c_item == item.c_item && r.c_com == item.c_com;
+                }); 
+            } else {
+                this.itemFilter = [];
             }
         },
-        rowSelectHead2 :function (item, row) {                  
-            this.headItem2Info = item;  
-            if (row) {
-                row.select(true) 
-            } else {
-                this.selectedM2 = [item]
-            }
+        rowSelectProc :function (item, row) {       
+            this.procInfo = item;  
+            if (row) {row.select(true) } else {this.procS = [item]};
+        },
+        rowSelectItem :function (item, row) {       
+            this.itemInfo = item;  
+            if (row) {row.select(true) } else {this.itemS = [item]};
         },
    },
 
