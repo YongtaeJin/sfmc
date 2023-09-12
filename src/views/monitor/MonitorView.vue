@@ -2,10 +2,10 @@
     <v-container fluid>        
         <v-toolbar height="40px" background-color="primary" dark>
             <v-toolbar-title> 설비모니터링 주소 : {{siteaddr}}</v-toolbar-title>
-        </v-toolbar>
-        <meta charset="UTF-8">
-        <iframe width="100%" :style="{ height: iframeHeight + 'px' }" :src=siteaddr>
-        </iframe>
+            <v-spacer/>
+            <v-btn @click="openNewWindow">열기</v-btn>
+        </v-toolbar>        
+        <iframe width="100%" :style="{ height: iframeHeight + 'px' }" :src=siteaddr></iframe>
     </v-container>    
 </template>
 
@@ -16,8 +16,7 @@ export default {
     },
     data() {
         return {
-            iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
-            // site : "http://121.177.37.156:201/monitoring_list_machine.php",
+            iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)            
             siteaddr : "",
         };
     },
@@ -40,7 +39,11 @@ export default {
         async init() {
             const data = await this.$axios.post(`/api/system/getMoniteraddr`);
             this.siteaddr = data.t_monitor;            
-        }
+        },
+        openNewWindow() {
+            // 새 창을 열고 URL을 설정합니다.
+            window.open(this.siteaddr, '_blank');
+        },
     },
 }
 </script>
