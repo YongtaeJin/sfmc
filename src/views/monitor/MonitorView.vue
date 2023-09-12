@@ -6,7 +6,8 @@
             <v-btn @click="openNewWindow" color="green">새창열기</v-btn>
         </v-toolbar>        
         <iframe width="100%" :style="{ height: iframeHeight + 'px' }" :src=siteaddr></iframe>
-    </v-container>    
+    </v-container>  
+    
 </template>
 
 <script>
