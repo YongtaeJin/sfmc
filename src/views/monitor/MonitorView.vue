@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>        
         <v-toolbar height="40px" background-color="primary" dark>
-            <v-toolbar-title>모니터링</v-toolbar-title>
+            <v-toolbar-title> 설비모니터링 주소 : {{siteaddr}}</v-toolbar-title>
         </v-toolbar>
         <iframe width="100%" :style="{ height: iframeHeight + 'px' }" :src=siteaddr>
 
