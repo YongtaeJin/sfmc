@@ -3,7 +3,7 @@
         <v-toolbar height="40px" background-color="primary" dark>
             <v-toolbar-title> 설비모니터링 주소 : {{siteaddr}}</v-toolbar-title>
             <v-spacer/>
-            <v-btn @click="openNewWindow">열기</v-btn>
+            <v-btn @click="openNewWindow" color="green">새창열기</v-btn>
         </v-toolbar>        
         <iframe width="100%" :style="{ height: iframeHeight + 'px' }" :src=siteaddr></iframe>
     </v-container>    
