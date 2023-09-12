@@ -122,9 +122,11 @@ export default {
             }
         },
         calPer(item) {            
-            let p_per =  Number(item.m_ok) / (Number(item.m_ordcnt) - Number(item.m_ing));
-            // p_per = 0.887
-            p_per = (p_per * 100).toFixed(2);
+            let p_per = 0 ; 
+            if ( (Number(item.m_ordcnt) - Number(item.m_ing)) > 0) {
+                p_per =  Number(item.m_ok) / (Number(item.m_ordcnt) - Number(item.m_ing));
+                p_per = (p_per * 100).toFixed(2);
+            }            
             return p_per;
             
         },
