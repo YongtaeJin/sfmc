@@ -170,12 +170,12 @@ const routes = [
 		component: () => import(/* webpackChunkName: "DefectrateRate" */ '../views/metrics/DefectraterateView.vue')
 	},
 	{
-		path: '/metrics/Clientsalerate',
+		path: '/metrics/clientsales',
 		name: 'Clientsalerate',
 		component: () => import(/* webpackChunkName: "Clientsalerate" */ '../views/metrics/ClientsalerateView.vue')
 	},
 	{
-		path: '/metrics/Periodsalerate',
+		path: '/metrics/periodsales',
 		name: 'Periodsalerate',
 		component: () => import(/* webpackChunkName: "Periodsalerate" */ '../views/metrics/Periodsalerate.vue')
 	},

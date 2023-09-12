@@ -122,8 +122,7 @@ export default {
                 {text: '공정코드',  value: 'c_process', sortable: false, align:'center', width: "50px"},
                 {text: '공정명',    value: 'n_process', sortable: false, align:'center', width: "60px"},                
                 {text: '발주번호',    value: 'i_orderno', sortable: false, align:'center', width: "60px"},
-                {text: '거래처',     value: 'n_vend', sortable: false, align:'center', width: "80px"},
-                {text: '항목(품목)', value: 'n_item', sortable: false, align:'center', width: "90px"},
+                {text: '거래처',     value: 'n_vend', sortable: false, align:'center', width: "80px"},                
                 {text: '작업자',    value: 'n_empnm', sortable: false, align:'center', width: "60px"},
                 {text: '불량수량',    value: 'm_err', sortable: false, align:'center', width: "50px"},
                 {text: '불량원인',    value: 'f_cause', sortable: false, align:'center', width: "60px"},
@@ -151,6 +150,8 @@ export default {
             await this.view();
         },
         async view() {
+            this.headItem1Info=[]; this.selectedM1=[]; this.headItem2Info=[]; this.selectedM2=[];
+            this.itemFilter=[]; this.itemInfo=[]; this.itemS=[];
             this.headItem1 = await this.$axios.post(`/api/metrics/getDefectraterate`, this.form); 
             this.procItems = await this.$axios.post(`/api/metrics/getDefectrateratedt`, this.form); 
             this.headItem2 = await this.$axios.post(`/api/metrics/getDefectraterate2`, this.form); 

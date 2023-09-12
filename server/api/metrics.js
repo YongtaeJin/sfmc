@@ -29,7 +29,22 @@ router.post('/getDefectrateratedt2', async (req, res) => {
     const result = await modelCall(metricsModel.getDefectrateratedt2, req);
 	res.json(result);
 });
-
+router.post('/getClientsalerate', async (req, res) => {    
+    const result = await modelCall(metricsModel.getClientsalerate, req);
+	res.json(result);
+});
+router.post('/getClientsaleratedt', async (req, res) => {    
+    const result = await modelCall(metricsModel.getClientsaleratedt, req);
+	res.json(result);
+});
+router.post('/getPeriodsalerate', async (req, res) => {    
+    const result = await modelCall(metricsModel.getPeriodsalerate, req);
+	res.json(result);
+});
+router.post('/getPeriodsaleratedt', async (req, res) => {    
+    const result = await modelCall(metricsModel.getPeriodsaleratedt, req);
+	res.json(result);
+});
 
 
 

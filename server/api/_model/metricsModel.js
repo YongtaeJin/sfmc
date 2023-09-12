@@ -233,6 +233,108 @@ const metricsModel = {
         const [rows] = await db.execute(query, values);   
         return rows;
     },
+    async getClientsalerate(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2 } = req.body;  
+
+        var values = new Array();
+        values.push(c_com);         
+        let query = `SELECT a.c_com, a.c_vend, MAX(a.n_vend) n_vend, SUM(a.a_orderamt) a_orderamt, SUM(b.m_itemcnt) m_itemcnt, SUM(b.m_cnt) m_cnt \n` +
+                    `  FROM tb_order a \n` +
+                    `       JOIN (SELECT c_com, i_order, COUNT(*) m_itemcnt, SUM(m_cnt) m_cnt \n` +
+                    `               FROM tb_orderli GROUP BY c_com, i_order) b ON a.c_com = b.c_com AND a.i_order = b.i_order \n` +
+                    ` WHERE a.c_com = ? \n`;
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += `    AND a.s_date BETWEEN ? and ? \n `;  
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += `    AND a.s_date >= ? \n `;            
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += `    AND a.s_date <= ? \n `;   
+            values.push(sDate2);
+        }  
+        query += ` GROUP BY a.c_com, a.c_vend \n` +
+                 ` ORDER BY a_orderamt desc \n` ;
+
+        const [rows] = await db.execute(query, values);   
+        return rows;
+    },
+    async getClientsaleratedt(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2 } = req.body;  
+
+        var values = new Array();
+        values.push(c_com);         
+        let query = `SELECT a.c_com, a.i_orderno, a.s_date, a.c_vend, a.n_vend, b.i_orderser, b.c_item, b.n_item, b.t_size, b.i_unit, b.m_cnt, b.a_amt \n` +
+                    `  FROM tb_order a \n` +
+                    `       JOIN tb_orderli b ON a.c_com = b.c_com AND a.i_order = b.i_order \n` +                    
+                    ` WHERE a.c_com = ? \n`;
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query += `    AND a.s_date BETWEEN ? and ? \n `;  
+            values.push(sDate1);
+            values.push(sDate2);
+        } else if (sDate1.length > 0) {
+            query += `    AND a.s_date >= ? \n `;            
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query += `    AND a.s_date <= ? \n `;   
+            values.push(sDate2);
+        }  
+        query += ` ORDER BY a.c_com, a.i_orderno, a.s_date \n` ;
+
+        const [rows] = await db.execute(query, values);   
+        return rows;
+    },
+    async getPeriodsalerate(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2 } = req.body;  
+
+        var values = new Array();        
+        let query = `SELECT a.s_ym, IFNULL(b.a_orderamt,0) a_orderamt \n` +
+                    `  FROM (SELECT DATE_ADD(?, INTERVAL (a.a + (10 * b.a) + (100 * c.a)) MONTH) s_ym \n` +
+                    `          FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a \n` +
+                    `               CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b \n` +
+                    `               CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c \n` +
+                    `         WHERE DATE_ADD(?, INTERVAL (a.a + (10 * b.a) + (100 * c.a)) MONTH) <= ? ) a \n` +
+                    `       LEFT OUTER JOIN (SELECT c_com, CONCAT(SUBSTR(s_date,1,8),'01') s_ym, SUM(a_orderamt) a_orderamt \n` +
+                    `                          FROM tb_order \n` +
+                    `                         WHERE c_com = ? \n` +
+                    `                           AND s_date BETWEEN ? AND ? \n `+
+                    `                         GROUP BY c_com, CONCAT(SUBSTR(s_date,1,8),'01') ) b on a.s_ym = b.s_ym \n`+
+                    ` ORDER BY 1 DESC`;
+        
+        values.push(sDate1);
+        values.push(sDate1);
+        values.push(sDate2);
+        values.push(c_com);
+        values.push(sDate1);
+        values.push(sDate2);
+
+        const [rows] = await db.execute(query, values);   
+        return rows;
+    },
+    async getPeriodsaleratedt(req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2 } = req.body; 
+
+        var values = new Array(); 
+        let query = `SELECT a.c_com, a.i_orderno, a.s_date, a.c_vend, a.n_vend, b.i_orderser, b.c_item, b.n_item, b.t_size, b.i_unit, b.m_cnt, b.a_amt, CONCAT(SUBSTR(s_date,1,8),'01') s_ym \n` +
+                    `  FROM tb_order a \n` +
+                    `       JOIN tb_orderli b ON a.c_com = b.c_com AND a.i_order = b.i_order \n` +                    
+                    ` WHERE a.c_com = ?  AND s_date BETWEEN ? AND ? \n` +
+                    ` ORDER BY a.c_com, a.s_date, a.i_orderno, b.s_sort `;
+        values.push(c_com);
+        values.push(sDate1);
+        values.push(sDate2);
+        const [rows] = await db.execute(query, values);   
+        return rows;    
+    },
 }
 
 module.exports = metricsModel;
