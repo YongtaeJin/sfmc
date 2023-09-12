@@ -119,6 +119,10 @@ router.post('/iuSiteCodeinit', async (req, res) => {
 	res.json(result);
 });
 
+router.post('/getMoniteraddr', async (req, res) => {
+	const result = await modelCall(systemModel.getMoniteraddr, req);
+	res.json(result);
+});
 // OpenLog
 router.post('/openLog', async (req, res) => {
 	const result = await modelCall(systemModel.openLog, req);

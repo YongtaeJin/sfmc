@@ -70,6 +70,7 @@ const systemModel = {
             delete payload.i_kpikey;
             delete payload.f_kpichk;
             delete payload.n_kpiconm;
+            delete payload.t_monitor;
             const sql2 = sqlHelper.Insert(TABLE.USERS, payload);
             const [row2] = await db.execute(sql2.query, sql2.values);
         } 
@@ -100,6 +101,7 @@ const systemModel = {
             delete payload.i_kpikey;
             delete payload.f_kpichk;
             delete payload.n_kpiconm;
+            delete payload.t_monitor;
           
             const sql2 = sqlHelper.Update(TABLE.USERS, payload, {c_com, i_id});
             const [row2] = await db.execute(sql2.query, sql2.values);
@@ -437,6 +439,15 @@ const systemModel = {
         const sql = sqlHelper.Insert(TABLE.OPENLOG, payload);      
         db.execute(sql.query, sql.values);
         db.execute('COMMIT');
+    },
+
+    async getMoniteraddr(req) {
+        const { c_com } = req.user;  
+        const sql = sqlHelper.SelectSimple(TABLE.WORKSITE, { c_com }, ['t_monitor']);
+       
+        
+        const [[rows]] = await db.execute(sql.query, sql.values);    
+        return rows;
     },
 };
 

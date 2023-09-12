@@ -63,6 +63,7 @@
                 <template v-slot:append> <v-btn @click="kpichk" small icon ><v-icon>mdi-check</v-icon></v-btn> </template>
             </v-text-field>
         </v-row>
+        <v-text-field label="장비모니터링주소" v-model="form.t_monitor"></v-text-field>            
         <v-textarea label="설명" v-model="form.t_remark" />        
         <v-btn type="submit" block>저장</v-btn>
         
@@ -112,6 +113,7 @@ export default {
                 i_kpikey: "",
                 f_kpichk: "",
                 n_kpiconm: "",
+                t_monitor: "",
                 t_remark: "",
             },
             isNew : false,            
@@ -155,6 +157,7 @@ export default {
                     i_kpikey: "",
                     f_kpichk: "N",
                     n_kpiconm: "",
+                    t_monitor: "",
                     t_remark: "",
                 },
                 this.isNew = true;

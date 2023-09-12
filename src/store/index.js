@@ -307,10 +307,18 @@ const store = new Vuex.Store({
 					]
 				},
 				{
+					title : "설비모니터링",
+					icon : "mdi-monitor",
+					to : '/monitor/monitor1',
+					grant : 2, 
+					newTab : false,
+					subItems : []
+				},
+				{
 					title : "KPI",
 					icon : "mdi-lan-connect",
 					to : '',
-					grant : 6, 
+					grant : 11, 
 					newTab : false,
 					subItems : [
 						{

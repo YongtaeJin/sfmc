@@ -180,7 +180,12 @@ const routes = [
 		component: () => import(/* webpackChunkName: "Periodsalerate" */ '../views/metrics/Periodsalerate.vue')
 	},
 
-	
+	// 모니터링
+	{
+		path: '/monitor/monitor1',
+		name: 'Monitorview',
+		component: () => import(/* webpackChunkName: "Monitorview" */ '../views/monitor/MonitorView.vue')
+	},
 
 	// KPI 
 	{
