@@ -8,7 +8,8 @@
         </v-toolbar>
         <v-data-table :headers="headers" :items="data" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1 text-no-wrap" 
             item-key="c_code" single-select
-            :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" >
+            :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+            height="500px" max-height="500px" > 
         </v-data-table>
     </div>    
 </template>

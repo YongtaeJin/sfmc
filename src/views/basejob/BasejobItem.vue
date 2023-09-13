@@ -19,15 +19,18 @@
                  {{ getNameType(item.i_type) }}
             </template>
             <template v-slot:[`item.a_bye`]="{ item }">
-                 {{ item.a_bye.toLocaleString()}}
+                <div class="right2-align">{{ item.a_bye.toLocaleString()}}</div>
             </template>
             <template v-slot:[`item.a_sell`]="{ item }">
-                {{ item.a_sell.toLocaleString()}}
+                <div class="right2-align">{{ item.a_sell.toLocaleString()}}</div>
             </template>
             <template v-slot:[`item.f_use`]="{ item }">
                 <v-chip x-small :color="getColor(item.f_use)" dark>
                     {{ item.f_use == 'Y' ? '사용' : '중지' }}
                 </v-chip>
+            </template>
+            <template v-slot:[`item.t_remark`]="{ item }">
+                <div class="left-align">{{ item.t_remark}}</div>
             </template>
         </v-data-table>
         <ez-dialog ref="dialog" label="품목 등록(수정)" persistent @onClose="close" width="500px">            
@@ -57,14 +60,14 @@ export default {
             headers: [
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "50px"},
                 {text: '품번',  value: 'c_item', sortable: false, align:'center', width: "100px"},
-                {text: '품명',  value: 'n_item', sortable: false, align:'left', width: "30%"},
-                {text: '사양',  value: 't_size', sortable: false, align:'left', width: "30%"},
+                {text: '품명',  value: 'n_item', sortable: false, align:'center', width: "30%"},
+                {text: '사양',  value: 't_size', sortable: false, align:'center', width: "30%"},
                 {text: '단위',  value: 'i_unit', sortable: false, align:'center', width: "60px"},
                 {text: '제품타입',  value: 'i_type', sortable: false, align:'center', width: "100px"},
-                {text: '구매단가',  value: 'a_bye', sortable: false, align:'right', width: "80px"},
-                {text: '판매단가',  value: 'a_sell', sortable: false, align:'right', width: "80px"},
+                {text: '구매단가',  value: 'a_bye', sortable: false, align:'center', width: "80px"},
+                {text: '판매단가',  value: 'a_sell', sortable: false, align:'center', width: "80px"},
                 {text: '사용',  value: 'f_use', sortable: false, align:'center', width: "60px"},
-                {text: '비고',  value: 't_remark', sortable: false, align:'left',  width: "40%"},
+                {text: '비고',  value: 't_remark', sortable: false, align:'center',  width: "40%"},
             ],
             items: [],
             item: null,

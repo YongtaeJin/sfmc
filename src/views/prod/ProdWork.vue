@@ -33,6 +33,9 @@
                     <td>{{ item.m_cnt }}</td>
                     <td>{{item.m_makecnt}}</td>
                     <td>{{item.m_errcnt}}</td>
+                    <td> <v-progress-linear :value="getPer(item)"  color="blue" height="18">                        
+                            <strong>{{ getPer(item) }}%</strong>                        
+                        </v-progress-linear></td>
                     <td class="left-align">{{ item.t_remark }}</td>
                 </tr>
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-else>
@@ -44,6 +47,9 @@
                     <td>{{ item.m_cnt }}</td>
                     <td>{{item.m_makecnt}}</td>
                     <td>{{item.m_errcnt}}</td>
+                    <td> <v-progress-linear :value="getPer(item)"  color="blue" height="18">                        
+                            <strong>{{ getPer(item) }}%</strong>                        
+                        </v-progress-linear></td>
                     <td class="left-align">{{ item.t_remark }}</td>
                 </tr>
              </template>
@@ -132,8 +138,11 @@
                             <span v-else>{{item.i_process}}</span>
                         </template>
                         <template v-slot:[`item.f_cause`]="{ item }">
-                            <v-text-field v-model="item.f_cause" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
-                            <span v-else>{{item.f_cause}}</span>
+                            <!-- <v-text-field v-model="item.f_cause" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" /> -->
+                            <v-select v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" 
+                                class="custom-select" hide-details dense @change="onChangeDetail"
+                                v-model="item.f_cause" :items="errType" item-text="n_code" item-value="c_code" />
+                            <span v-else>{{getErrtypename(item.f_cause)}}</span>
                         </template>
                         <template v-slot:[`item.t_remark`]="{ item }">
                             <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="ordStatus && setItemProd.i_makeser == item.i_makeser" dense hide-details class="my-text-field no-padding" />
@@ -173,6 +182,7 @@ export default {
                 sDate1:"", sDate2:"", sVend:"",
             },
             prodselect : {c_com:"", i_order:"", i_orderser:""},
+            errType:[],
             itemHead: [
                 {text: 'No',       sortable: false, align:'center', width: "40"},
                 {text: '수주번호',  value: 'i_orderno', sortable: false, align:'center', width: "75"},                
@@ -185,6 +195,7 @@ export default {
                 {text: '지시수량',   value: 'm_cnt', sortable: false, align:'center', width: "55px"},
                 {text: '생산수량',    value: 'm_makecnt', sortable: false, align:'center', width: "55px"},
                 {text: '불량수량',    value: 'm_errcnt', sortable: false, align:'center', width: "55px"},
+                {text: '진행률',     value: 'p_per', sortable: false, align:'center', width: "55px"},
                 {text: '비고',      value: 't_remark', sortable: false, align:'center', width: "300px"},
             ],
             itemList:[], itemInfo:[], selected:[],
@@ -250,9 +261,17 @@ export default {
             const count = this.itemList.filter((i) => i.i_orderno === item.i_orderno).length;
             return count;
         },
+        getPer(item) {
+            return item.m_cnt < 1 ? 0 : (item.m_makecnt / item.m_cnt * 100).toFixed(2);
+        },
+        getErrtypename(val){
+            const err = this.errType.find(obj => obj.c_code == val);
+            return err ? err.n_code : '';
+        },
         async init() {
             this.form.sDate1=getDate(-100, 1);
-            this.view();
+            this.errType = await this.$axios.post(`/api/prod/getErrtype`);
+            this.view();            
         },  
         async view() {
             this.itemInfo = [];

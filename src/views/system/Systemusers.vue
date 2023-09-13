@@ -10,7 +10,8 @@
         
         <v-data-table :headers="headers" :items="items" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1 text-no-wrap" 
             item-key="i_id" single-select
-            :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" >
+            :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+            height="500px" max-height="500px" > 
         <!-- <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo
             v-model="selected" :single-select="true" item-key="i_id" show-select > -->
             <template v-slot:[`item.i_level`]="{ item }">                
@@ -46,8 +47,8 @@ export default {
     data() {
         return {
             headers: [
-                {text: 'ID',  value: 'i_id', sortable: true, align:'left', },
-                {text: '성명',  value: 'n_name', sortable: true, align:'left', },
+                {text: 'ID',  value: 'i_id', sortable: true, align:'center', },
+                {text: '성명',  value: 'n_name', sortable: true, align:'center', },
                 {text: '등급',  value: 'i_level', sortable: true, align:'center', width: "100px"},
                 {text: '사용',  value: 'f_use', sortable: true, align:'center', width: "100px"}, 
                 {text: '접속일',  value: 'd_login_at', sortable: false, align:'center', width: "150px"}, 

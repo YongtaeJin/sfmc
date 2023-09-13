@@ -10,7 +10,7 @@
         </v-toolbar>
         <v-data-table :headers="headers" :items="vends" @click:row="rowSelect" @dblclick:row="showRowInfo" 
             item-key="c_vend" single-select
-            :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+            :items-per-page="-1"  hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
             class="elevation-1 text-no-wrap" height="600px">  
 
             <!-- <template v-slot:item.s_sort="{ item }"> -->
@@ -19,7 +19,6 @@
                     {{ item.s_sort }}
                 </v-chip>
             </template>
-
         </v-data-table>
         <ez-dialog ref="dialog" label="거래처(고객사)" persistent @onClose="close" width="700px">
             <basejobvend-form 
@@ -47,8 +46,8 @@ export default {
             headers: [
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "50px"},
                 // {text: 'Code',  value: 'c_vend', sortable: false, align:'center', width: "50px"},
-                {text: '약칭',  value: 'n_vend', sortable: false, align:'left', width: "100px"},
-                {text: '명칭',  value: 'n_compnay', sortable: false, align:'left', width: "200px"},
+                {text: '약칭',  value: 'n_vend', sortable: false, align:'center', width: "100px"},
+                {text: '명칭',  value: 'n_compnay', sortable: false, align:'center', width: "200px"},
                 {text: '사업자번호',  value: 'i_company', sortable: false, align:'center', width: "120px"},
                 {text: '대표자',  value: 'n_ceo', sortable: false, align:'center', width: "110px"},
                 {text: '전화',  value: 't_tel', sortable: false, align:'center', width: "125px"},

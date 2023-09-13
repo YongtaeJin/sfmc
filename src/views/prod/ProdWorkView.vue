@@ -34,8 +34,12 @@
                     <td> {{ item.m_yescnt }}</td>
                     <td> {{ item.m_nocnt }}</td>
                     <td> {{ item.d_plan2 }}</td>
-                    <td> {{ item.s_worke }}</td>
+                    <td> {{ item.s_works }}</td>
+                    <td> {{ item.s_worke }}</td>                    
                     <td> {{ item.w_workcnt }}</td>
+                    <td> <v-progress-linear :value="getPer(item)"  color="blue" height="18">                        
+                            <strong>{{ getPer(item) }}%</strong>                        
+                        </v-progress-linear></td>
                     <td><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
 
                 </tr>   
@@ -48,8 +52,12 @@
                     <td> {{ item.m_yescnt }}</td>
                     <td> {{ item.m_nocnt }}</td>
                     <td> {{ item.d_plan2 }}</td>
+                    <td> {{ item.s_works }}</td>
                     <td> {{ item.s_worke }}</td>
                     <td> {{ item.w_workcnt }}</td>
+                    <td> <v-progress-linear :value="getPer(item)"  color="blue" height="18">                        
+                            <strong>{{ getPer(item) }}%</strong>                        
+                        </v-progress-linear></td>
                     <td><v-chip x-small :color="getColor(item.f_work)" dark>{{getStatus(item.f_work)}}</v-chip></td>
                 </tr>
             </template> 
@@ -92,8 +100,10 @@ export default {
                 {text: '양품',      value: 'm_yescnt', sortable: false, align:'center', width: "30px"},
                 {text: '불량',      value: 'm_nocnt', sortable: false, align:'center', width: "30px"},
                 {text: '계획완료',    value: 'd_plan2', sortable: false, align:'center', width: "60px"},
+                {text: '생산시작',    value: 's_works', sortable: false, align:'center', width: "60px"},
                 {text: '생산완료',    value: 's_worke', sortable: false, align:'center', width: "60px"},
                 {text: '생산일수',    value: 'w_workcnt', sortable: false, align:'center', width: "30px"},
+                {text: '진행률',    value: 'p_per', sortable: false, align:'center', width: "50px"},
                 {text: '상태',    value: 'f_work', sortable: false, align:'center', width: "30px"},
             ],
             itemLists:[], itemInfo:[], selected:[],
@@ -147,6 +157,9 @@ export default {
         async selectItem(item) {
             if (this.selected == item) return;
             this.selected = item;
+        },
+        getPer(item) {
+            return item.m_ocnt < 1 ? 0 : (item.m_yescnt / item.m_ocnt * 100).toFixed(2);
         },
 
     },

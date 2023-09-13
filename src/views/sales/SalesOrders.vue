@@ -25,13 +25,11 @@
         <v-row >
             <v-col col="12" sm="4" md="4">
                 <v-data-table ref="table" :headers="masterHead" :items="masters" @click:row="rowSelectMaster" 
-                    item-key="i_order" single-select v-model="selectedM"
-                    
-                    :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
-
+                    item-key="i_order" single-select v-model="selectedM"                    
+                    :items-per-page="-1"  hide-default-footer  :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap" height="545px" max-height="545px" > 
                     <template v-slot:[`item.a_orderamt`]="{ item }">
-                        {{ comma(item.a_orderamt) }}
+                        <div class="right2-align">{{ comma(item.a_orderamt) }}</div>
                     </template>
                 </v-data-table>
             </v-col>
@@ -65,7 +63,7 @@
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
                     <v-col col="8" sm="2" md="2"><input-date-3 v-model="masterinfo.s_date" :readonly="!edit" @input="onChangeMaster" :rules="rules.date({required: false})" /> </v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="납기일" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><input-date-3 v-model="masterinfo.s_date2" :readonly="!edit" @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>
+                    <v-col col="8" sm="2" md="2"><input-date-3 v-model="masterinfo.s_date2"  @input="onChangeMasterDate" :rules="rules.date({required: false})" /> </v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주금액" readonly dense hide-details class="text-input-redbrg no-padding "/> </v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="comma(masterinfo.a_orderamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice no-padding"/> </v-col>
                 </v-row>
@@ -87,7 +85,7 @@
                     @click:row="rowSelectDetail" 
                     item-key="i_orderser" 
                     single-select v-model="selectedD"                    
-                    :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    :items-per-page="-1"  hide-default-footer  :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
                     class="elevation-1 text-no-wrap no-padding" height="372px" max-height="372px">                   
                     
@@ -111,11 +109,11 @@
                     </template>
                     <template v-slot:[`item.a_unit`]="{ item }">
                         <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
-                        <span v-else>{{comma(item.a_unit)}}</span>
+                        <span v-else><div class="right2-align">{{comma(item.a_unit)}}</div></span>
                     </template>
                     <template v-slot:[`item.a_amt`]="{ item }">
                         <input-amt v-model="item.a_amt" @input="onChangeAmt2" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
-                        <span v-else>{{comma(item.a_amt)}}</span>
+                        <span v-else><div class="right2-align">{{comma(item.a_amt)}}</div></span>
                     </template>
                     <template v-slot:[`item.s_duedate`]="{ item }">
                         <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" :rules="rules.date({required: false})" />
@@ -123,7 +121,7 @@
                     </template>
                     <template v-slot:[`item.t_remark`]="{ item }">
                         <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" dense hide-details class="my-text-field" />
-                        <span v-else>{{item.t_remark}}</span>
+                        <span v-else> <div class="left-align">{{item.t_remark}}</div></span>
                     </template>
 
                 </v-data-table>
@@ -171,18 +169,18 @@ export default {
             masterHead: [
                 {text: '수주일',    value: 's_date', sortable: false, align:'center', width: "65px"},                
                 {text: '수주번호',  value: 'i_orderno', sortable: false, align:'center', width: "70px"},
-                {text: '고객사',    value: 'n_vend', sortable: false, align:'left', width: "100px" },
-                {text: '수주금액',  value: 'a_orderamt', sortable: false, align:'right', width: "65px"},
+                {text: '고객사',    value: 'n_vend', sortable: false, align:'center', width: "100px" },
+                {text: '수주금액',  value: 'a_orderamt', sortable: false, align:'center', width: "65px"},
             ],
             masters:[], masterinfo:[], selectedM: [],
             itemHead: [
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
-                {text: '항목(품목)',  value: 'n_item', sortable: false, align:'left', width: "130px"},
-                {text: '규격(사양)',  value: 't_size', sortable: false, align:'left', width: "100px"},
+                {text: '항목(품목)',  value: 'n_item', sortable: false, align:'center', width: "130px"},
+                {text: '규격(사양)',  value: 't_size', sortable: false, align:'center', width: "100px"},
                 {text: '단위',  value: 'i_unit', sortable: false, align:'center', width: "90px"},
                 {text: '수량',  value: 'm_cnt', sortable: false, align:'center', width: "60px"},
-                {text: '단가',  value: 'a_unit', sortable: false, align:'right', width: "90px"},
-                {text: '금액',  value: 'a_amt', sortable: false, align:'right', width: "90px"},                
+                {text: '단가',  value: 'a_unit', sortable: false, align:'center', width: "90px"},
+                {text: '금액',  value: 'a_amt', sortable: false, align:'center', width: "90px"},                
                 {text: '납기일',  value: 's_duedate', sortable: false, align:'center', width: "90px"},     
                 {text: '비고',  value: 't_remark', sortable: false, align:'center', width: "90px"}, 
             ],

@@ -165,6 +165,13 @@ const prodModel = {
         await db.execute('COMMIT');
         return true;
     },
+    async getErrtype(req) {
+        const { c_com } = req.user;
+        let query = `SELECT c_code, n_code FROM tb_comcode WHERE c_com = ? AND c_gcode = 'ERRTYPE01' ORDER BY s_sort`;
+        var values = new Array(); values.push(c_com);
+        const [rows] = await db.execute(query, values);
+        return rows;
+    },
 
     async getProdWork(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
@@ -367,13 +374,14 @@ const prodModel = {
         var values = new Array();
         let query = `select a.c_com, a.i_order, b.i_orderser, ` +
                     `       a.i_orderno, a.n_vend, a.n_order, b.c_item, b.n_item, b.t_size, b.m_cnt m_ocnt, b.s_duedate,  \n` +
-                    `       c.m_yescnt, c.m_nocnt, b.d_plan1, b.d_plan2, d.s_works, d.s_worke, d.w_workcnt, b.f_work \n` +
+                    `       c.m_yescnt, c.m_nocnt, b.d_plan1, b.d_plan2, d.s_works, CASE WHEN c.m_yescnt >= b.m_cnt THEN d.s_worke END s_worke, \n ` +
+                    `       CASE WHEN c.m_yescnt >= b.m_cnt THEN f_CountWeekday(d.s_works, d.s_worke) ELSE f_CountWeekday(d.s_works, d.d_now) END w_workcnt, b.f_work \n` +
                     `  from tb_order a \n` +
                     `       join tb_orderli b on a.i_order = b.i_order and a.c_com = b.c_com \n` +
                     `       join (select i_order, c_com, i_orderser, sum(if(f_err = 'N', if(f_jobf = 'Y',m_cnt,0),0)) m_yescnt, sum(if(f_err = 'N', 0, m_err)) m_nocnt \n` +
                     `                          from tb_prodmake \n` +
                     `                         group by i_order, c_com, i_orderser)  c on b.c_com = c.c_com and b.i_order = c.i_order and b.i_orderser = c.i_orderser \n` +
-                    `       join (select i_order, c_com, i_orderser, DATEDIFF(max(s_workday), min(s_workday)) w_workcnt, min(s_workday) s_works, max(s_workday) s_worke \n` +
+                    `       join (select i_order, c_com, i_orderser, DATEDIFF(max(s_workday), min(s_workday)) w_workcnt, min(s_workday) s_works, max(s_workday) s_worke, DATE_FORMAT(CURDATE(), '%Y-%m-%d') d_now \n` +
                     `                          from (select i_order, c_com, i_orderser, s_workday \n` +
                     `                                  from tb_prodmake \n` +
                     `                                  group by i_order, c_com, i_orderser, s_workday) t \n` +
@@ -408,13 +416,15 @@ const prodModel = {
         const { sDate1, sDate2, sVend } = req.body;        
         var values = new Array();
         let query = `SELECT a.c_com, a.i_order, a.i_orderno, a.s_date, a.f_use, a.f_order, a.f_status, a.c_vend, a.n_vend, a.n_order, \n ` +
-                    `        b.i_orderser, b.f_work, b.c_item, b.s_duedate, b.n_item, b.t_size, b.i_unit, b.i_type, b.m_cnt, b.d_plan1, b.d_plan2, \n` +
-                    `        c.c_process, c.n_process, c.s_date1 s_dplan1, c.s_date2 s_dplan2, DATEDIFF(c.s_date2, c.s_date1) m_planday,  c.m_cnt m_plancnt, \n ` +
-                    `        IFNULL(d.m_yescnt, 0) m_yescnt, IFNULL(d.m_nocnt, 0) m_nocnt, d.s_workday1, d.s_workday2, IFNULL(d.m_workcnt, 0) m_workcnt \n ` +
+                    `       b.i_orderser, b.f_work, b.c_item, b.s_duedate, b.n_item, b.t_size, b.i_unit, b.i_type, b.m_cnt, b.d_plan1, b.d_plan2, \n` +
+                    `       c.c_process, c.n_process, c.s_date1 s_dplan1, c.s_date2 s_dplan2, f_CountWeekday(c.s_date1, c.s_date2) m_planday,  c.m_cnt m_plancnt, \n ` +
+                    `       IFNULL(d.m_yescnt, 0) m_yescnt, IFNULL(d.m_nocnt, 0) m_nocnt, \n ` +
+                    `       d.s_workday1, CASE WHEN b.m_cnt <= IFNULL(d.m_yescnt, 0) THEN d.s_workday2 END s_workday2, \n ` +
+                    `       CASE WHEN b.m_cnt > IFNULL(d.m_yescnt, 0) THEN f_CountWeekday(d.s_workday1, NOW()) ELSE f_CountWeekday(d.s_workday1,s_workday2) END m_workcnt \n ` +
                     `  FROM tb_order a \n ` +
                     `        JOIN tb_orderli b ON a.c_com = b.c_com AND a.i_order = b.i_order \n ` +
                     `        JOIN tb_prodplan c ON b.c_com = c.c_com AND b.i_order = c.i_order AND b.i_orderser = c.i_orderser AND b.c_item = c.c_item \n ` +
-                    `        LEFT OUTER JOIN (SELECT c_com, i_order, i_orderser, c_item, i_ser, MIN(s_workday) s_workday1, MAX(s_workday) s_workday2, DATEDIFF(MAX(s_workday), MIN(s_workday)) m_workcnt, \n ` +
+                    `        LEFT OUTER JOIN (SELECT c_com, i_order, i_orderser, c_item, i_ser, MIN(s_workday) s_workday1, MAX(s_workday) s_workday2, \n ` +
                     `                                SUM(IF(f_err = 'N', m_cnt, 0)) m_yescnt, SUM(IF(f_err = 'N', 0, m_err)) m_nocnt \n ` +
                     `                           FROM tb_prodmake \n ` +
                     `                          GROUP BY c_com, i_order, i_orderser, c_item, i_ser) d \n ` +

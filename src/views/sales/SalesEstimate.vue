@@ -38,14 +38,14 @@
                 <v-data-table ref="table" :headers="master" :items="estimates" @click:row="rowSelectMaster" 
                     item-key="i_ser" single-select v-model="selectedM"
                     
-                    :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
+                    :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap" height="515px" max-height="515px" > 
 
                     <template v-slot:[`item.f_status`]="{ item }">
                         {{getStatus(item.f_status)}} 
                     </template>
                     <template v-slot:[`item.a_estamt`]="{ item }">
-                        {{comma(item.a_estamt)}}
+                        <div class="right2-align">{{comma(item.a_estamt)}}</div>
                     </template>
                 </v-data-table>
             </v-col>
@@ -133,7 +133,7 @@
                     @click:row="rowSelectDetail" 
                     item-key="i_serno" 
                     single-select v-model="selectedD"                    
-                    :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    :items-per-page="-1"  hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
                     class="elevation-1 text-no-wrap" height="290px" max-height="290px">
                     
@@ -157,11 +157,11 @@
                     </template>
                     <template v-slot:[`item.a_unit`]="{ item }">
                         <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_serno === itmelit.i_serno" ></input-amt>
-                        <span v-else>{{comma(item.a_unit)}}</span>
+                        <span v-else><div class="right2-align">{{comma(item.a_unit)}}</div></span>
                     </template>
                     <template v-slot:[`item.a_amt`]="{ item }">
                         <input-amt v-model="item.a_amt" @input="onChangeAmt2" v-if="edit && item.i_serno === itmelit.i_serno" ></input-amt>
-                        <span v-else>{{comma(item.a_amt)}}</span>
+                        <span v-else><div class="right2-align">{{comma(item.a_amt)}}</div></span>
                     </template>
                     <template v-slot:[`item.s_duedate`]="{ item }">
                         <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" v-if="edit && item.i_serno === itmelit.i_serno" :rules="rules.date({required: false})" />
@@ -169,7 +169,7 @@
                     </template>
                     <template v-slot:[`item.t_remark`]="{ item }">
                         <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="edit && item.i_serno === itmelit.i_serno" dense hide-details class="my-text-field no-padding" />
-                        <span v-else>{{item.t_remark}}</span>
+                        <span v-else><div class="left-align">{{item.t_remark}}</div></span>
                     </template>
                 </v-data-table>
                 </v-form>
@@ -217,18 +217,18 @@ export default {
             master: [
                 {text: '견적번호',  value: 'i_estno', sortable: false, align:'center', width: "65px"},                
                 {text: '상태',  value: 'f_status', sortable: false, align:'center', width: "25px"},
-                {text: '고객사',    value: 'n_vend', sortable: false, align:'left', width: "75px" },
-                {text: '견적금액',  value: 'a_estamt', sortable: false, align:'right', width: "65px"},
+                {text: '고객사',    value: 'n_vend', sortable: false, align:'center', width: "75px" },
+                {text: '견적금액',  value: 'a_estamt', sortable: false, align:'center', width: "65px"},
             ],
             estimates:[], estimate:[], selectedM: [],
             detail: [
                 {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "35px"},
-                {text: '항목(품목)',  value: 'n_item', sortable: false, align:'left', width: "130px"},
-                {text: '규격(사양)',  value: 't_size', sortable: false, align:'left', width: "100px"},
+                {text: '항목(품목)',  value: 'n_item', sortable: false, align:'center', width: "130px"},
+                {text: '규격(사양)',  value: 't_size', sortable: false, align:'center', width: "100px"},
                 {text: '단위',  value: 'i_unit', sortable: false, align:'center', width: "90px"},
                 {text: '수량',  value: 'm_cnt', sortable: false, align:'center', width: "60px"},
-                {text: '단가',  value: 'a_unit', sortable: false, align:'right', width: "90px"},
-                {text: '금액',  value: 'a_amt', sortable: false, align:'right', width: "90px"},
+                {text: '단가',  value: 'a_unit', sortable: false, align:'center', width: "90px"},
+                {text: '금액',  value: 'a_amt', sortable: false, align:'center', width: "90px"},
                 // {text: '통화',  value: 'f_status', sortable: false, align:'center'},
                 {text: '납기일',  value: 's_duedate', sortable: false, align:'center', width: "90px"},     
                 {text: '비고',  value: 't_remark', sortable: false, align:'center', width: "90px"},                     

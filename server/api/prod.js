@@ -24,6 +24,10 @@ router.post('/iuProdPlanlist2', async (req, res) => {
 	res.json(result);
 });
 
+router.post('/getErrtype', async (req, res) => {    
+    const result = await modelCall(prodModel.getErrtype, req);
+	res.json(result);
+});
 router.post('/getProdWork', async (req, res) => {    
     const result = await modelCall(prodModel.getProdWork, req);
 	res.json(result);

@@ -27,7 +27,7 @@
                         <th colspan="3" class="text-center">수주정보</th>
                         <th colspan="4" class="text-center">제품정보</th>
                         <th colspan="6" class="text-center">생산계획</th>
-                        <th colspan="5" class="text-center">생산실적</th>
+                        <th colspan="6" class="text-center">생산실적</th>
                     </tr>
                 </thead>
                 
@@ -52,6 +52,9 @@
                     <td> {{ item.s_workday1 }}</td>
                     <td> {{ item.s_workday2 }}</td>
                     <td> {{ item.m_workcnt }}</td>
+                    <td> <v-progress-linear :value="getPer(item)"  color="blue" height="18">                        
+                            <strong>{{ getPer(item) }}%</strong>                        
+                        </v-progress-linear></td>
                 </tr>
 
 
@@ -70,7 +73,10 @@
                     <td> {{ item.m_nocnt }}</td>
                     <td> {{ item.s_workday1 }}</td>
                     <td> {{ item.s_workday2 }}</td>
-                    <td> {{ item.m_workcnt }}</td>                    
+                    <td> {{ item.m_workcnt }}</td>
+                    <td> <v-progress-linear :value="getPer(item)"  color="blue" height="18">                        
+                            <strong>{{ getPer(item) }}%</strong>                        
+                        </v-progress-linear></td>                    
                 </tr>
             </template>
 
@@ -122,15 +128,10 @@ export default {
                 {text: '생산시작일',  value: 's_workday1', sortable: false, align:'center', width: "60px"},
                 {text: '생산종료일',  value: 's_workday2', sortable: false, align:'center', width: "60px"},
                 {text: '생산일수',    value: 'm_workcnt', sortable: false, align:'center', width: "30px"},
+                {text: '진행률',     value: 'p_per', sortable: false, align:'center', width: "60px"},
                 
             ],
             itemLists:[], itemInfo:[], selected:[],
-            /*
-            a.c_com, a.i_order, b.i_orderser,
-       a.i_orderno, a.n_vend, a.n_order, b.c_item, b.n_item, b.t_size, b.m_cnt m_ocnt, b.s_duedate, 
-       c.m_yescnt, c.m_nocnt, b.d_plan1, b.d_plan2, d.s_works, d.s_worke, d.w_workcnt, b.f_work
-       */
-           
         }
     },
     watch: {
@@ -193,6 +194,9 @@ export default {
         async selectItem(item) {
             if (this.selected == item) return;
             this.selected = item;
+        },
+        getPer(item) {
+            return item.m_cnt < 1 ? 0 : (item.m_yescnt / item.m_cnt * 100).toFixed(2);
         },
 
     },
