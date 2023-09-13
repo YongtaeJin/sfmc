@@ -15,12 +15,12 @@
                 <tr  class="center-align">
                     <td><v-checkbox v-model="item.f_select" true-value="1"  false-value="0" dense  hide-details="" style="margin: 0; padding: 0;"></v-checkbox> </td>
                     <td> {{ item.i_shipno }} </td>
-                    <td> {{ comma(item.a_invatamt) }} </td>
+                    <td class="right2-align"> {{ comma(item.a_invoice) }} </td>
                     <td> {{ item.n_item }} </td>
                     <td> {{ item.t_size }} </td>
                     <td> {{ item.m_cnt }} </td>                    
-                    <td> {{ comma(item.a_inamt) }} </td>
-                    <td> {{ comma(item.a_invat) }} </td>
+                    <td class="right2-align"> {{ comma(item.a_accamt) }} </td>
+                    <td class="right2-align"> {{ comma(item.a_invatamt) }} </td>
                 </tr>
             </template>
            
@@ -46,12 +46,12 @@ export default {
                 // {text: '견적일',    value: 'f_select', sortable: false, align:'center', width: "65px"},                
                 {text: '선택',       value: 'f_select', sortable: false, align:'center', width: "25px"},
                 {text: '출하번호',    value: 'i_shipno', sortable: false, align:'center', width: "65px" },
-                {text: '납품가액',    value: 'a_invatamt', sortable: false, align:'center', width: "65px" },
+                {text: '납품가액',    value: 'a_invoice', sortable: false, align:'center', width: "65px" },
                 {text: '항목(품목)',  value: 'n_item', sortable: false, align:'center', width: "130px"},
                 {text: '규격(사양)',  value: 't_size', sortable: false, align:'center', width: "100px"},
                 {text: '수량',        value: 'm_cnt', sortable: false, align:'center', width: "60px"},
-                {text: '공급가액',    value: 'a_inamt', sortable: false, align:'center', width: "60px" },
-                {text: 'VAT',        value: 'a_invat', sortable: false, align:'center', width: "60px" },
+                {text: '기입금액',    value: 'a_accamt', sortable: false, align:'center', width: "60px" },
+                {text: '잔여금액',    value: 'a_invatamt', sortable: false, align:'center', width: "60px" },
                 
             ],
             selected:[],

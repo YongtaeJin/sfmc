@@ -29,6 +29,14 @@ router.post('/getDefectrateratedt2', async (req, res) => {
     const result = await modelCall(metricsModel.getDefectrateratedt2, req);
 	res.json(result);
 });
+router.post('/getDefectraterate3', async (req, res) => {    
+    const result = await modelCall(metricsModel.getDefectraterate3, req);
+	res.json(result);
+});
+router.post('/getDefectrateratedt3', async (req, res) => {    
+    const result = await modelCall(metricsModel.getDefectrateratedt3, req);
+	res.json(result);
+});
 router.post('/getClientsalerate', async (req, res) => {    
     const result = await modelCall(metricsModel.getClientsalerate, req);
 	res.json(result);

@@ -20,14 +20,13 @@
                 <v-data-table ref="table" :headers="masterHead" :items="masters" @click:row="rowSelectMaster" 
                     item-key="c_vend" single-select v-model="selectedM"
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
-
+                    :item-class= "row_classes"  class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
                     <template v-slot:[`item.p_per`]="{ item }">                        
                         <v-progress-linear :value="calPer(item)"  color="blue" height="18">                        
                             <strong>{{ calPer(item) }}%</strong>                        
                         </v-progress-linear>
                     </template>
-                </v-data-table>                
+                </v-data-table>      
             </v-col>
 
             <v-col col="12" sm="8" md="8">
@@ -35,7 +34,31 @@
                     item-key="i_orderser" single-select v-model="selectedD"
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
-                </v-data-table>
+                    <template v-slot:item="{ item }">
+                        <tr :class="{ 'row_select': item === itemInfo }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
+                            <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td> 
+                            <td :rowspan="getRowspan(item)">{{ item.s_date2 }}</td> 
+                            <td> {{ item.n_item }} </td>
+                            <td> {{ item.t_size }} </td>
+                            <td> {{ item.m_cnt }} </td>
+                            <td> {{ item.s_duedate }} </td>
+                            <td> {{ item.m_shipcnt }} </td>
+                            <td> {{ item.d_ship }} </td>
+                            <td> {{ item.m_ordshipcnt }} </td>
+                            <td> {{ item.n_status }} </td>
+                        </tr>
+                        <tr :class="{ 'row_select': item === itemInfo }" class="center-align" @click="selectItem(item)" v-else>
+                            <td> {{ item.n_item }} </td>
+                            <td> {{ item.t_size }} </td>
+                            <td> {{ item.m_cnt }} </td>
+                            <td> {{ item.s_duedate }} </td>
+                            <td> {{ item.m_shipcnt }} </td>
+                            <td> {{ item.d_ship }} </td>
+                            <td> {{ item.m_ordshipcnt }} </td>
+                            <td> {{ item.n_status }} </td>
+                        </tr>
+                    </template>
+                </v-data-table>               
             </v-col>
         </v-row>
     </v-container>  
@@ -74,6 +97,7 @@ export default {
                 {text: '납기일',      value: 's_duedate', sortable: false, align:'center', width: "60px"},     
                 {text: '출하수량',    value: 'm_shipcnt', sortable: false, align:'center', width: "60px"},
                 {text: '출하일',      value: 'd_ship', sortable: false, align:'center', width: "60px"},
+                {text: '출하소요일',  value: 'm_ordshipcnt', sortable: false, align:'center', width: "60px"},
                 {text: '납기상태',    value: 'n_status', sortable: false, align:'center', width: "60px"},
                 
             ],
@@ -88,12 +112,39 @@ export default {
             await this.view();
         },
         async view() {
+            this.masters = [];
             this.masterinfo = [], this.selectedM = [],
             this.itemListFilter = [], this.itemInfo = [], this.selectedD = [],
-            this.masters = await this.$axios.post(`/api/metrics/getDerliverrate`, this.form); 
+            // this.masters = await this.$axios.post(`/api/metrics/getDerliverrate`, this.form); 
+            this.masters = await  this.GetDerliver();
             this.itemLists = await this.$axios.post(`/api/metrics/getDerliverratedt`, this.form); 
 
         },
+        async GetDerliver() {
+            const data = await this.$axios.post(`/api/metrics/getDerliverrate`, this.form); 
+            if (!!data.length) {
+                const obj = {};
+                obj.c_com   = this.masterinfo.c_com; 
+                obj.c_vend  = '전체'; 
+                obj.n_vend  = '전체';
+                obj.m_ordcnt = this.sumFilder(data, 'm_ordcnt');
+                obj.m_no     = this.sumFilder(data, 'm_no');
+                obj.m_ing    = this.sumFilder(data, 'm_ing');
+                obj.m_ok     = this.sumFilder(data, 'm_ok');
+                const idx = data.unshift(obj); 
+            }
+            
+            return data;
+        },
+        sumFilder(data, object) {
+            return data.reduce((sum, item) => {return sum + (Number(item[object]) || 0);}, 0 );
+        },
+        row_classes(item) {
+            if (item.c_vend == "전체") {
+                return "orange";
+            } 
+        },
+
         rowSelectMaster :function (item, row) {                  
             this.masterinfo = item;  
             this.rowFilter(item);
@@ -107,7 +158,7 @@ export default {
         rowFilter(item) {
             if (this.itemLists.length > 0) {
                 this.itemListFilter = this.itemLists.filter((r) => {
-                    return r.c_vend == item.c_vend && r.c_com == item.c_com;
+                    return item.c_vend == "전체" || r.c_vend == item.c_vend && r.c_com == item.c_com;
                 }); 
             } else {
                 this.itemListFilter = [];
@@ -127,8 +178,19 @@ export default {
                 p_per =  Number(item.m_ok) / (Number(item.m_ordcnt) - Number(item.m_ing));
                 p_per = (p_per * 100).toFixed(2);
             }            
-            return p_per;
-            
+            return p_per;            
+        },
+        shouldMergeRow(item) {
+            const index = this.itemListFilter.findIndex((i) => i.i_orderno === item.i_orderno);
+            return index === this.itemListFilter.indexOf(item);
+        },
+        getRowspan(item) {
+            const count = this.itemListFilter.filter((i) => i.i_orderno === item.i_orderno).length;
+            return count;
+        },
+        async selectItem(item) {
+            if (this.itemInfo == item) return;
+            this.itemInfo = item;
         },
     },
 }

@@ -175,7 +175,7 @@ export default {
             
             const otherList = this.invoicedata.filter(sourceItem => {
                 // 다른 배열에 해당 객체가 없는지 확인
-                return !this.itemLists.some(otherItem => otherItem.i_invoiceserno === sourceItem.i_invoiceserno);
+                return !this.itemLists.some(otherItem => otherItem.i_invoiceserno == sourceItem.i_invoiceserno && otherItem.f_editold !== '0');
                 });
             if (!otherList.length) {
                 this.$toast.warning(`등록 가능한 출하List 없습니다.`);
@@ -194,7 +194,7 @@ export default {
                                      i_shipser:      obj.i_shipser,
                                      i_order:        obj.i_order,
                                      i_orderser:     obj.i_orderser,
-
+                                     a_invoice:      obj.a_invoice,
                                      a_invatamt:     obj.a_invatamt,   
                                      a_inamt:        obj.a_inamt,
                                      a_invat:        obj.a_invat,
@@ -205,6 +205,7 @@ export default {
                                      i_type:         obj.i_type,
                                      m_cnt:          obj.m_cnt,
                                      a_unit:         obj.a_unit,
+                                     a_accamt:       obj.a_accamt,
                                      }))), 
                     JSON.parse);
             this.$refs.dialog_Insert.open();
@@ -310,7 +311,7 @@ export default {
             // sum data in give key (property)
             const data = this.itemLists.reduce((sum, item) => {
                     if (item.f_edit !== "2") {
-                        return sum + (item['a_accamt'] || 0);
+                        return sum + (Number(item['a_accamt']) || 0);
                     }
                     return sum;
                 }, 0 );

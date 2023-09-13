@@ -186,7 +186,7 @@ const salesModel = {
                 if (!row.n_crnm) {
                     delete row.d_create_at;
                     delete row.n_crnm;
-                    row.d_update_at = at;
+                    row.d_update_at = at;                   
                     row.n_upnm = req.user.n_name;
                 } else {
                     row.d_create_at = at;
@@ -391,6 +391,11 @@ const salesModel = {
                     delete row.d_create_at;
                     delete row.n_crnm;
                 }
+                delete row.d_plan_at;
+                delete row.d_work1_at; 
+                delete row.d_work3_at; 
+                delete row.d_work4_at;
+                delete row.d_work5at;
                 const sql = deldata ? sqlHelper.DeleteSimple(TABLE.ORDERLI, {c_com, i_order, i_orderser}) : newdata ? sqlHelper.Insert(TABLE.ORDERLI, row) : sqlHelper.Update(TABLE.ORDERLI, row, {c_com, i_order, i_orderser});
                 
                 console.log("detial", sql);                

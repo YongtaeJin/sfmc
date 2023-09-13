@@ -416,8 +416,8 @@ export default {
             this.$toast.info(`삭제 하였습니다.`);
         },
         async saveOrd() {
-            if (!this.edit) return;
-            if (!this.editJob) return;            
+            // if (!this.edit) return;
+            // if (!this.editJob) return;            
             if (this.masterinfo.i_orderno == null || this.masterinfo.i_orderno.length < 1) {
                 this.$toast.error("수주번호 입력 필수 입니다.");
                 return;
