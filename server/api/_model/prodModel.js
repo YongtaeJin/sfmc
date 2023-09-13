@@ -216,7 +216,7 @@ const prodModel = {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
         const { c_com, i_order, i_orderser } = req.body;
         const sql = sqlHelper.SelectSimple(TABLE.PRODPLAN, { c_com, i_order, i_orderser}) ;
-        sql.query = sql.query + ` ORDER BY s_sort `;
+        sql.query = sql.query + ` ORDER BY f_jobs desc, s_sort `;
 
         const [rows] = await db.execute(sql.query, sql.values);  
         rows.forEach((row) => {
@@ -266,7 +266,7 @@ const prodModel = {
                     ` WHERE a.c_com = ? \n`+
                     `   AND a.i_order = ? \n`+
                     `   AND a.i_orderser = ? \n`+
-                    ` ORDER BY a.c_com, a.i_order, a.i_orderser, a.c_item, a.i_ser, a.s_sort`
+                    ` ORDER BY a.c_com, a.i_order, a.i_orderser, a.c_item, a.f_jobs desc, a.s_sort`
         values.push(c_com);  
         values.push(i_order);
         values.push(i_orderser);
@@ -447,7 +447,7 @@ const prodModel = {
             query += ` AND a.n_vend LIKE ? \n `
             values.push(sVend + '%');
         }
-        query += ` ORDER BY a.c_com, a.i_orderno, b.s_sort, c.s_sort, a.s_date` ;
+        query += ` ORDER BY a.c_com, a.i_orderno, b.s_sort, c.f_jobs desc, c.s_sort, a.s_date` ;
         console.log(query, values);
         const [rows] = await db.execute(query, values);         
         return rows;    
