@@ -461,7 +461,8 @@ const systemModel = {
         
         const { t_image } = req.files;
 		const fileName = `${c_com}_log${path.extname(t_image.name)}`;
-        const newFile = `${UPLOAD_PATH}/worksite/comlog/${fileName}`;
+        const newFile = `${UPLOAD_PATH}/worksite/comlog/${fileName}`;   // 서버 Upload 절대 Path 
+        const tPathFile = `/upload/worksite/comlog/${fileName}`;       // DB 칼럼 저장 위해서  (상대 Path)
         
         t_image.mv(newFile, (err)=>{
             if ( err ) {
@@ -471,7 +472,7 @@ const systemModel = {
         });	
         const query = `UPDATE tb_worksite SET t_worklog = ?  WHERE c_com = ? `;
         var values = new Array();
-        values.push(newFile); 
+        values.push(tPathFile); 
         values.push(c_com); 
         const res = await db.execute(query, values);
         if (res.affectedRows < 1) {
@@ -479,7 +480,7 @@ const systemModel = {
             return '';
         }
         await db.execute('COMMIT');
-        return newFile;
+        return tPathFile;
     },
 };
 

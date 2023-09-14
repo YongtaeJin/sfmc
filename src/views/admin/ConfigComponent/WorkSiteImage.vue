@@ -10,7 +10,7 @@
 export default {
     name: "WorkSiteImage",
     props: {
-        c_com: null,
+        c_com: null,        
     },
     data() {
         return {
@@ -21,7 +21,10 @@ export default {
         };
     },
     watch: {
-        c_com() {this.form.c_com = this.c_com}
+        c_com() {
+            this.form.c_com = this.c_com;
+            this.form.t_image = "";
+        }
     },
     methods: {
         async onImage() {       
@@ -31,7 +34,9 @@ export default {
                 formData.append(key, this.form[key]);
             };
             const rv = await this.$axios.post(`/api/system/siteImageSave`, formData);
-            console.log(rv)
+            this.form.t_image = "";
+            this.form.c_com = "";
+            this.$emit('onSave', rv);  
         }
     },
 }

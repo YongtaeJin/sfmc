@@ -20,7 +20,7 @@
             <tooltip-btn fab small label="등록" @click="clickLogImage"><v-icon>mdi-plus</v-icon></tooltip-btn>
         </v-toolbar>
         <div>            
-            {{ siteImglog}}
+            <v-img :src="siteImglog"></v-img>
         </div>
 
         <ez-dialog ref="dialog" label="사업장" persistent @onClose="closeDialog" width="500px">
@@ -28,7 +28,7 @@
             </worksite-form>
         </ez-dialog>
         <ez-dialog ref="dialog_log" label="회사 Log Image 선택"  persistent width="400px">
-            <work-site-image :c_com="selected.c_com">
+            <work-site-image :c_com="selected.c_com" @onSave="saveimgage">
 
             </work-site-image>
         </ez-dialog>
@@ -85,12 +85,8 @@ export default {
     },
     computed: {
         siteImglog() {
-            if (this.selected.c_com) {
-                if(this.selected.c_com.startsWith("/upload/worksite/comlog")) {
-                    console.log("ok",this.selected.c_com)
-                } else {
-                    console.log("no",this.selected.c_com)
-                }
+            if (this.selected.t_worklog) {
+                return this.selected.t_worklog;
             }
         }
     },
@@ -166,6 +162,16 @@ export default {
         
         async clickLogImage() {
             this.$refs.dialog_log.open();
+        },
+        async saveimgage(rv) {
+            
+            if (rv.length > 0) {
+                this.selected.t_worklog = rv;
+                this.$toast.info(`저장 하였습니다. `);
+            } else {
+                this.$toast.error(`실패...`);
+            }
+            this.$refs.dialog_log.close();
         },
         
     },
