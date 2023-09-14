@@ -57,6 +57,11 @@ export const actions = {
 		const { $axios } = Vue.prototype;
 		const data = await $axios.post('/api/system/iuSiteCodeinit', form);
 		return data;
+	},
+	async siteImageSave( { commit }, form) {
+		const { $axios } = Vue.prototype;
+		const data = await $axios.post('/api/system/siteImageSave', form);
+		return data;
 	}
 	
 };

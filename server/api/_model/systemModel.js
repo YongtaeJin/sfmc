@@ -7,6 +7,7 @@ const moment = require('../../../util/moment');
 const { LV, isGrant } = require('../../../util/level');
 const { getIp } = require('../../../util/lib');
 const { query } = require('express');
+const path = require('path');
 
 function clearUserField(user) {
 	delete user.p_password;
@@ -71,6 +72,8 @@ const systemModel = {
             delete payload.f_kpichk;
             delete payload.n_kpiconm;
             delete payload.t_monitor;
+            delete payload.t_worklog;
+            delete payload.t_worksign;
             const sql2 = sqlHelper.Insert(TABLE.USERS, payload);
             const [row2] = await db.execute(sql2.query, sql2.values);
         } 
@@ -102,6 +105,8 @@ const systemModel = {
             delete payload.f_kpichk;
             delete payload.n_kpiconm;
             delete payload.t_monitor;
+            delete payload.t_worklog;
+            delete payload.t_worksign;
           
             const sql2 = sqlHelper.Update(TABLE.USERS, payload, {c_com, i_id});
             const [row2] = await db.execute(sql2.query, sql2.values);
@@ -448,6 +453,33 @@ const systemModel = {
         
         const [[rows]] = await db.execute(sql.query, sql.values);    
         return rows;
+    },
+
+    async siteImageSave(req) {
+        const { c_com } = req.body;  
+        if ( !req.files ) return '';
+        
+        const { t_image } = req.files;
+		const fileName = `${c_com}_log${path.extname(t_image.name)}`;
+        const newFile = `${UPLOAD_PATH}/worksite/comlog/${fileName}`;
+        
+        t_image.mv(newFile, (err)=>{
+            if ( err ) {
+                console.log('업로드 실패', err);
+                return '';
+            }
+        });	
+        const query = `UPDATE tb_worksite SET t_worklog = ?  WHERE c_com = ? `;
+        var values = new Array();
+        values.push(newFile); 
+        values.push(c_com); 
+        const res = await db.execute(query, values);
+        if (res.affectedRows < 1) {
+            await db.execute('ROLLBACK');
+            return '';
+        }
+        await db.execute('COMMIT');
+        return newFile;
     },
 };
 

@@ -426,10 +426,18 @@ export default {
             query = qs.stringify({c_com: this.$store.state.user.member.c_com, c_vend: this.estimate.c_vend});
             const vend = await this.$axios.get(`/api/basejob/getVendInfo?${query}`);
             
+            // jsPDF 라이브러리를 가져옵니다.
             const doc = new jsPDF('p', 'mm', 'a4');
+            // 이미지를 로드합니다.
+            const img = new Image();
+            img.src = '/upload/memberPhoto/test4.jpg'; // 이미지 파일 경로
+
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
             doc.setFont("malgun");
+
+            doc.addImage(img, 'JPEG', 150, 30, 50, 20); // 이미지를 PDF에 추가합니다.
+
             // 텍스트 출력
             doc.setFontSize(30);
             doc.text('견  적  서', 80, 30);

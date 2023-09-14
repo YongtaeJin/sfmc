@@ -6,20 +6,31 @@
             <tooltip-btn fab small label="추가" @click="addWorkSite"><v-icon>mdi-plus</v-icon></tooltip-btn>
             <tooltip-btn fab small label="조회" @click="fetchData"><v-icon>mdi-magnify</v-icon></tooltip-btn>
         </v-toolbar>
-        <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo 
+        <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo  @click:row=showWorkSiteLog
                     item-key="i_ser" single-select 
-                    :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="500px" max-height="500px" >
+                    :items-per-page="-1"  hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap" height="400px" max-height="400px" >
             <template v-slot:[`item.f_init`]="{ item }">
                <v-btn icon x-small tabindex="-1" @click="clickInit(item)"><v-icon> mdi-dialpad </v-icon></v-btn>
-            </template>
-         
+            </template>         
         </v-data-table>
+        <v-toolbar height="30px" background-color="primary" dark>
+            <v-toolbar-title>회사 Log Image</v-toolbar-title>
+            <v-spacer/>   
+            <tooltip-btn fab small label="등록" @click="clickLogImage"><v-icon>mdi-plus</v-icon></tooltip-btn>
+        </v-toolbar>
+        <div>            
+            {{ siteImglog}}
+        </div>
 
         <ez-dialog ref="dialog" label="사업장" persistent @onClose="closeDialog" width="500px">
-            <worksite-form :data="item" :keyCheckCom="keyCheckCom" :keyCheckId="keyCheckId" :isLoad="isLoad" @onSave="save">
-                
+            <worksite-form :data="item" :keyCheckCom="keyCheckCom" :keyCheckId="keyCheckId" :isLoad="isLoad" @onSave="save">                
             </worksite-form>
+        </ez-dialog>
+        <ez-dialog ref="dialog_log" label="회사 Log Image 선택"  persistent width="400px">
+            <work-site-image :c_com="selected.c_com">
+
+            </work-site-image>
         </ez-dialog>
     </v-container>
     
@@ -31,8 +42,9 @@ import TooltipBtn from "../../components/etc/TooltipBtn.vue";
 import EzDialog from '../../components/etc/EzDialog.vue';
 import WorksiteForm from './ConfigComponent/WorksiteForm.vue';
 import { deepCopy } from '../../../util/lib';
+import WorkSiteImage from './ConfigComponent/WorkSiteImage.vue';
 export default {
-    components: { TooltipBtn, EzDialog, WorksiteForm }, 
+    components: { TooltipBtn, EzDialog, WorksiteForm, WorkSiteImage }, 
     name: "AdmWorksite",
     mounted() {
         this.init();
@@ -62,6 +74,8 @@ export default {
                 f_kpichk: "",
                 n_kpiconm: "",
                 t_monitor: "",
+                t_worklog: "",
+                t_worksign: "",
                 t_remark: "",
             },
             isLoad: false,
@@ -70,10 +84,19 @@ export default {
     watch: {
     },
     computed: {
+        siteImglog() {
+            if (this.selected.c_com) {
+                if(this.selected.c_com.startsWith("/upload/worksite/comlog")) {
+                    console.log("ok",this.selected.c_com)
+                } else {
+                    console.log("no",this.selected.c_com)
+                }
+            }
+        }
     },
     
     methods: {
-        ...mapActions("system", ["duplicateCheck", "duplicateDualCheck", "insertWorksite", "updateWorksite", "iuSiteCodeinit"]),
+        ...mapActions("system", ["duplicateCheck", "duplicateDualCheck", "insertWorksite", "updateWorksite", "iuSiteCodeinit", "siteImageSave"]),
         async init() {
             this.fetchData();
         },
@@ -84,6 +107,11 @@ export default {
             this.item = deepCopy(item); 
             
             this.$refs.dialog.open();
+        },
+
+        async showWorkSiteLog(event, { item }) {
+            if (this.selected == item) return;
+            this.selected = item;            
         },
         async addWorkSite(item) {
             this.isLoad = true;
@@ -135,6 +163,11 @@ export default {
                 this.$toast.error(`실패...`);
             }
         },
+        
+        async clickLogImage() {
+            this.$refs.dialog_log.open();
+        },
+        
     },
 }
 </script>

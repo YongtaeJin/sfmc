@@ -128,4 +128,10 @@ router.post('/openLog', async (req, res) => {
 	const result = await modelCall(systemModel.openLog, req);
 	res.json(result);
 });
+// 사업장 이미지 저장
+router.post('/siteImageSave', async (req, res) => {
+	const result = await modelCall(systemModel.siteImageSave, req);
+	res.json(result);
+});
+
 module.exports = router;
