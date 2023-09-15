@@ -91,9 +91,51 @@ const metricsModel = {
         query2 +=    ` ORDER BY a.c_com, a.c_vend, a.i_orderno, a.s_date, b.s_sort `;
 
         // console.log(query2)
+        // console.log("query2",query2)
         const [rows2] = await db.execute(query2, values);   
         return rows2;
     },
+    async getDerliverrateAvg (req) {
+        if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인
+        const { c_com } = req.user;
+        const { sDate1, sDate2, sVend } = req.body;  
+
+        var values = new Array();
+        values.push(c_com); 
+     
+        let query2 = `SELECT a.c_com, b.c_item, MAX(b.n_item) n_item, MAX(b.t_size) t_size, COUNT(*) m_shicnt, \n` +
+                     `       SUM(ABS(DATEDIFF(a.s_date, c.d_ship))+1) m_ordshipcnt, \n` +
+                     `       ROUND(SUM(ABS(DATEDIFF(a.s_date, c.d_ship))+1) / COUNT(*), 2) m_avgship \n` +                     
+                     `  FROM tb_order a \n` +
+                     `       JOIN tb_orderli b on a.c_com = b.c_com AND a.i_order = b.i_order \n` +
+                     `       LEFT OUTER JOIN (SELECT c_com, i_order, i_orderser, SUM(m_shipcnt) m_shipcnt, MAX(d_ship) d_ship \n` +
+                     `                          FROM tb_prodship GROUP BY c_com, i_order, i_orderser) c \n` +
+                     `                        ON b.c_com = c.c_com AND b.i_order = c.i_order AND b.i_orderser = c.i_orderser \n` +
+                     ` WHERE a.c_com = ? \n`;
+        if (sDate1.length > 0 && sDate2.length > 0 ) {
+            query2 += `           AND a.s_date2 BETWEEN ? and ? \n `;  
+            values.push(sDate1);
+            values.push(sDate2);          
+        } else if (sDate1.length > 0) {
+            query2 += `           AND a.s_date2 >= ? \n `;            
+            values.push(sDate1);
+        } else if (sDate2.length > 0) {
+            query2 += `           AND a.s_date2 <= ? \n `;   
+            values.push(sDate2);         
+        }
+        if (sVend.length > 0) {
+            query2 += `           AND a.n_vend LIKE ? \n `;   
+            values.push(sVend + '%');         
+        }
+        query2 +=    ` GROUP BY a.c_com, b.c_item \n`;
+        query2 +=    ` ORDER BY (SELECT t.s_sort FROM tb_item t WHERE t.c_com = b.c_com AND t.c_item = b.c_item)  `;
+        
+
+        console.log("query2",query2)
+        const [rows2] = await db.execute(query2, values);   
+        return rows2;
+    },
+
 
     async getDefectraterate(req) {
         if (!isGrant(req, LV.PRODUCTION)) {throw new Error('권한이 없습니다.');}   // 권한 확인

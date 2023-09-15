@@ -19,7 +19,7 @@
         <v-data-table ref="item-table" :headers="itemHead" :items="itemLists"                     
                     item-key="i_orderser" single-select hide-default-footer
                     :item-class= "row_classes" :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap"  max-height="500px" height="500px" 
+                    class="elevation-1 text-no-wrap"  max-height="400px" height="400px" 
                     >
             <template v-slot:item="{ item,index }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
@@ -62,6 +62,18 @@
                 </tr>
             </template> 
         </v-data-table> 
+        <v-toolbar height="30px" background-color="primary" dark>
+            <v-toolbar-title>항목(품목)별 일 평균 생산량</v-toolbar-title>
+            <v-spacer/>            
+        </v-toolbar>
+        <v-data-table ref="item-makeavg" :headers="dayMakeAvgHead" :items="dayMakeList"                     
+                    item-key="c_item" single-select hide-default-footer  @click:row="rowSelectmake"
+                    :item-class= "row_classes" :items-per-page="-1" 
+                    class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
+                    >
+
+        </v-data-table>
+
     </v-container>
 </template>
 
@@ -107,6 +119,15 @@ export default {
                 {text: '상태',    value: 'f_work', sortable: false, align:'center', width: "30px"},
             ],
             itemLists:[], itemInfo:[], selected:[],
+            dayMakeAvgHead:[
+                {text: '품번',          value: 'c_item', sortable: false, align:'center', width: "100"},
+                {text: '항목(품목)',    value: 'n_item', sortable: false, align:'center', width: "150"},
+                {text: '규격(사양)',    value: 't_size', sortable: false, align:'center', width: "150"},
+                {text: '생산량',        value: 'm_yescnt', sortable: false, align:'center', width: "80px"},
+                {text: '생산일수',      value: 'w_workcnt', sortable: false, align:'center', width: "80px"},
+                {text: '일 평균생산량', value: 'm_dayavgcnt', sortable: false, align:'center', width: "80px"},
+            ],
+            dayMakeList:[], dayMakeInfo:[] , selectMake:[],
         }
     },
     watch: {
@@ -123,6 +144,7 @@ export default {
             // this.itemInfo = [];
             // this.itemProd = []; this.itemMake = []; this.itemErr = []; this.makeRow =[]; this.errRow = [];
             this.itemLists = await this.$axios.post(`/api/prod/getProdWorkview`, this.form); 
+            this.dayMakeList = await this.$axios.post(`/api/prod/getProdWorkDayAvg`, this.form); 
         },
         async add() {
 
@@ -160,6 +182,11 @@ export default {
         },
         getPer(item) {
             return item.m_ocnt < 1 ? 0 : (item.m_yescnt / item.m_ocnt * 100).toFixed(2);
+        },        
+        rowSelectmake:function (item, row) {
+            if (this.dayMakeInfo.c_item == item.c_item) return;
+            this.dayMakeInfo = item;
+            if (row) { row.select(true) } else { this.selectMake = [item] }
         },
 
     },

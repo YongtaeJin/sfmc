@@ -20,7 +20,7 @@
                 <v-data-table ref="table" :headers="masterHead" :items="masters" @click:row="rowSelectMaster" 
                     item-key="c_vend" single-select v-model="selectedM"
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    :item-class= "row_classes"  class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
+                    :item-class= "row_classes"  class="elevation-1 text-no-wrap" height="400px" max-height="400px" > 
                     <template v-slot:[`item.p_per`]="{ item }">                        
                         <v-progress-linear :value="calPer(item)"  color="blue" height="18">                        
                             <strong>{{ calPer(item) }}%</strong>                        
@@ -33,7 +33,7 @@
                 <v-data-table ref="table" :headers="itemHead" :items="itemListFilter" @click:row="rowSelectDetail" 
                     item-key="i_orderser" single-select v-model="selectedD"
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
+                    class="elevation-1 text-no-wrap" height="400px" max-height="400px" > 
                     <template v-slot:item="{ item }">
                         <tr :class="{ 'row_select': item === itemInfo }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
                             <td :rowspan="getRowspan(item)">{{ item.i_orderno }}</td> 
@@ -61,6 +61,17 @@
                 </v-data-table>               
             </v-col>
         </v-row>
+        <v-toolbar height="30px" background-color="primary" dark>
+            <v-toolbar-title>항목(품목)별 평균출하 소요일 </v-toolbar-title>
+            <v-spacer/>            
+        </v-toolbar>
+        <v-data-table ref="item-makeavg" :headers="dayMakeAvgHead" :items="dayMakeList"                     
+                    item-key="c_item" single-select hide-default-footer  @click:row="rowSelectmake"
+                    :item-class= "row_classes" :items-per-page="-1" 
+                    class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
+                    >
+
+        </v-data-table>
     </v-container>  
 </template>
 
@@ -102,8 +113,16 @@ export default {
                 
             ],
             itemLists: [], itemInfo: [], itemListFilter: [], selectedD: [],
-
             itemLists: [],
+            dayMakeAvgHead:[
+                {text: '품번',          value: 'c_item', sortable: false, align:'center', width: "100"},
+                {text: '항목(품목)',    value: 'n_item', sortable: false, align:'center', width: "150"},
+                {text: '규격(사양)',    value: 't_size', sortable: false, align:'center', width: "150"},
+                {text: '출하건수',      value: 'm_shicnt', sortable: false, align:'center', width: "80px"},
+                {text: '출하일수',      value: 'm_ordshipcnt', sortable: false, align:'center', width: "80px"},
+                {text: '평균출하 소요일', value: 'm_avgship', sortable: false, align:'center', width: "80px"},
+            ],
+            dayMakeList:[], dayMakeInfo:[] , selectMake:[],
         }
     },
     methods: {
@@ -118,6 +137,7 @@ export default {
             // this.masters = await this.$axios.post(`/api/metrics/getDerliverrate`, this.form); 
             this.masters = await  this.GetDerliver();
             this.itemLists = await this.$axios.post(`/api/metrics/getDerliverratedt`, this.form); 
+            this.dayMakeList = await this.$axios.post(`/api/metrics/getDerliverrateAvg`, this.form); 
 
         },
         async GetDerliver() {
@@ -191,6 +211,11 @@ export default {
         async selectItem(item) {
             if (this.itemInfo == item) return;
             this.itemInfo = item;
+        },
+        rowSelectmake:function (item, row) {
+            if (this.dayMakeInfo.c_item == item.c_item) return;
+            this.dayMakeInfo = item;
+            if (row) { row.select(true) } else { this.selectMake = [item] }
         },
     },
 }

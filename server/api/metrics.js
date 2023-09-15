@@ -13,6 +13,10 @@ router.post('/getDerliverratedt', async (req, res) => {
     const result = await modelCall(metricsModel.getDerliverratedt, req);
 	res.json(result);
 });
+router.post('/getDerliverrateAvg', async (req, res) => {    
+    const result = await modelCall(metricsModel.getDerliverrateAvg, req);
+	res.json(result);
+});
 router.post('/getDefectraterate', async (req, res) => {    
     const result = await modelCall(metricsModel.getDefectraterate, req);
 	res.json(result);

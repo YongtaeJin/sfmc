@@ -60,6 +60,10 @@ router.post('/getProdWorkview', async (req, res) => {
     const result = await modelCall(prodModel.getProdWorkview, req);
 	res.json(result);
 });
+router.post('/getProdWorkDayAvg', async (req, res) => {    
+    const result = await modelCall(prodModel.getProdWorkDayAvg, req);
+	res.json(result);
+});
 router.post('/getProdWorkview2', async (req, res) => {    
     const result = await modelCall(prodModel.getProdWorkview2, req);
 	res.json(result);
