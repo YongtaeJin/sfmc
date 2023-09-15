@@ -219,6 +219,8 @@ const prodModel = {
         sql.query = sql.query + ` ORDER BY f_jobs desc, s_sort `;
 
         const [rows] = await db.execute(sql.query, sql.values);  
+
+        console.log("getProdplan", sql);
         rows.forEach((row) => {
             sqlHelper.addEditCol(row);
         });      
