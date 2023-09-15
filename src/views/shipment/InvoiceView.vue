@@ -682,14 +682,16 @@ export default {
             const company = await this.$axios.get(`/api/system/getCompany?${query}`);
             
             const doc = new jsPDF('p', 'mm', 'a4');
-            const img = new Image();   // 이미지를 로드합니다.
-            img.src = this.siteImglog; // 이미지 파일 경로
+            if (!!this.siteImglog) {
+                const img = new Image();   // 이미지를 로드합니다.            
+                img.src = this.siteImglog; // 이미지 파일 경로  
+                // doc.addImage(img, 'JPEG', 150, 30, 50, 20); // 이미지를 PDF에 추가합니다.
+                doc.addImage(img, 'JPEG', 150, 30, 50, 20); // 이미지를 PDF에 추가합니다.  
+            }
 
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
             doc.setFont("malgun");
-
-            doc.addImage(img, 'JPEG', 150, 30, 50, 20); // 이미지를 PDF에 추가합니다.
             
             // 텍스트 출력
             doc.setFontSize(30);

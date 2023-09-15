@@ -294,3 +294,11 @@ table.type07 {
 .underline {
 	text-decoration: underline;
 }
+
+
+.custom-select .v-input__control  {
+	font-size: 0.7rem; /* 글자 크기 */
+	height: 10px; /* 높이 */
+	min-height: 10px; /* 선택 박스가 닫혔을 때의 최소 높이 */
+  }
+  
