@@ -108,8 +108,9 @@
                 </v-row>
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="담당자" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_magname" @input="onChangeMaster" dense hide-details class="no-padding"/> </v-col>
-                    <v-col col="8" sm="3" md="3"></v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.n_magname" :readonly="!edit" @input="onChangeMaster" dense hide-details class="no-padding"/> </v-col>
+                    <v-col col="8" sm="1" md="1"><v-text-field value="연락처" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
+                    <v-col col="8" sm="2" md="2"><v-text-field v-model="estimate.t_magtel" :readonly="!edit" placeholder="담당자 연락처" @input="onChangeMaster" dense hide-details class="no-padding"/> </v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="견적금액" readonly dense hide-details class="text-input-redbrg no-padding"/> </v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="comma(estimate.a_estamt)+'원'" readonly dense hide-details class="text-input-redbrg inputPrice no-padding"/> </v-col>
                     
@@ -523,8 +524,8 @@ export default {
            
             y = y + 91
             doc.text(12, 260, `견적유효일 : ${dateToKorean(this.estimate.s_date2)} 까지` )   ;
-            if (this.estimate.n_magname) doc.text(100, 260, `견적담당자 : ${this.estimate.n_magname}` )   ;
-            if (this.estimate.t_remark) doc.text(12, 270, `특 이 사 항 : ${this.estimate.t_remark}` )   ;
+            if (this.estimate.n_magname) doc.text(100, 260, `견적담당자 : ${this.estimate.n_magname}  ${this.estimate.t_magtel} ` )   ;            
+            if (this.estimate.t_remark) doc.text(12, 267, `특 이 사 항 : ${this.estimate.t_remark}` )   ;
 
             // PDF 저장            
             doc.save(`견적서_${this.estimate.i_estno}.pdf`);

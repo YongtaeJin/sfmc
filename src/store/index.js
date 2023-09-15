@@ -269,14 +269,14 @@ const store = new Vuex.Store({
 					title : "실적분석",
 					icon : "mdi-chart-bar-stacked",
 					to : '',
-					grant : 6, 
+					grant : 7, 
 					newTab : false,
 					subItems : [
 						{
 							title : "납기내역",
 							icon : "",
 							to : '/metrics/derliver',
-							grant : 6, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -284,7 +284,7 @@ const store = new Vuex.Store({
 							title : "불량율 분석",
 							icon : "",
 							to : '/metrics/defectrate',
-							grant : 6, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -292,7 +292,7 @@ const store = new Vuex.Store({
 							title : "고객별 매출 분석",
 							icon : "",
 							to : '/metrics/clientsales',
-							grant : 6, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -300,7 +300,7 @@ const store = new Vuex.Store({
 							title : "기간별 매출 분석",
 							icon : "",
 							to : '/metrics/periodsales',
-							grant : 6, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},

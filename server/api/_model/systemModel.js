@@ -177,6 +177,7 @@ const systemModel = {
     // 시스템코드 관리
     async grpcode(req) {     
         // 권한 확인
+        // console.log(req.user)
         if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');
         
         const { c_com } = req.user;
