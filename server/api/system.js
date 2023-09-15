@@ -133,5 +133,9 @@ router.post('/siteImageSave', async (req, res) => {
 	const result = await modelCall(systemModel.siteImageSave, req);
 	res.json(result);
 });
+router.post('/getSiteImage', async (req, res) => {
+	const result = await modelCall(systemModel.getSiteImage, req);
+	res.json(result);
+});
 
 module.exports = router;

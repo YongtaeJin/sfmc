@@ -482,6 +482,13 @@ const systemModel = {
         await db.execute('COMMIT');
         return tPathFile;
     },
+    async getSiteImage(req) {
+        if (!req.user.c_com ) { throw new Error('권한이 없습니다.'); }  
+        const { c_com } = req.user;
+        const sql = sqlHelper.SelectSimple(TABLE.WORKSITE, { c_com}, ['t_worklog']);
+        const [[rows]] = await db.execute(sql.query, sql.values);    
+        return rows;
+    },
 };
 
 async function sqlDbExecute(sql) {	    

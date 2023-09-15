@@ -192,6 +192,7 @@ export default {
             ],
             itemLists: [], itemInfo: [], selectedD: [], item: [],
             invoicedata:[], derliverlist:[],
+            comImageLog: "",
         }
     },
 
@@ -212,8 +213,14 @@ export default {
         getStatus() {
             var find = this.IVCOICE01.find(e => e.value == this.masterinfo.f_status);
             return find !== undefined ? find.label : ''; 
-        }
-
+        },
+        siteImglog() {
+            if (this.comImageLog.t_worklog) {
+                return this.comImageLog.t_worklog
+            } else {
+                return false
+            }
+        } 
         
     },
     methods: {
@@ -226,6 +233,7 @@ export default {
         async init() {
             this.form.sDate1 = getDate(-100, 1);
             this.viewInvoice();
+            this.comImageLog = await this.$axios.post(`/api/system/getSiteImage`);
         },
       
         async rowSelectMaster(item, row) {
@@ -674,9 +682,15 @@ export default {
             const company = await this.$axios.get(`/api/system/getCompany?${query}`);
             
             const doc = new jsPDF('p', 'mm', 'a4');
+            const img = new Image();   // 이미지를 로드합니다.
+            img.src = this.siteImglog; // 이미지 파일 경로
+
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
             doc.setFont("malgun");
+
+            doc.addImage(img, 'JPEG', 150, 30, 50, 20); // 이미지를 PDF에 추가합니다.
+            
             // 텍스트 출력
             doc.setFontSize(30);
             doc.text('거 래 명 세 표', 60, 30);

@@ -239,6 +239,7 @@ export default {
                 sDate1:"", sDate2:"", sEsimate:"", sVend:"", sStatus:"",
             },
             estDayFt: 15,
+            comImageLog: "",
         }
     },
     watch: {
@@ -273,7 +274,14 @@ export default {
                 if (row.f_edit == "1" || row.f_edit == "2") return true
             });
             return false;
-        },        
+        },
+        siteImglog() {
+            if (this.comImageLog.t_worklog) {
+                return this.comImageLog.t_worklog
+            } else {
+                return false
+            }
+        }        
     },
     methods: {
         ...mapActions("sales", ["getSaleEstimate", "iuSaleEstimate"]), 
@@ -301,6 +309,7 @@ export default {
             var data = await this.$axios.get(`/api/sales/getSaleEstimateInit?${query}`);
             this.estDayFt = parseFloat(data[0].m_buf1);
             this.select();
+            this.comImageLog = await this.$axios.post(`/api/system/getSiteImage`);            
         },
         async select() {
             this.selectedM = []; this.selectedD = [];
@@ -428,14 +437,16 @@ export default {
             
             // jsPDF 라이브러리를 가져옵니다.
             const doc = new jsPDF('p', 'mm', 'a4');
-            // 이미지를 로드합니다.
-            const img = new Image();
-            img.src = '/upload/memberPhoto/test4.jpg'; // 이미지 파일 경로
+            
+            const img = new Image();   // 이미지를 로드합니다.
+            img.src = this.siteImglog; // 이미지 파일 경로
+            
 
             doc.addFileToVFS("malgun.ttf", _fonts);
             doc.addFont("malgun.ttf", "malgun", "normal");
             doc.setFont("malgun");
 
+            // doc.addImage(img, 'JPEG', 150, 30, 50, 20); // 이미지를 PDF에 추가합니다.
             doc.addImage(img, 'JPEG', 150, 30, 50, 20); // 이미지를 PDF에 추가합니다.
 
             // 텍스트 출력

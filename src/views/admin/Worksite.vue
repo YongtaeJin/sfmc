@@ -20,7 +20,7 @@
             <tooltip-btn fab small label="등록" @click="clickLogImage"><v-icon>mdi-plus</v-icon></tooltip-btn>
         </v-toolbar>
         <div>            
-            <v-img :src="siteImglog"></v-img>
+            <v-img :src="siteImglog" max-width="200" max-height="100"></v-img>
         </div>
 
         <ez-dialog ref="dialog" label="사업장" persistent @onClose="closeDialog" width="500px">

@@ -1,7 +1,7 @@
 <template>    
     <v-form @submit.prevent="onImage" ref="form" >
         <v-text-field label="사업장코드" v-model="form.c_com"  readonly/>
-        <v-file-input label="이미지" v-model="form.t_image"  :multiple="false"  /> 
+        <v-file-input label="이미지" v-model="form.t_image"  :multiple="false"  accept="image/jpg,image/png" /> 
         <v-btn type="submit" block color="primary" >저 장</v-btn>
     </v-form>
 </template>
