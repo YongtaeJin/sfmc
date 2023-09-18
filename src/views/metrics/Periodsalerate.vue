@@ -19,7 +19,7 @@
                 <v-data-table ref="table" :headers="Head1" :items="headItem1" @click:row="rowSelectHead1" 
                         item-key="s_ym" single-select v-model="selectedM1"
                         :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                        class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
+                        class="elevation-1 text-no-wrap" :height=iframeHeight > 
                     <template v-slot:[`item.s_ym`]="{ item }">                
                         {{ item.s_ym.substring(0,7) }}
                     </template>
@@ -37,7 +37,7 @@
                 <v-data-table ref="table2" :headers="Head2" :items="headItem2Filter" @click:row="rowSelectHead2" 
                         item-key="i_orderser" single-select v-model="selectedM2"
                         :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                        class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
+                        class="elevation-1 text-no-wrap" :height=iframeHeight > 
                     <template v-slot:[`item.a_amt`]="{ item }">                
                         <div class="right2-align"> {{  comma(item.a_amt) }}</div>
                     </template>
@@ -56,13 +56,21 @@ import { comma, getDate, dateToKorean, numberToKorean, amtToKorean } from '../..
 export default {
     components: { InputDateft, TooltipBtn },
     name: "Periodsalerate",
-    mounted() {        
+    mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
-    },    
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
+    },
     data() {
        return {
            comma, 
            form : {sDate1:"", sDate2:"", sVend:"",},
+           iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
            Head1: [
                 {text: '년월',     value: 's_ym',     sortable: false, align:'center', width: "40px"},                
                 {text: '매출액',   value: 'a_orderamt', sortable: false, align:'center', width: "60px"},
@@ -70,7 +78,7 @@ export default {
             ],
             headItem1:[], headItem1Info:[], selectedM1: [],
             Head2: [
-                {text: '수주번호',    value: 'n_vend', sortable: false, align:'center', width: "80px"},                
+                {text: '수주번호',    value: 'i_orderno', sortable: false, align:'center', width: "80px"},                
                 {text: '수주일',      value: 's_date', sortable: false, align:'center', width: "60px"},
                 {text: '거래처',      value: 'n_vend', sortable: false, align:'center', width: "80px"},
                 {text: '품목코드',    value: 'c_item', sortable: false, align:'center', width: "60px"},
@@ -88,6 +96,11 @@ export default {
         },
     },
     methods: {
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200;
+        },
         async init() {
             this.form.sDate1 = getDate(-365, 1);
             this.form.sDate2 = getDate();

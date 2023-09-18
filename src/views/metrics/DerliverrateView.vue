@@ -68,7 +68,7 @@
         <v-data-table ref="item-makeavg" :headers="dayMakeAvgHead" :items="dayMakeList"                     
                     item-key="c_item" single-select hide-default-footer  @click:row="rowSelectmake"
                     :item-class= "row_classes" :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
+                    class="elevation-1 text-no-wrap"  :height=iframeHeight
                     >
 
         </v-data-table>
@@ -83,13 +83,21 @@ import { comma, getDate, dateToKorean, numberToKorean, amtToKorean } from '../..
 export default {
     components: { InputDateft, TooltipBtn },
     name: "Derliverrate",
-    mounted() {        
+    mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
-    },    
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
+    },
     data() {
         return {
             comma, 
             form : {sDate1:"", sDate2:"", sVend:"",},
+            iframeHeight: 200, // 초기 높이 설정 (원하는 높이로 초기화)
             masterHead: [
                 {text: '거래처',      value: 'n_vend', sortable: false, align:'center', width: "80px"},                
                 {text: '수주건수',    value: 'm_ordcnt', sortable: false, align:'center', width: "50px"},
@@ -126,6 +134,11 @@ export default {
         }
     },
     methods: {
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200 - 450;
+        },
         async init() {
             this.form.sDate1 = getDate(-365, 1);
             await this.view();

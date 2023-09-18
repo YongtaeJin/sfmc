@@ -23,7 +23,7 @@
                 <v-data-table ref="table" :headers="Head1" :items="headItem1" 
                     item-key="c_process" single-select v-model="selectedM1" @click:row="rowSelectHead1" 
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" > 
+                    class="elevation-1 text-no-wrap" height="300px" max-height="300px" > 
                     <template v-slot:[`item.p_per`]="{ item }">                        
                         <v-progress-linear :value="item.p_per"  color="red" height="18">                        
                             <strong>{{ item.p_per }}%</strong>                        
@@ -38,7 +38,7 @@
                 <v-data-table ref="table2" :headers="Head2" :items="headItem2" 
                     item-key="c_item" single-select v-model="selectedM2" @click:row="rowSelectHead2" 
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" > 
+                    class="elevation-1 text-no-wrap" height="300px" max-height="300px" > 
                     <template v-slot:[`item.p_per`]="{ item }">                        
                         <v-progress-linear :value="item.p_per"  color="red" height="18">                        
                             <strong>{{ item.p_per }}%</strong>                        
@@ -53,7 +53,7 @@
                 <v-data-table ref="table3" :headers="Head3" :items="headItem3" 
                     item-key="f_cause" single-select v-model="selectedM3" @click:row="rowSelectHead3" 
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" > 
+                    class="elevation-1 text-no-wrap" height="300px" max-height="300px" > 
                     <template v-slot:[`item.p_per`]="{ item }">                        
                         <v-progress-linear :value="item.p_per"  color="red" height="18">                        
                             <strong>{{ getCasueper(item) }}%</strong>                        
@@ -70,7 +70,7 @@
                 <v-data-table ref="table_proc" :headers="ProcHead" :items="procFilter" 
                     item-key="i_makeser" single-select v-model="procS" @click:row="rowSelectProc" 
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" >                     
+                    class="elevation-1 text-no-wrap" :height=iframeHeight >
 
                     <template v-slot:[`item.f_cause`]="{ item }"> {{getErrtypename(item.f_cause)}} </template>
                 </v-data-table> 
@@ -82,7 +82,7 @@
                 <v-data-table ref="table_item" :headers="ItemHead" :items="itemFilter" 
                     item-key="i_makeser" single-select v-model="itemS" @click:row="rowSelectItem" 
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" >
+                    class="elevation-1 text-no-wrap" :height=iframeHeight >
 
                     <template v-slot:[`item.f_cause`]="{ item }"> {{getErrtypename(item.f_cause)}} </template>
                 </v-data-table>
@@ -94,7 +94,7 @@
                 <v-data-table ref="table_cause" :headers="CauseHead" :items="causeFilter" 
                     item-key="i_makeser" single-select v-model="itemS" @click:row="rowSelectCause" 
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="200px" max-height="200px" >
+                    class="elevation-1 text-no-wrap" :height=iframeHeight >
 
                     <template v-slot:[`item.f_cause`]="{ item }"> {{getErrtypename(item.f_cause)}} </template>
                 </v-data-table>
@@ -110,13 +110,21 @@ import { comma, getDate, dateToKorean, numberToKorean, amtToKorean } from '../..
 export default {
    components: { InputDateft, TooltipBtn },
    name: "DefectrateRate",
-   mounted() {        
-       this.init();
-   },    
-   data() {
+    mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
+        this.init();
+    },    
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
+    },
+    data() {
        return {
            comma, 
            form : {sDate1:"", sDate2:"", sVend:"",},
+           iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
            itemSelect: false, tabIndex: 3,
            errType:[],
            Head1: [
@@ -200,6 +208,11 @@ export default {
         }
     },
     methods: {
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200 - 400;
+        },
         getErrtypename(val){
             const err = this.errType.find(obj => obj.c_code == val);
             return err ? err.n_code : '';
@@ -218,9 +231,6 @@ export default {
             this.itemItems = await this.$axios.post(`/api/metrics/getDefectrateratedt2`, this.form); 
             this.headItem3 = await this.$axios.post(`/api/metrics/getDefectraterate3`, this.form); 
             this.causeItems = await this.$axios.post(`/api/metrics/getDefectrateratedt3`, this.form); 
-
-            console.log(this.headItem3)
-
         },
         rowSelectHead1 :function (item, row) {                  
             this.tabIndex = 1;

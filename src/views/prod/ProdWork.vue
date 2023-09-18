@@ -19,7 +19,7 @@
         <v-data-table ref="item-table" :headers="itemHead" :items="itemList"                     
                     item-key="i_orderser" single-select hide-default-footer
                     :item-class= "row_classes" :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap"  max-height="250px" height="250px" 
+                    class="elevation-1 text-no-wrap"  :height=iframeHeight
                     >
              <template v-slot:item="{ item,index }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
@@ -65,7 +65,7 @@
                         item-key="i_ser" v-model="errRow" single-select @click:row="rowSelectProc"                        
                         hide-default-footer
                         :item-class= "row_classes" :items-per-page="-1" 
-                        class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
+                        class="elevation-1 text-no-wrap" max-height="200px" height="200px" 
                         >
                         <template v-slot:[`item.n_process`]="{ item }">
                             <v-chip v-if="item.f_jobf=='Y'" x-small :color="getColor('a')" dark > {{item.n_process}} </v-chip>
@@ -172,12 +172,20 @@ import validateRules from "../../../util/validateRules";
 export default {
     components: { InputDateft, TooltipBtn, EzDialog, InputDate2, InputAmt, DatesDialog},
     mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
     },
     data() {
         return {
             PROD001,
             valid: true,
+            iframeHeight: 250, // 초기 높이 설정 (원하는 높이로 초기화)
             form : {
                 sDate1:"", sDate2:"", sVend:"",
             },
@@ -253,6 +261,11 @@ export default {
     },
     methods: {     
         ...mapActions("prod", ["iuProdWorklist", "iuProdWorkset"]), 
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 180 - 270;
+        },
         shouldMergeRow(item) {
             const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemList.indexOf(item);
