@@ -1,5 +1,5 @@
 const db = require('../../plugins/mysql');
-const dbSet = require('./dbSet');
+// const dbSet = require('./dbSet');
 const sqlHelper = require('../../../util/sqlHelper');
 const TABLE = require('../../../util/TABLE');
 const jwt = require('../../plugins/jwt');
@@ -64,7 +64,7 @@ const prodModel = {
         let sql;
         let rv = [];
         let order = []; 
-        await dbSet.setAutoCommitNo();
+        // await dbSet.setAutoCommitNo();
         for (let i = 0; i < item.length; i++) {
             const {c_com, i_order, i_orderser, f_work, d_plan1, d_plan2, t_remark, f_edit, f_editold} = item[i];
             if (f_edit !== "1" || f_editold !== "0") continue;            
@@ -319,6 +319,7 @@ const prodModel = {
                 await db.execute('ROLLBACK');
                 return false;
             }
+            await db.execute('COMMIT');
             await addOrder(order, {c_com, i_order});
             await addOrderList(orderlist, {c_com, i_order, i_orderser});
         }
@@ -337,6 +338,7 @@ const prodModel = {
                 await db.execute('ROLLBACK');
                 return false;
             }
+            await db.execute('COMMIT');
         }
         // 발주서 list 상태 변경  (지시 <-> 작업 )
         let n_work1 = req.user.n_name;
@@ -356,6 +358,7 @@ const prodModel = {
                 await db.execute('ROLLBACK');
                 return false;
             }
+            await db.execute('COMMIT');
         }
 
         await db.execute('COMMIT');

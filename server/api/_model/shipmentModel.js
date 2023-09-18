@@ -7,18 +7,18 @@ const moment = require('../../../util/moment');
 const { LV, isGrant } = require('../../../util/level');
 const { extractNumber, addToUniqueArray } = require('../../../util/lib');
 
-async function setAutoCommitNo() {
-    const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
-    if (data[0].rt == 1) {
-        const [rv] = await db.execute('SET AUTOCOMMIT = FALSE');
-    }
-}
-async function setAutoCommit() {
-    const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
-    if (data[0].rt == 0) {
-        const rv = await db.execute('SET AUTOCOMMIT = TRUE');
-    }
-}
+// async function setAutoCommitNo() {
+//     const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
+//     if (data[0].rt == 1) {
+//         const [rv] = await db.execute('SET AUTOCOMMIT = FALSE');
+//     }
+// }
+// async function setAutoCommit() {
+//     const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
+//     if (data[0].rt == 0) {
+//         const rv = await db.execute('SET AUTOCOMMIT = TRUE');
+//     }
+// }
 function addEditCol(data) {	
 	data.f_edit = '0';	
     data.f_editold = '0';	
@@ -108,7 +108,7 @@ const shipmentModel = {
         let order = [];
         let orderlist = [];
 
-        await dbSet.setAutoCommitNo();
+        // await dbSet.setAutoCommitNo();
         for (let i = 0; i < item.length; i++) {
             const { c_com, i_shipser, i_shipno, d_ship, i_order, i_orderser, m_shipcnt, t_remark, f_edit, f_editold } = item[i];
             if (f_edit == "0") continue;      // 수정 내용 없음
@@ -387,6 +387,7 @@ const shipmentModel = {
                     db.execute('ROLLBACK');
                     return false;
                 }
+                db.execute('COMMIT');
                 // 발주 item 상태 변경
                 if (i_orderser.length) {
                     addOrder(order, {c_com, i_order});
@@ -578,6 +579,7 @@ const shipmentModel = {
                 await db.execute('ROLLBACK');
                 return false;
             }
+            await db.execute('COMMIT');
             // 발주 item 상태 변경
             const { i_order, i_orderser, i_invoiceser} = item;
             if (i_orderser.length) { 

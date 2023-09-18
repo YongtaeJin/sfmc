@@ -412,7 +412,7 @@ const systemModel = {
         const payload = {...req.body};
         const {c_com} = payload;
         
-        await dbSet.setAutoCommitNo();
+        // await dbSet.setAutoCommitNo();
         let res =null;
         const sql1 = sqlHelper.DeleteSimple(TABLE.COMCODE, { c_com });
         const sql2 = sqlHelper.DeleteSimple(TABLE.GRPCODE, { c_com });

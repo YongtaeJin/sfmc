@@ -6,18 +6,18 @@ const moment = require('../../../util/moment');
 const { LV, isGrant } = require('../../../util/level');
 const { extractNumber } = require('../../../util/lib');
 
-async function setAutoCommitNo() {
-    const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
-    if (data[0].rt == 1) {
-        const [rv] = await db.execute('SET AUTOCOMMIT = FALSE');
-    }
-}
-async function setAutoCommit() {
-    const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
-    if (data[0].rt == 0) {
-        const rv = await db.execute('SET AUTOCOMMIT = TRUE');
-    }
-}
+// async function setAutoCommitNo() {
+//     const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
+//     if (data[0].rt == 1) {
+//         const [rv] = await db.execute('SET AUTOCOMMIT = FALSE');
+//     }
+// }
+// async function setAutoCommit() {
+//     const [data] = await db.execute('SELECT @@AUTOCOMMIT rt');
+//     if (data[0].rt == 0) {
+//         const rv = await db.execute('SET AUTOCOMMIT = TRUE');
+//     }
+// }
 function addEditCol(data) {	
 	data.f_edit = '0';	
     data.f_editold = '0';	
