@@ -327,7 +327,7 @@ export default {
         },
         async select() {
             this.selectedM = []; this.selectedD = [];
-            this.estimate = [];
+            this.estimate = [];            
             this.itmelit = [];
             this.itmelitFilter = [];
             
@@ -346,14 +346,18 @@ export default {
             this.estimate = item;  
             this.rowFilter(item);                                
         },
-        rowFilter(item) {      
-            if (this.itmelits.length > 0) {
-                this.itmelitFilter = this.itmelits.filter((r) => {
-                    return r.i_ser == item.i_ser && r.c_com == item.c_com;
-                }); 
-            } else {
-                this.itmelitFilter = [];
-            }
+        rowFilter(item) {
+            // console.log(item);
+            // if (this.itmelits.length > 0) {
+            //     this.itmelitFilter = this.itmelits.filter((r) => {
+            //         return r.i_ser == item.i_ser && r.c_com == item.c_com;
+            //     }); 
+            // } else {
+            //     this.itmelitFilter = [];
+            // }
+            //this.itemRouterFilter = this.itemRouters.filter(obj => obj.c_com == item.c_com && obj.i_order == item.i_order && obj.i_orderser == item.i_orderser && obj.f_edit !== "2").map(obj => ({...obj}));
+            this.itmelitFilter = this.itmelits.filter(obj => obj.i_ser == item.i_ser).map(obj => ({...obj}));
+
         },
         async addEstimates() {   
             if (this.editJob) {
