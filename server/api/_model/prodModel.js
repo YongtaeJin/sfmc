@@ -111,9 +111,9 @@ const prodModel = {
         
         for (let i = 0; i < masterdb.length; i++) {
             const {c_com, i_order, i_orderser, f_work, d_plan1, d_plan2, t_remark, f_edit, f_editold} = masterdb[i];
-            if (f_edit !== "1" || f_editold !== "0") continue;            
-        
+            if (f_edit !== "1" || f_editold !== "0") continue;                        
             sql = sqlHelper.Update(TABLE.ORDERLI, {f_work, d_plan1, d_plan2, t_remark, n_plan, d_plan_at}, {c_com, i_order, i_orderser});           
+            console.log(sql)
             const [row] = await db.execute(sql.query, sql.values); 
             if (row.affectedRows > 0) {
                 rv[rv.length] = i_orderser;
@@ -135,6 +135,7 @@ const prodModel = {
                   `   and a.f_status in ('P', 'S') `;
             const res = await db.execute(sql.query);             
             if (res.affectedRows < 1) { db.execute('ROLLBACK'); return false;}
+            await db.execute('COMMIT');
         }
        
         // 공정별 세부일정 저장
