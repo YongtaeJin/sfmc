@@ -189,6 +189,11 @@ const routes = [
 
 	// KPI 
 	{
+		path: '/adm/kpimanager',
+		name: 'kPIManager',
+		component: () => import(/* webpackChunkName: "kPIManager" */ '../views/kpi/KpiManager.vue')
+	},
+	{
 		path: '/kpi/level1',
 		name: 'KPILevel1',
 		component: () => import(/* webpackChunkName: "KPILevel1" */ '../views/kpi/Level1View.vue')

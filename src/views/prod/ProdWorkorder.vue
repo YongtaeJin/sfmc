@@ -85,6 +85,7 @@
         <v-toolbar height="25px" background-color="primary" dark >
             <v-toolbar-title>공정별 세부일정</v-toolbar-title>
             <v-spacer/>
+            <tooltip-btn v-if="itemInfo.f_work == '1'" label="초기화" @click="proccdel" :height="20"><v-icon>mdi-notification-clear-all</v-icon></tooltip-btn>
         </v-toolbar>
         <v-data-table ref="table" :headers="routerHead" :items="itemRouterFilter" @click:row="rowSelectRouter" 
             item-key="i_ser" single-select v-model="selectR"
@@ -255,10 +256,10 @@ export default {
         async del() {},
         async save() {
             const edititem = this.itemList.filter(obj => obj.f_edit === '1').map(obj => ({...obj}));
-            const edititemdt = this.itemRouters.filter(obj => obj.f_edit === '1').map(obj => ({...obj}));
+            const edititemdt = this.itemRouters.filter(obj => obj.f_edit === '1' || obj.f_edit === '2').map(obj => ({...obj}));
 
             if (edititem.length || edititemdt.length) {            
-                const plandata = {master:edititem, detail: edititemdt }  // 수주정보 비고란 + 공정별세부일정\\                
+                const plandata = {master:edititem, detail: edititemdt }  // 수주정보 비고란 + 공정별세부일정\\   
                 const data = await this.iuProdPlanlist2(plandata);                
                 if (data) {
                     this.itemList.forEach((row, index) => {
@@ -278,29 +279,30 @@ export default {
                 return "orange";
             } 
         },
-        rowSelect :function (item, row) {
-            console.log("ddd")
+        rowSelect :function (item, row) {            
             if (this.itemInfo.i_orderser == item.i_orderser) return;
             this.itemInfo = item;
-            if (row) { row.select(true) } else { this.selected = [item] }
-            console.log("a")
-            // this.itemRouters
-
+            if (row) { row.select(true) } else { this.selected = [item] }            
         },
-        async selectItem(item) {
-            if (this.itemInfo.i_orderser == item.i_orderser) return;
+        async selectItem(item, chk) {
+            
+            if (this.itemInfo.i_orderser == item.i_orderser && !chk ) return;            
             this.selected = item;
             this.itemInfo = item;
 
-            this.itemRouterFilter = this.itemRouters.filter(obj => obj.c_com == item.c_com && obj.i_order == item.i_order && obj.i_orderser == item.i_orderser).map(obj => ({...obj}));
+            this.itemRouterFilter = this.itemRouters.filter(obj => obj.c_com == item.c_com && obj.i_order == item.i_order && obj.i_orderser == item.i_orderser && obj.f_edit !== "2").map(obj => ({...obj}));
             
             if (this.itemRouterFilter.length == 0) { 
-                this.itemRouterFilter = await this.$axios.post(`/api/prod/getProdplan`, item); 
+                if (!chk ) { 
+                    // console.log("조회")
+                    this.itemRouterFilter = await this.$axios.post(`/api/prod/getProdplan`, item); 
+                }
                 if (this.itemRouterFilter.length) {                    
                     this.itemRouters = [...this.itemRouters, ...this.itemRouterFilter];
                 } else {
                     if (parseInt(this.itemInfo.f_work) < 2 )  {
                         this.itemRouterFilter = await this.$axios.post(`/api/prod/getItemRouterProc`, item); 
+                        // console.log("new")
                         this.itemRouterFilter.forEach((row) => {
                             row.i_order  = this.itemInfo.i_order;
                             row.i_orderser = this.itemInfo.i_orderser;
@@ -360,8 +362,10 @@ export default {
             if (row) { row.select(true) } else { this.selectR = [item] }
 
         },
-        onChange(item) {
+        onChange(item, col) {
             item.f_edit = "1";
+            const idx = this.itemRouters.indexOf(item);
+            
         },
         async getEmpno(item) {
             this.$refs.dialog_emp.open();
@@ -390,6 +394,20 @@ export default {
             } 
             item.f_edit = "1";
         },
+        async proccdel() {
+            if(this.itemInfo.f_work == '1') {                           
+                for (let i = this.itemRouterFilter.length - 1; i >= 0; i --) {
+                    if (this.itemRouterFilter[i].f_editold == "1") {
+                        this.itemRouterFilter.splice(i, 1)
+                    } else {
+                        const idx = this.itemRouters.indexOf( this.itemRouterFilter[i]);
+                        this.itemRouters[idx].f_edit = "2";
+                        this.itemRouterFilter[i].f_edit = "2"
+                    }
+                }
+                await this.selectItem(this.itemInfo, "del");
+            }        
+        }
 
     }
 

@@ -102,9 +102,12 @@ const prodModel = {
         let sql;
         let rv = [];
         let order = []; 
-                
-        const masterdb = await sqlHelper.objectSplit(master, "d");
+                ///////////////////////////////////////////////////////////////////////////////////////////
+        const masterdb = await sqlHelper.objectSplit(master, 'd');
         const detaildb = await sqlHelper.objectSplit(detail, "d");
+        // 삭제 처리 후 작업 위해 정렬순서 변경 작업 objArray.sort((a, b) => a.id - b.id); // id 프로퍼티를 기준으로 오름차순 정렬        
+        detaildb.sort((a,b) => b.f_edit - a.f_edit);
+        
         for (let i = 0; i < masterdb.length; i++) {
             const {c_com, i_order, i_orderser, f_work, d_plan1, d_plan2, t_remark, f_edit, f_editold} = masterdb[i];
             if (f_edit !== "1" || f_editold !== "0") continue;            

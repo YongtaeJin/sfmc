@@ -46,6 +46,7 @@ export default {
 			],
 			siteMenus : [				
 				{title : '사업장 관리', icon:'mdi-account-cog', to:'/adm/worksite'},
+				{title : 'KPI 관리', icon:'mdi-lan-connect', to:'/adm/kpimanager'},
 			]
 		}
 	},
