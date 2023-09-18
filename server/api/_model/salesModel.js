@@ -85,7 +85,7 @@ const salesModel = {
         }
         where += ` ORDER BY c_com, i_ser `;
         
-        console.log(where, values);
+        console.log('getSaleEstimate', where, values);
         // const sql = sqlHelper.SelectSimple(TABLE.ESTIMATE, { c_com, f_use:'Y' });     
         const [rows] = await db.execute(where, values);        
 
