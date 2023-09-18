@@ -11,7 +11,7 @@
         <v-data-table :headers="headers" :items="items" @click:row="rowSelect" @dblclick:row="showRowInfo" class="elevation-1 text-no-wrap" 
             item-key="i_id" single-select
             :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-            height="500px" max-height="500px" > 
+            :height="iframeHeight" > 
         <!-- <v-data-table :headers="headers" :items="items" @dblclick:row=showRowInfo
             v-model="selected" :single-select="true" item-key="i_id" show-select > -->
             <template v-slot:[`item.i_level`]="{ item }">                
@@ -42,10 +42,18 @@ export default {
     name: "Systemusers",
     
     mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
     },
     data() {
         return {
+            iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
             headers: [
                 {text: 'ID',  value: 'i_id', sortable: true, align:'center', },
                 {text: '성명',  value: 'n_name', sortable: true, align:'center', },
@@ -68,6 +76,11 @@ export default {
     },    
     methods: {
         ...mapActions("system", ["duplicateDualCheck", "iuWorkUser"]),
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200;           
+        },
         getLvlabel (lv) {            
             var i = LVITEMS.findIndex(i => i.lv == lv );
             return (lv > -1) ?  LVITEMS[i].label : lv;

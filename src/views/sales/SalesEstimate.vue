@@ -39,7 +39,7 @@
                     item-key="i_ser" single-select v-model="selectedM"
                     
                     :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap" height="515px" max-height="515px" > 
+                    class="elevation-1 text-no-wrap" :height="iframeHeight" > 
 
                     <template v-slot:[`item.f_status`]="{ item }">
                         {{getStatus(item.f_status)}} 
@@ -136,7 +136,7 @@
                     single-select v-model="selectedD"                    
                     :items-per-page="-1"  hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
                     :item-class= "row_classes" 
-                    class="elevation-1 text-no-wrap" height="290px" max-height="290px">
+                    class="elevation-1 text-no-wrap" :height="iframeHeight - 230">
                     
                     <template v-slot:[`item.s_sort`]="{ item }">                        
                         <input-number v-model="item.s_sort" :maxlength="2" @input="onChangeDetail" v-if="edit && item.i_serno === itmelit.i_serno" ></input-number>                        
@@ -209,12 +209,20 @@ export default {
     
     name: "Salesestimate",
     mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
     },
     data() {
         return {
             ESTI001,            
             valid: true,
+            iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
             master: [
                 {text: '견적번호',  value: 'i_estno', sortable: false, align:'center', width: "65px"},                
                 {text: '상태',  value: 'f_status', sortable: false, align:'center', width: "25px"},
@@ -286,6 +294,11 @@ export default {
     },
     methods: {
         ...mapActions("sales", ["getSaleEstimate", "iuSaleEstimate"]), 
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 230;           
+        },
         comma (value) {
             if (value !== null && value !== undefined) {
                 return String(Math.trunc(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');

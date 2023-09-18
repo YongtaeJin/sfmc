@@ -19,7 +19,7 @@
         <v-data-table ref="data-table" :headers="itemHead" :items="itemList"                     
                     item-key="i_orderser" single-select 
                     :item-class= "row_classes" :items-per-page="-1"  hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap"  max-height="300px"  height="300px" 
+                    class="elevation-1 text-no-wrap"  max-height="350px"  height="350px" 
                     >
             <template v-slot:header="">
                 <thead align='center'>
@@ -89,7 +89,7 @@
         <v-data-table ref="table" :headers="routerHead" :items="itemRouterFilter" @click:row="rowSelectRouter" 
             item-key="i_ser" single-select v-model="selectR"
             hide-default-footer :items-per-page="-1" :item-class= "row_classes" 
-            class="elevation-1 text-no-wrap" height="150px" max-height="150px" > 
+            class="elevation-1 text-no-wrap" :height=iframeHeight > 
 
             <template v-slot:[`item.f_jobs`]="{ item }">    
                 <div @dblclick="handleDoubleClick(item, 'f_jobs')">
@@ -171,6 +171,7 @@ export default {
         return {
             PROD001,
             valid: true,
+            iframeHeight: 200, // 초기 높이 설정 (원하는 높이로 초기화)
             form : {
                 sDate1:"", sDate2:"", sVend:"", work:"order",
             },
@@ -211,8 +212,15 @@ export default {
     },
     mounted() {
         // this.form.sDate1=previousMonth();
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정      
         this.form.sDate1=getDate(-100, 1);
         this.init();
+    },    
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
     },
     watch: {
     },
@@ -221,6 +229,11 @@ export default {
     },
     methods: {     
         ...mapActions("prod", ["iuProdPlanlist2"]), 
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200 - 400;           
+        },
         shouldMergeRow(item) {
             const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemList.indexOf(item);

@@ -14,7 +14,7 @@
         <v-data-table ref="table" :headers="masterHead" :items="masters" @click:row="rowSelectMaster" 
             item-key="i_hrbaseser" single-select v-model="selectedM"
             hide-default-footer :items-per-page="-1" :item-class= "row_classes" 
-            class="elevation-1 text-no-wrap" height="500px" max-height="500px" > 
+            class="elevation-1 text-no-wrap" :height="iframeHeight"  > 
 
             <template v-slot:[`item.s_sort`]="{ item }">
                 <v-text-field v-model="item.s_sort" @input="onChange" v-if="item.i_hrbaseser === masterinfo.i_hrbaseser" dense hide-details class="my-text-field" />
@@ -60,11 +60,19 @@ import TooltipBtn from '../../components/etc/TooltipBtn.vue'
 export default {
     components: { TooltipBtn },
     name: "BasejobHr",
-    mounted() {        
+    mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
-    },    
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
+    },
     data() {
         return {
+            iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
             masterHead: [
                 {text: 'No',     value: 's_sort',    sortable: false, align:'center', width: "40px"},                
                 {text: '사번',    value: 'i_empno',  sortable: false, align:'center', width: "70px"},
@@ -86,6 +94,11 @@ export default {
     },
     methods: {
         ...mapActions("basejob", ["iuHrbase"]),
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200;           
+        },
         async init() {
             this.view()
         },

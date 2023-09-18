@@ -19,7 +19,7 @@
         <v-data-table ref="item-table" :headers="itemHead" :items="itemLists"                     
                     item-key="i_orderser" single-select hide-default-footer
                     :item-class= "row_classes" :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap" :height=iframeHeight
+                    class="elevation-1 text-no-wrap" max-height="350px" height="350px" 
                     >
             <template v-slot:item="{ item,index }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
@@ -69,7 +69,7 @@
         <v-data-table ref="item-makeavg" :headers="dayMakeAvgHead" :items="dayMakeList"                     
                     item-key="c_item" single-select hide-default-footer  @click:row="rowSelectmake"
                     :item-class= "row_classes" :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap"  max-height="200px" height="200px" 
+                    class="elevation-1 text-no-wrap"  :height="iframeHeight"
                     >
 
         </v-data-table>
@@ -106,7 +106,7 @@ export default {
             form : {
                 sDate1:"", sDate2:"", sVend:"",
             },
-            iframeHeight: 400, // 초기 높이 설정 (원하는 높이로 초기화)
+            iframeHeight: 200, // 초기 높이 설정 (원하는 높이로 초기화)
             itemHead: [
                 {text: 'No',       sortable: false, align:'center', width: "25"},
                 {text: '수주번호',   value: 'i_orderno', sortable: false, align:'center', width: "75"},
@@ -147,7 +147,7 @@ export default {
         adjustIframeHeight() {
         // 브라우저 창의 높이를 iframe의 높이로 설정
             const windowHeight = window.innerHeight;
-            this.iframeHeight = windowHeight - 180;
+            this.iframeHeight = windowHeight - 200 - 400;
         },
         async init() {
             this.form.sDate1=getDate(-100, 1);

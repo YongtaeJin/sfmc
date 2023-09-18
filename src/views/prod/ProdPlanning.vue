@@ -18,8 +18,8 @@
         </v-card>
         <v-data-table ref="data-table" :headers="itemHead" :items="itemList"                     
                     item-key="i_orderser" single-select 
-                    :item-class= "row_classes" :items-per-page="20" :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
-                    class="elevation-1 text-no-wrap"  max-height="500px" 
+                    :item-class= "row_classes" :items-per-page="-1" hide-default-footer :footer-props="{'items-per-page-options': [10, 20, 30, 40, 50, 100, -1]}" 
+                    class="elevation-1 text-no-wrap"  :height=iframeHeight
                     >
             <template v-slot:header="">
                 <thead align='center'>
@@ -106,6 +106,7 @@ export default {
         return {
             PROD001,
             valid: true,
+            iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
             form : {
                 sDate1:"", sDate2:"", sVend:"", work:"plan",
             },
@@ -130,7 +131,14 @@ export default {
         }
     },
     mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
     },
     watch: {
     },
@@ -138,6 +146,11 @@ export default {
     },
     methods: {     
         ...mapActions("prod", ["iuProdPlanlist"]), 
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200;           
+        },
         shouldMergeRow(item) {
             const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);
             return index === this.itemList.indexOf(item);

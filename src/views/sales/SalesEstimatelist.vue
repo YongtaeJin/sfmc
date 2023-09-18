@@ -17,7 +17,7 @@
         <v-data-table :headers="itemHead" :items="itemLists"
                     item-key="i_serno" single-select hide-default-footer
                     :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap"  max-height="500px" height="500px" 
+                    class="elevation-1 text-no-wrap" :height=iframeHeight >
                     > 
             <template v-slot:item="{ item,index }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)" v-if="shouldMergeRow(item) ">
@@ -58,14 +58,21 @@ import { getDate, previousMonth } from '../../../util/lib';
 export default {
   components: { InputDateft, TooltipBtn },
     name: "EstimateList",
-    mounted() {        
+    mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정 
         this.init();
     },
-    
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
+    },
     data() {
         return {
             ESTI001,
             form : {sDate1:"", sDate2:"", sVend:"",},
+            iframeHeight: 500, // 초기 높이 설정 (원하는 높이로 초기화)
             itemHead: [
                 {text: 'No',            sortable: false, align:'center', width: "50px"},
                 {text: '견적번호',   value: 'i_estno', sortable: false, align:'center', width: "60px"},
@@ -98,6 +105,11 @@ export default {
             } else {
                 return String(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             }
+        },
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200;           
         },
     
         shouldMergeRow(item) {

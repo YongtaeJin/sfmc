@@ -23,7 +23,7 @@
         <v-data-table ref="item-table" :headers="itemHead" :items="itemLists"                     
                     item-key="i_orderser" single-select hide-default-footer
                     :item-class= "row_classes" :items-per-page="-1" 
-                    class="elevation-1 text-no-wrap"  max-height="280px" height="280px" 
+                    class="elevation-1 text-no-wrap"  max-height="350px" height="350px" 
                     > 
             <template v-slot:item="{ item,index }">
                 <tr :class="{ 'row_select': item === selected }" class="center-align" @click="selectItem(item)">
@@ -53,7 +53,7 @@
         <v-data-table ref="tabledt" :headers="itemHeaddt" :items="itemdts"                     
                     item-key="i_shipser" single-select v-model="selectedItemIndex"  @click:row="selectItemDt"  
                     :item-class= "row_classes" :items-per-page="-1"  hide-default-footer                    
-                    class="elevation-1 text-no-wrap"  max-height="160px" height="160px" 
+                    class="elevation-1 text-no-wrap"  :height=iframeHeight
                     >
             <template v-slot:[`item.i_shipno`]="{ item }">
                 <v-text-field v-model="item.i_shipno" @input="onChangeDetail" v-if=" edit && item.i_shipser === selectdt.i_shipser" dense hide-details class="my-text-field" />
@@ -90,14 +90,21 @@ import InputNumber from '../../components/InputForms/InputNumber.vue';
 export default {    
     components: { TooltipBtn,  InputDateft, InputDate2, InputAmt, InputNumber},
     name: "DerliverView",
-    mounted() {        
+    mounted() {
+        // 창 크기가 변경될 때마다 iframe의 높이를 조정
+        window.addEventListener('resize', this.adjustIframeHeight);
+        this.adjustIframeHeight(); // 초기 조정
         this.init();
     },
-    
+    beforeDestroy() {
+        // 컴포넌트가 파기될 때 리스너 제거
+        window.removeEventListener('resize', this.adjustIframeHeight);
+    },
     data() {
         return {
             PROD001,
             valid: true,
+            iframeHeight: 180, // 초기 높이 설정 (원하는 높이로 초기화)
             form : {
                 sDate1:"", sDate2:"", sVend:"",
             },
@@ -148,7 +155,12 @@ export default {
         }
     },
     methods: {     
-        ...mapActions("shipment", ["iuDerliverlist", "iuShipWorkset"]),         
+        ...mapActions("shipment", ["iuDerliverlist", "iuShipWorkset"]),
+        adjustIframeHeight() {
+        // 브라우저 창의 높이를 iframe의 높이로 설정
+            const windowHeight = window.innerHeight;
+            this.iframeHeight = windowHeight - 200 - 410;
+        },
         comma (value) {
             if (value !== null && value !== undefined) {
                 return String(Math.trunc(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
