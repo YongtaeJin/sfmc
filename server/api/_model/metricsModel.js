@@ -14,7 +14,7 @@ const metricsModel = {
 
         var values = new Array();
         values.push(c_com); 
-        let query = `SELECT a.c_com, a.c_vend, a.n_vend, \n` +
+        let query = `SELECT a.c_com, a.c_vend, MAX(a.n_vend) n_vend, \n` +
                     `       COUNT(*) m_ordcnt, SUM(CASE WHEN i = 0 AND e = 0 THEN 1 ELSE 0 END) m_ok, SUM(CASE WHEN i = 0 AND e > 0 THEN 1 ELSE 0 END) m_no, SUM(CASE WHEN i = 1 THEN 1 ELSE 0 END ) m_ing \n` +
                     `  FROM (SELECT a.c_com, a.c_vend, MAX(a.n_vend) n_vend, a.i_order, \n` +
                     `               MAX(CASE WHEN s_date2 >= NOW() THEN CASE WHEN b.m_cnt > IFNULL(c.m_shipcnt,0) THEN 1 ELSE 0 END ELSE 0 END) i, \n` +
@@ -42,9 +42,9 @@ const metricsModel = {
         }
         query +=    `        GROUP BY a.c_com, a.c_vend, a.i_order \n` +
                     `       ) a \n` +
-                    ` GROUP BY a.c_com, a.c_vend, a.n_vend \n` +
+                    ` GROUP BY a.c_com, a.c_vend \n` +
                     ` ORDER BY 1, 3` ;        
-        console.log(query, values)
+        console.log('getDerliverrate', query, values)
         const [rows] = await db.execute(query, values);   
     
         return rows;

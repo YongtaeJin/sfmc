@@ -323,6 +323,7 @@ const prodModel = {
             const f_status = rv.cnt > 0 ? "W" : 'P';
             
             const sql = sqlHelper.Update(TABLE.ORDER, {f_status}, order[i]);
+            console.log(sql);
             const res = await db.execute(sql.query, sql.values);
             if (res.affectedRows < 1) {
                 await db.execute('ROLLBACK');
