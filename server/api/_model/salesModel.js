@@ -374,37 +374,6 @@ const salesModel = {
             await db.execute('COMMIT');           
         }
         
-        // detail.forEach((row, index) => {
-        //     if(row.f_edit !== "0" || row.f_editold !== "0") {
-        //         const {i_orderser} = row;
-        //         const newdata = row.f_editold !== "0" ? true : false;
-        //         const deldata = row.f_edit == "2" ? true : false;
-        //         delete row.f_edit;
-        //         delete row.f_editold;
-        //         if (newdata) {
-        //             delete row.d_update_at;
-        //             delete row.n_upnm;
-        //             row.d_create_at = at;
-        //             row.n_crnm = req.user.n_name;
-        //         } else {
-        //             row.d_update_at = at;
-        //             row.n_upnm = req.user.n_name;
-        //             delete row.d_create_at;
-        //             delete row.n_crnm;
-        //         }
-        //         delete row.d_plan_at;
-        //         delete row.d_work1_at; 
-        //         delete row.d_work3_at; 
-        //         delete row.d_work4_at;
-        //         delete row.d_work5at;
-        //         const sql = deldata ? sqlHelper.DeleteSimple(TABLE.ORDERLI, {c_com, i_order, i_orderser}) : newdata ? sqlHelper.Insert(TABLE.ORDERLI, row) : sqlHelper.Update(TABLE.ORDERLI, row, {c_com, i_order, i_orderser});
-                
-        //         console.log("detial", sql);                
-        //         const res = sqlDbExecute(sql);  ///       
-        //         if (res.affectedRows < 1) return index + 1;
-        //     }
-        //     db.execute('COMMIT');
-        // })
         for (let i = 0; i < detail.length; i++) {
             if(detail[i].f_edit !== "0" || detail[i].f_editold !== "0") {
                 const row = { ...detail[i], }
@@ -436,7 +405,6 @@ const salesModel = {
                 if (res.affectedRows < 1) return index + 1;
             }
             await db.execute('COMMIT');
-
         }
 
         await db.execute('COMMIT');

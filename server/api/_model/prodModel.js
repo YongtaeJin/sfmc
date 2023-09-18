@@ -165,8 +165,10 @@ const prodModel = {
                 if (res.affectedRows < 1) {
                     db.execute('ROLLBACK');
                     return false;
-                }                
+                } 
+                db.execute('COMMIT');
             }
+            
         });
         await db.execute('COMMIT');
         return true;
