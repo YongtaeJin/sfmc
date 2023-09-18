@@ -76,6 +76,7 @@ const prodModel = {
                 addToUniqueArray(order, i_order);
             }
         }
+        await db.execute('COMMIT');
         // 발주정보 확인 하여 발주 상태 저장 
         for (let i = 0; i < order.length; i++) {
             sql.query = `update tb_order a \n ` +
@@ -120,6 +121,7 @@ const prodModel = {
             } else {
                 db.execute('ROLLBACK'); return false;
             }
+            await db.execute('COMMIT');
         }
         // 발주정보 확인 하여 발주 상태 저장 
         console.log("발주정보 확인 하여 발주 상태 저장 ");
@@ -286,7 +288,7 @@ const prodModel = {
         let order = []; 
         let orderlist = []; 
         
-        await dbSet.setAutoCommitNo();
+        // await dbSet.setAutoCommitNo();
         for (let i = 0; i < item.length; i++) {
             const {c_com, i_order, i_orderser, i_makeser, s_workday, f_err, m_cnt, m_err, i_process, f_cause, n_name, t_remark, f_edit, f_editold} = item[i];
             if (f_edit == "0") continue;      // 수정 내용 없음
@@ -362,7 +364,9 @@ const prodModel = {
         const n_work3 = req.user.n_name;
         const d_work3_at = moment().format('LT');
         const sql = sqlHelper.Update(TABLE.ORDERLI, {f_work, n_work3, d_work3_at}, {c_com, i_order, i_orderser});
+        console.log("iuProdWorkset", sql)
         const res = await db.execute(sql.query, sql.values);
+        console.log("res]n", res)
         if (res.affectedRows < 1) {
             await db.execute('ROLLBACK');
             return false;

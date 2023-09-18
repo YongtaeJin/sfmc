@@ -92,6 +92,10 @@
             hide-default-footer :items-per-page="-1" :item-class= "row_classes" 
             class="elevation-1 text-no-wrap" :height=iframeHeight > 
 
+            <template v-slot:[`item.s_sort`]="{ item }">                
+                <input-number v-model="item.s_sort" @input="onChange(item)" v-if="itemInfo.f_work == '1' && item.i_ser === routerInfo.i_ser"></input-number>
+                <div v-else> {{  item.s_sort }}</div>            
+            </template> 
             <template v-slot:[`item.f_jobs`]="{ item }">    
                 <div @dblclick="handleDoubleClick(item, 'f_jobs')">
                 <v-icon v-if="item.f_jobs=='Y'" small color=#008000> mdi-check </v-icon>
@@ -193,6 +197,7 @@ export default {
             ],
             itemList:[], itemInfo:[], selected:[],
             routerHead: [
+                {text: 'No',  value: 's_sort', sortable: false, align:'center', width: "40"},
                 {text: '첫공정',  value: 'f_jobs', sortable: false, align:'center', width: "40"},
                 {text: '외주',  value: 'f_jobo', sortable: false, align:'center', width: "40"},
                 {text: '마지막',  value: 'f_jobf', sortable: false, align:'center', width: "40"},

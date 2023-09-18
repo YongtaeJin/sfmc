@@ -147,9 +147,9 @@ const salesModel = {
         // f_edit =  0:변경없음, 1:수정, 2:삭제
         const master = objectSplit(req.body, 'm');
         const detail = objectSplit(req.body, 'd');        
-        console.log(req.body)
-        console.log(master)
-        console.log(detail)
+        // console.log(req.body)
+        // console.log(master)
+        // console.log(detail)
         
         const {c_com, i_ser } = master;
         
@@ -175,7 +175,7 @@ const salesModel = {
             const [row] = await db.execute(sql.query, sql.values);            
             if (row.affectedRows < 1) return -1;            
         }
-        
+        await db.execute('COMMIT');
         detail.forEach((row, index) => {
             if(row.f_edit !== "0" || row.f_editold !== "0") {
                 const {i_serno} = row;
@@ -370,7 +370,8 @@ const salesModel = {
 
             console.log("master", sql)      
             const [row] = await db.execute(sql.query, sql.values);
-            if (row.affectedRows < 1) return -1;            
+            if (row.affectedRows < 1) return -1; 
+            await db.execute('COMMIT');           
         }
         
         detail.forEach((row, index) => {
@@ -402,6 +403,7 @@ const salesModel = {
                 const res = sqlDbExecute(sql);  ///       
                 if (res.affectedRows < 1) return index + 1;
             }
+            db.execute('COMMIT');
         })
         await db.execute('COMMIT');
         return 0;
