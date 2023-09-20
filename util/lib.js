@@ -60,6 +60,20 @@ const lib = {
 		const dateString = dd !== undefined || dd > 0 ? `${year}-${month}-${String(dd).padStart(2, '0')}` :`${year}-${month}-${day}` ;
 		return dateString;
 	},
+	getYYYYmmdd() {
+		const now = new Date(Date.now());
+		const year = now.getFullYear();		
+		const month = String(now.getMonth() + 1).padStart(2, '0');
+		const day = String(now.getDate()).padStart(2, '0');		
+		return year + month + day;
+	},
+	getHHmm() {
+		const now = new Date(Date.now());
+		const hours = now.getHours().toString().padStart(2, '0');
+		const minutes = now.getMinutes().toString().padStart(2, '0'); 
+		return hours + minutes;
+
+	},
 	numberToKorean(number) {
 		const units = ['', '만', '억', '조', '경', '해'];
 		const digits = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];

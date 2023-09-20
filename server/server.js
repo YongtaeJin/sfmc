@@ -21,8 +21,8 @@ require('./plugins/pm2Bus');
 	}, 5000);
 
 	setInterval(() => {
-		// kpiModel.load();		
-	}, 60000);
+		kpiModel.load();
+	}, 60 * 1000); // 1분 = 60초 * 1000밀리초
 
 	let isDiableKeepAlive = false;
 	app.use((req, res, next) => {

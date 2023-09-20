@@ -25,4 +25,25 @@ router.post('/getKpi1dt', async (req, res) => {
     const result = await modelCall(kpiModel.getKpi1dt, req);
 	res.json(result);
 });
+router.post('/getWorksite', async (req, res) => {
+    const result = await modelCall(kpiModel.getWorksite, req);
+    res.json(result);
+});
+router.post('/getResKpi', async (req, res) => {
+    const result = await modelCall(kpiModel.getResKpi, req);
+    res.json(result);
+});
+router.post('/getKpiFild', async (req, res) => {
+    const result = await modelCall(kpiModel.getKpiFild, req);
+    res.json(result);
+});
+router.post('/getKPITime', async (req, res) => {
+    const result = await modelCall(kpiModel.getKPITime, req);
+    res.json(result);
+});
+router.post('/sendKPIJob', async (req, res) => {
+    const result = await modelCall(kpiModel.sendKPIJob, req);
+    res.json(result);
+});
+
 module.exports = router;
