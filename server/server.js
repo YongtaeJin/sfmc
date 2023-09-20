@@ -18,20 +18,10 @@ const numCPUs = require('os').cpus().length;
 	await configModel.load();
 
 	const kpiModel = require('./api/_model/kpiModel');
-	// setInterval(() => {
-	// 	kpiModel.load();
-	// }, 60 * 1000); // 1분 = 60초 * 1000밀리초
-	if (cluster.isMaster) {
-		// 이 부분은 마스터 프로세스에서만 실행됩니다.
-		setInterval(() => {			
-				console.log("This code will only run in cluster worker 1.");
-		  
-		}, 1000);
-	} else {
-		// 클러스터 워커에서 실행될 코드입니다.
-		
-	}
-
+	setInterval(() => {
+		kpiModel.load();
+	}, 60 * 1000); // 1분 = 60초 * 1000밀리초
+	
 	let isDiableKeepAlive = false;
 	app.use((req, res, next) => {
 		if (isDiableKeepAlive) {
