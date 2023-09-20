@@ -45,5 +45,17 @@ router.post('/sendKPIJob', async (req, res) => {
     const result = await modelCall(kpiModel.sendKPIJob, req);
     res.json(result);
 });
+router.post('/getKPI1List', async (req, res) => {
+    const result = await modelCall(kpiModel.getKPI1List, req);
+    res.json(result);
+});
+router.post('/getKPI2List', async (req, res) => {
+    const result = await modelCall(kpiModel.getKPI2List, req);
+    res.json(result);
+});
+router.post('/getKPI3List', async (req, res) => {
+    const result = await modelCall(kpiModel.getKPI3List, req);
+    res.json(result);
+});
 
 module.exports = router;

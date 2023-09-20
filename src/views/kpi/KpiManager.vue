@@ -35,7 +35,7 @@
                             <v-toolbar-title>KPI 1</v-toolbar-title>
                             <v-spacer/><tooltip-btn x-small label="KPI1 추가" @click="addKpi('kpi1')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
                         </v-toolbar>
-                        <v-data-table ref="kpi1" :headers="kpi1Head"  :items="kpi1Items" @click:row="rowSelectKpi1" 
+                        <v-data-table ref="kpi1" :headers="kpi1Head"  :items="kpi1ItemFiled" @click:row="rowSelectKpi1" 
                                 item-key="t_no" single-select v-model="kip1S"        
                                 hide-default-footer :items-per-page="-1" 
                                 class="elevation-1 text-no-wrap" :item-class= "row_classes" height="150px" max-height="150px" > 
@@ -49,7 +49,7 @@
                             <v-toolbar-title>KPI 2</v-toolbar-title>
                             <v-spacer/><tooltip-btn x-small label="KPI2 추가" @click="addKpi('kpi2')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
                         </v-toolbar>
-                        <v-data-table ref="kpi2" :headers="kpi2Head"  :items="kpi2Items" @click:row="rowSelectKpi2" 
+                        <v-data-table ref="kpi2" :headers="kpi2Head"  :items="kpi2ItemFiled" @click:row="rowSelectKpi2" 
                                 item-key="t_no" single-select v-model="kip2S"        
                                 hide-default-footer :items-per-page="-1" 
                                 class="elevation-1 text-no-wrap" :item-class= "row_classes" height="150px" max-height="150px" > 
@@ -62,7 +62,7 @@
                             <v-toolbar-title>KPI 3</v-toolbar-title>
                             <v-spacer/><tooltip-btn x-small label="KPI3 추가" @click="addKpi('kpi3')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
                         </v-toolbar>
-                        <v-data-table ref="kpi3" :headers="kpi3Head"  :items="kpi3Items" @click:row="rowSelectKpi3" 
+                        <v-data-table ref="kpi3" :headers="kpi3Head"  :items="kpi3ItemFiled" @click:row="rowSelectKpi3" 
                                 item-key="t_no" single-select v-model="kip3S"        
                                 hide-default-footer :items-per-page="-1" 
                                 class="elevation-1 text-no-wrap" :item-class= "row_classes" height="150px" max-height="150px" > 
@@ -123,7 +123,7 @@ export default {
                 {text: '시스템가동여부',  value: 'systmOprYn',  sortable: false, align:'center', width: "80px"},
                 {text: '결과',           value: 'f_err',  sortable: false, align:'center', width: "80px"},
             ],
-            kpi1Items:[], kpi1Info:[], kip1S:[],
+            kpi1Items:[], kpi1ItemFiled:[], kpi1Info:[], kip1S:[],
 
             kpi2Head:[
                 {text: '전송예약시간',   value: 's_restime',  sortable: false, align:'center', width: "80px"},
@@ -134,7 +134,7 @@ export default {
                 {text: '성치율',  value: 'achrt',  sortable: false, align:'center', width: "80px"},
                 {text: '결과',           value: 'f_err',  sortable: false, align:'center', width: "80px"},
             ],
-            kpi2Items:[], kpi2Info:[], kip2S:[],
+            kpi2Items:[], kpi2ItemFiled:[], kpi2Info:[], kip2S:[],
 
             kpi3Head:[
                 {text: '전송예약시간',   value: 's_restime',  sortable: false, align:'center', width: "80px"},
@@ -146,7 +146,7 @@ export default {
                 {text: '단위',           value: 'unt',  sortable: false, align:'center', width: "80px"},
                 {text: '결과',           value: 'f_err',  sortable: false, align:'center', width: "80px"},
             ],
-            kpi3Items:[], kpi3Info:[], kip3S:[],
+            kpi3Items:[], kpi3ItemFiled:[], kpi3Info:[], kip3S:[],
             kpiResTime:[], ResTime: "",
         }
     },
@@ -198,7 +198,6 @@ export default {
             this.ym.y = now.getFullYear();
             this.ym.m = now.getMonth();
             this.workSite = await this.$axios.post(`/api/kpi/getWorksite`);
-            
         },
         yyyymm() {
             return `${this.ym.y}${String(this.ym.m + 1).padStart(2, '0')}`;
@@ -236,13 +235,20 @@ export default {
             
             this.masters = await this.$axios.post(`/api/kpi/getResKpi`, this.form);
             this.kpiResTime = await this.$axios.post(`/api/kpi/getKPITime`, this.form); 
-                
+            this.kpi1Items = await this.$axios.post(`/api/kpi/getKPI1List`, this.form);
+            this.kpi2Items = await this.$axios.post(`/api/kpi/getKPI2List`, this.form);
+            this.kpi3Items = await this.$axios.post(`/api/kpi/getKPI3List`, this.form);
+
         },
         async rowSelectMaster(item, row) {
             if(this.masterinfo.s_day == item.s_day) return;
             
             this.masterinfo = item;
             if (row) { row.select(true) } else { this.selectedM = [item] }; 
+
+            this.kpi1ItemFiled = this.kpi1Items.filter((i) => i.ocrDttm === item.s_date);
+            this.kpi2ItemFiled = this.kpi2Items.filter((i) => i.ocrDttm === item.s_date);
+            this.kpi3ItemFiled = this.kpi3Items.filter((i) => i.ocrDttm === item.s_date);
         },
         async rowSelectKpi1(item, row) {
             if(this.kpi1Info.t_no == item.t_no) return;            

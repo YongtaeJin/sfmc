@@ -320,7 +320,7 @@ const kpiModel = {
 
       
       const instanceId = process.env.INSTANCE_ID;
-      if (instanceId !== 0 ) return;
+      if (instanceId !== '0' ) return;
       const query = `SELECT 'KPILEVEL1' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, NULL kpiFldCd, NULL kpiDtlCd, NULL kpiDtlNm, NULL achrt, NULL msmtVl, NULL unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
                     `    FROM tb_kpilevel1 \n` +
                     `  WHERE ocrDttm = ? AND s_restime BETWEEN ? AND ? AND f_err = '-' \n` +
@@ -371,7 +371,27 @@ const kpiModel = {
           await KPIsendKpi3(row, 'up')
         }
       }
-
+  },
+  async getKPI1List(req) {
+    const { c_com, s_ym } = req.body;
+    const query = `SELECT * \n FROM tb_kpilevel1 a  WHERE a.c_com = ? AND ocrDttm LIKE ? \n`;
+    var values = new Array();    values.push(c_com);     values.push(`${s_ym}%`); 
+    const [rows] = await db.execute(query, values);    
+    return rows;
+  },
+  async getKPI2List(req) {
+    const { c_com, s_ym } = req.body;
+    const query = `SELECT * \n FROM tb_kpilevel2 a  WHERE a.c_com = ? AND ocrDttm LIKE ? \n`;
+    var values = new Array();    values.push(c_com);     values.push(`${s_ym}%`); 
+    const [rows] = await db.execute(query, values);    
+    return rows;
+  },
+  async getKPI3List(req) {
+    const { c_com, s_ym } = req.body;
+    const query = `SELECT * \n FROM tb_kpilevel3 a  WHERE a.c_com = ? AND ocrDttm LIKE ? \n`;
+    var values = new Array();    values.push(c_com);     values.push(`${s_ym}%`); 
+    const [rows] = await db.execute(query, values);    
+    return rows;
   },
 
 }
