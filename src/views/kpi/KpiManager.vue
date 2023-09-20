@@ -39,6 +39,9 @@
                                 item-key="t_no" single-select v-model="kip1S"        
                                 hide-default-footer :items-per-page="-1" 
                                 class="elevation-1 text-no-wrap" :item-class= "row_classes" height="150px" max-height="150px" > 
+                                <template v-slot:[`item.f_err`]="{ item }">
+                                   {{ getErrName(item.f_err) }}
+                                </template>
                         </v-data-table>
                                                 
                     </v-col>                    
@@ -53,6 +56,9 @@
                                 item-key="t_no" single-select v-model="kip2S"        
                                 hide-default-footer :items-per-page="-1" 
                                 class="elevation-1 text-no-wrap" :item-class= "row_classes" height="150px" max-height="150px" > 
+                                <template v-slot:[`item.f_err`]="{ item }">
+                                   {{ getErrName(item.f_err) }}
+                                </template>
                         </v-data-table>
                     </v-col>                    
                 </v-row>
@@ -66,6 +72,9 @@
                                 item-key="t_no" single-select v-model="kip3S"        
                                 hide-default-footer :items-per-page="-1" 
                                 class="elevation-1 text-no-wrap" :item-class= "row_classes" height="150px" max-height="150px" > 
+                                <template v-slot:[`item.f_err`]="{ item }">
+                                   {{ getErrName(item.f_err) }}
+                                </template>
                         </v-data-table>
                     </v-col>                    
                 </v-row>
@@ -265,7 +274,12 @@ export default {
             this.kpi3Info = item;
             if (row) { row.select(true) } else { this.kip3S = [item] }; 
         },
-        async addKpi(kpi) {            
+        async addKpi(kpi) {
+
+            if (!this.kpiKey) {
+                this.$toast.warning(`인증키값이 없습니다.`);
+                return;
+            }
             this.setCom.ocrDttm = this.masterinfo.s_date;
             this.setCom.s_day   = this.masterinfo.s_day;
             this.kpiindex = kpi == "kpi3" ? 2 : kpi == "kpi2" ? 1 : 0;

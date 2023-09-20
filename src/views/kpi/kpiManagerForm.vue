@@ -116,7 +116,7 @@ export default {
             
             await this.$axios.post(`/api/kpi/sendKPIJob`, this.form); 
 
-            this.$toast.info(`전송 및 예약 처리 하였습니다...`);
+            this.$toast.info(`${this.form.f_sned} 처리 하였습니다 ...`);
         },
         changeFild(Cd) {            
             this.kpifildfilter = this.kpifilds.filter(function(item) { return item.c_gcode == `KPI${Cd}`; });         
