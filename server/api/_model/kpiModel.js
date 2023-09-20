@@ -317,6 +317,12 @@ const kpiModel = {
       const now = getCurrentDateYYYYMMDD();
       const dt2 = getCurrentDateHHMM2();
       const dt1 = getTwentyAgo2();
+
+      
+      const instanceId = process.env.INSTANCE_ID;
+      console.log(`Instance ID: ${instanceId}`);
+      
+      return
       const query = `SELECT 'KPILEVEL1' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, NULL kpiFldCd, NULL kpiDtlCd, NULL kpiDtlNm, NULL achrt, NULL msmtVl, NULL unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
                     `    FROM tb_kpilevel1 \n` +
                     `  WHERE ocrDttm = ? AND s_restime BETWEEN ? AND ? AND f_err = '-' \n` +
