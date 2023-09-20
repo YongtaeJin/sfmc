@@ -320,9 +320,7 @@ const kpiModel = {
 
       
       const instanceId = process.env.INSTANCE_ID;
-      console.log(`Instance ID: ${instanceId}`);
-      
-      return
+      if (instanceId !== 0 ) return;
       const query = `SELECT 'KPILEVEL1' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, NULL kpiFldCd, NULL kpiDtlCd, NULL kpiDtlNm, NULL achrt, NULL msmtVl, NULL unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
                     `    FROM tb_kpilevel1 \n` +
                     `  WHERE ocrDttm = ? AND s_restime BETWEEN ? AND ? AND f_err = '-' \n` +
