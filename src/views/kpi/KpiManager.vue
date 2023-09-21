@@ -83,8 +83,8 @@
 
         <ez-dialog ref="dialog_kpi" label="KPI 추가" persistent  width="450px" @onClose="kpi_close">
             <kpi-manager-form :tabindex="kpiindex" :data="setCom" :resTime="ResTime">
-
             </kpi-manager-form>
+            
         </ez-dialog>
     </v-container>
 </template>
@@ -111,7 +111,7 @@ export default {
         return {
             iframeHeight : 500,  
             ym : {y:0, m:0}, 
-            form : {c_com:"", s_ym:"", f_tst:"Y"},           
+            form : {c_com:"", s_ym:"", f_tst:"Y"},
             workSite:[],
             setCom:{c_com:"", n_com:"", i_kpikey:"", s_day:"", ocrDttm:""},
             kpiindex:0,
@@ -156,7 +156,7 @@ export default {
                 {text: '결과',           value: 'f_err',  sortable: false, align:'center', width: "80px"},
             ],
             kpi3Items:[], kpi3ItemFiled:[], kpi3Info:[], kip3S:[],
-            kpiResTime:[], ResTime: "",
+            kpiResTime:[], ResTime: "",  kpiPopTitle:"",
         }
     },
     computed: {

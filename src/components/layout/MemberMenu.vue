@@ -43,10 +43,13 @@ export default {
 			admMenus : [
 				{title : '설정 관리', icon:'mdi-cog', to:'/adm/config'},
 				{title : '사업장 관리', icon:'mdi-account-cog', to:'/adm/worksite'},
+				{title : 'KPI 관리', icon:'mdi-lan-connect', to:'/adm/kpimanager'},
+				{title : 'KPI Data', icon:'mdi-database', to:'/adm/kpidatainput'},
 			],
 			siteMenus : [				
 				{title : '사업장 관리', icon:'mdi-account-cog', to:'/adm/worksite'},
 				{title : 'KPI 관리', icon:'mdi-lan-connect', to:'/adm/kpimanager'},
+				{title : 'KPI Data', icon:'mdi-database', to:'/adm/kpidatainput'},
 			]
 		}
 	},

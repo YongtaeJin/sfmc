@@ -41,6 +41,14 @@ router.post('/getKPITime', async (req, res) => {
     const result = await modelCall(kpiModel.getKPITime, req);
     res.json(result);
 });
+router.post('/kpiJoblist', async (req, res) => {
+    const result = await modelCall(kpiModel.kpiJoblist, req);
+    res.json(result);
+});
+router.post('/iukpiJoblist', async (req, res) => {
+    const result = await modelCall(kpiModel.iukpiJoblist, req);
+    res.json(result);
+});
 router.post('/sendKPIJob', async (req, res) => {
     const result = await modelCall(kpiModel.sendKPIJob, req);
     res.json(result);

@@ -312,12 +312,102 @@ const kpiModel = {
         await db.execute('COMMIT');
       }      
     },
+    // KPI 전송내역 조회 (한번에 입력작업 위해서)
+    async kpiJoblist(req) {
+      const { c_com } = req.body;
+      
+      const query = `SELECT 'KPILEVEL1' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, NULL kpiFldCd, NULL kpiDtlCd, NULL kpiDtlNm, NULL achrt, NULL msmtVl, NULL unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
+                    `  FROM tb_kpilevel1 \n` +
+                    ` WHERE c_com = ? AND ocrDttm > DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n` +
+                    `UNION \n` +
+                    `SELECT 'KPILEVEL2' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, NULL systmOprYn, kpiFldCd, kpiDtlCd, kpiDtlNm, achrt, NULL msmtVl, NULL unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
+                    `  FROM tb_kpilevel2 \n` +
+                    ` WHERE c_com = ? AND ocrDttm > DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n` +
+                    `UNION \n` +
+                    `SELECT 'KPILEVEL3' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, NULL systmOprYn, kpiFldCd, kpiDtlCd, kpiDtlNm, NULL achrt, msmtVl, unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
+                    `  FROM tb_kpilevel3 \n` +
+                    ` WHERE c_com = ? AND ocrDttm > DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n ` +
+                    ` ORDER BY c_com, kpilevel, ocrDttm, t_no`;
+      var values = new Array();
+      values.push(c_com); values.push(c_com); values.push(c_com); 
+        
+      const [rows] = await db.execute(query, values);
+      rows.forEach((row) => {
+        sqlHelper.addEditCol(row);
+      });
+      return rows;
+    },
+    // KPI 전송내역 저장 (한번에 입력작업 위해서)
+    async iukpiJoblist(req) {
+      
+      const item = await sqlHelper.objectSplit(req.body);
+      
+      // item.forEach((row, index) => {
+      //   if(row.f_edit !== "0" || row.f_editold !== "0") {
+      //     const {c_com, t_no, kpiCertKey, ocrDttm, kpilevel } = row;
+      //     const newdata = row.f_editold !== "0" ? true : false;
+      //     const deldata = row.f_edit == "2" ? true : false;
+      //     const table = kpilevel == 'KPILEVEL1' ?  'tb_kpilevel1' : kpilevel == 'KPILEVEL2' ? 'tb_kpilevel2' : kpilevel == 'KPILEVEL3' ? 'tb_kpilevel3' : 'no';
 
+      //     if(table !== 'no')  {
+      //       delete row.f_edit;
+      //       delete row.f_editold;
+      //       delete row.kpilevel;
+      //       if (newdata) {
+      //           delete row.t_no;              
+      //       } else {
+                
+      //       }
+      //       const sql = deldata ? sqlHelper.DeleteSimple(table, {c_com, t_no, kpiCertKey, ocrDttm}) :  newdata ? sqlHelper.Insert(table, row) : sqlHelper.Update(table, row, {c_com, t_no, kpiCertKey, ocrDttm});            
+      //       const [row] = db.execute(sql.query, sql.values)            
+      //     }   
+      //   }
+
+      // });
+      for (let i = 0; i < item.length; i++) {
+        const row = { ... item[i] };
+        if(row.f_edit == "0" && row.f_editold == "0") continue;
+
+        const {c_com, t_no, kpiCertKey, ocrDttm, kpilevel } = row;
+        const newdata = row.f_editold !== "0" ? true : false;
+        const deldata = row.f_edit == "2" ? true : false;
+        const table = kpilevel == 'KPILEVEL1' ?  'tb_kpilevel1' : kpilevel == 'KPILEVEL2' ? 'tb_kpilevel2' : kpilevel == 'KPILEVEL3' ? 'tb_kpilevel3' : 'no';
+        if(table == 'no')  continue;
+
+        delete row.f_edit;
+        delete row.f_editold;
+        delete row.kpilevel;
+        if (newdata) delete row.t_no;
+        if (table == 'tb_kpilevel1' ) {
+          delete row.kpiFldCd;
+          delete row.kpiDtlCd;
+          delete row.kpiDtlNm;
+          delete row.achrt;
+          delete row.msmtVl;
+          delete row.unt;
+        } else if (table == 'tb_kpilevel2' ) {
+          delete row.systmOprYn;
+          delete row.msmtVl;
+          delete row.unt;
+        } else {
+          delete row.systmOprYn;
+          delete row.achrt;
+
+        }
+
+        const sql = deldata ? sqlHelper.DeleteSimple(table, {c_com, t_no, kpiCertKey, ocrDttm}) :  newdata ? sqlHelper.Insert(table, row) : sqlHelper.Update(table, row, {c_com, t_no, kpiCertKey, ocrDttm});            
+        const [rv] = await db.execute(sql.query, sql.values);
+
+      }
+            
+      return true;
+    },
+
+    // Server.js 에서 setInterval(() => { 에서 호출 백그라운더 실행 1분마다
     async load() {
       const now = getCurrentDateYYYYMMDD();
       const dt2 = getCurrentDateHHMM2();
       const dt1 = getTwentyAgo2();
-
       
       const instanceId = process.env.INSTANCE_ID;
       if (instanceId !== '0' ) return;
