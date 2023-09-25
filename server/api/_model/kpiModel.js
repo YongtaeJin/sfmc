@@ -242,11 +242,12 @@ const kpiModel = {
     },
 
     async getKpiFild(req) {
-      const query = `SELECT b.c_gcode, b.c_code, b.n_code, b.s_buf1 \n` +
+      const query = `SELECT CONCAT(b.c_gcode, b.c_code) c_gccode, b.c_gcode, b.c_code, b.n_code, b.s_buf1 \n` +
                     `  FROM tb_grpcode a \n` +
                     `       JOIN tb_comcode b ON a.c_com = b.c_com AND a.c_gcode = b.c_gcode \n` +
                     ` WHERE a.c_com = 'system' AND a.c_gcode IN ('KPIP', 'KPIQ', 'KPID', 'KPIC') \n` +
                     ` ORDER BY a.s_sort, b.s_sort `;
+                    
       const [rows] = await db.execute(query);
       return rows;
     },
@@ -337,33 +338,27 @@ const kpiModel = {
       });
       return rows;
     },
+    async kpiFldDtlist(req) {
+      const query = `SELECT CONCAT(b.c_gcode, b.c_code) c_gccode, SUBSTR(a.c_gcode,4,1) kpiFldCd, a.n_gcode kpiFldNm,\n ` +
+                    `       b.c_code kpiDtlCd, b.n_code kpiDtlNm, b.s_buf1 unt\n ` +
+                    `  FROM tb_grpcode a\n ` +
+                    `        JOIN tb_comcode b ON a.c_com = b.c_com AND a.c_gcode = b.c_gcode\n ` +
+                    `  WHERE a.c_com = 'system'\n ` +
+                    `    AND a.c_gcode IN ('KPID', 'KPIQ' )\n ` +
+                    `  ORDER BY a.s_sort, b.s_sort`;
+      const [rows] = await db.execute(query);        
+      return rows;
+    },
+    async kpiLevellist(req) {
+      const { c_com } = req.body;
+      var values = new Array(); values.push(c_com);
+      const query = `SELECT s_buf1 lev, n_code t_time  FROM tb_comcode WHERE c_com = ? AND c_gcode LIKE 'KPITIME' ORDER BY  s_sort`;
+      const [rows] = await db.execute(query, values);        
+      return rows;
+    },
     // KPI 전송내역 저장 (한번에 입력작업 위해서)
-    async iukpiJoblist(req) {
-      
+    async iukpiJoblist(req) {      
       const item = await sqlHelper.objectSplit(req.body);
-      
-      // item.forEach((row, index) => {
-      //   if(row.f_edit !== "0" || row.f_editold !== "0") {
-      //     const {c_com, t_no, kpiCertKey, ocrDttm, kpilevel } = row;
-      //     const newdata = row.f_editold !== "0" ? true : false;
-      //     const deldata = row.f_edit == "2" ? true : false;
-      //     const table = kpilevel == 'KPILEVEL1' ?  'tb_kpilevel1' : kpilevel == 'KPILEVEL2' ? 'tb_kpilevel2' : kpilevel == 'KPILEVEL3' ? 'tb_kpilevel3' : 'no';
-
-      //     if(table !== 'no')  {
-      //       delete row.f_edit;
-      //       delete row.f_editold;
-      //       delete row.kpilevel;
-      //       if (newdata) {
-      //           delete row.t_no;              
-      //       } else {
-                
-      //       }
-      //       const sql = deldata ? sqlHelper.DeleteSimple(table, {c_com, t_no, kpiCertKey, ocrDttm}) :  newdata ? sqlHelper.Insert(table, row) : sqlHelper.Update(table, row, {c_com, t_no, kpiCertKey, ocrDttm});            
-      //       const [row] = db.execute(sql.query, sql.values)            
-      //     }   
-      //   }
-
-      // });
       for (let i = 0; i < item.length; i++) {
         const row = { ... item[i] };
         if(row.f_edit == "0" && row.f_editold == "0") continue;

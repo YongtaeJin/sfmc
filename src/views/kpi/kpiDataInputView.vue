@@ -10,33 +10,51 @@
             <tooltip-btn label="삭제" @click="del"><v-icon>mdi-minus</v-icon></tooltip-btn>
             <tooltip-btn label="저장" @click="save"><v-icon>mdi-content-save-outline</v-icon></tooltip-btn>
         </v-toolbar>
-        <v-data-table ref="kpi1" :headers="kpiHead"  :items="kpiData" 
-                item-key="t_no" single-select 
-                hide-default-footer :items-per-page="-1" 
-                class="elevation-1 text-no-wrap" :item-class= "row_classes"
-                :height="iframeHeight" > 
-            <template v-slot:item="{ item }">
-                <!-- <tr :style="{ backgroundColor: getCellBackgroundColor(item) }"> -->
-                <tr  :class="{ 'row_select': item === kpiDataS }" class="center-align" @click="selectItem(item)">                    
-                    <td :style="{backgroundColor: getCellStyle(item, 'kpilevel')}">
-                        <v-text-field @input="onChange(item)" v-model="item.kpilevel" :readonly="item.f_editold == 0" dense class="my-text-field  no-padding"/>
-                    </td>
-                    
-                    <td :style="{backgroundColor: '#ffdda0'}"><v-text-field @input="onChange(item)" v-model="item.ocrDttm" dense  class="my-text-field no-padding"/></td>
-                    <td :style="{backgroundColor: '#ffdda0'}"><v-text-field @input="onChange(item)" v-model="item.f_tst" dense  class="my-text-field no-padding"/></td>
-                    <td :style="{backgroundColor: '#ffdda0'}"><v-text-field @input="onChange(item)" v-model="item.s_restime" dense  class="my-text-field no-padding"/></td>
-                    <td :style="{backgroundColor: getCellStyle(item, 'systmOprYn')}"><v-text-field @input="onChange(item)" v-model="item.systmOprYn" dense  class="my-text-field no-padding"/></td>
-                    <td :style="{backgroundColor: getCellStyle(item, 'kpiFldCd')}"><v-text-field @input="onChange(item)" v-model="item.kpiFldCd" dense  class="my-text-field no-padding"/></td>                    
-                    <td :style="{backgroundColor: getCellStyle(item, 'kpiDtlCd')}"><v-text-field @input="onChange(item)" v-model="item.kpiDtlCd" dense  class="my-text-field no-padding"/></td>
-                    <td :style="{backgroundColor: getCellStyle(item, 'kpiDtlNm')}"><v-text-field @input="onChange(item)" v-model="item.kpiDtlNm" dense  class="my-text-field no-padding"/></td>
-                    <td :style="{backgroundColor: getCellStyle(item, 'achrt')}"><v-text-field @input="onChange(item)" v-model="item.achrt" dense  class="my-text-field no-padding"/></td>
-                    <td :style="{backgroundColor: getCellStyle(item, 'unt')}"><v-text-field @input="onChange(item)" v-model="item.unt" dense  class="my-text-field no-padding"/></td>                    
-                    <td :style="{backgroundColor: getCellStyle(item, 'msmtVl')}"><v-text-field @input="onChange(item)" v-model="item.msmtVl" dense  class="my-text-field no-padding"/></td>   
-                    <td> {{  getStatue(item) }}</td>                 
-                </tr>
-            </template> 
-        </v-data-table>
-        
+        <v-row>
+        <v-col col="12" sm="9" md="9">
+            <v-data-table ref="kpi1" :headers="kpiHead"  :items="kpiData" 
+                    item-key="t_no" single-select 
+                    hide-default-footer :items-per-page="-1" 
+                    class="elevation-1 text-no-wrap" :item-class= "row_classes"
+                    :height="iframeHeight" > 
+                <template v-slot:item="{ item }">
+                    <!-- <tr :style="{ backgroundColor: getCellBackgroundColor(item) }"> -->
+                    <tr  :class="{ 'row_select': item === kpiDataS }" class="center-align" @click="selectItem(item)">                    
+                        <td :style="{backgroundColor: getCellStyle(item, 'kpilevel')}">
+                            <v-text-field @input="onChange(item)" v-model="item.kpilevel" :readonly="item.f_editold == 0" dense class="my-text-field  no-padding"/>
+                        </td>
+                        
+                        <td :style="{backgroundColor: '#ffdda0'}"><v-text-field @input="onChange(item)" v-model="item.ocrDttm" dense  class="my-text-field no-padding"/></td>
+                        <td :style="{backgroundColor: '#ffdda0'}"><v-text-field @input="onChange(item)" v-model="item.f_tst" dense  class="my-text-field no-padding"/></td>
+                        <td :style="{backgroundColor: '#ffdda0'}"><v-text-field @input="onChange(item)" v-model="item.s_restime" dense  class="my-text-field no-padding"/></td>
+                        <td :style="{backgroundColor: getCellStyle(item, 'systmOprYn')}"><v-text-field @input="onChange(item)" v-model="item.systmOprYn" dense  class="my-text-field no-padding"/></td>
+                        <td :style="{backgroundColor: getCellStyle(item, 'kpiFldCd')}"><v-text-field @input="onChange(item)" v-model="item.kpiFldCd" dense  class="my-text-field no-padding"/></td>                    
+                        <td :style="{backgroundColor: getCellStyle(item, 'kpiDtlCd')}"><v-text-field @input="onChange(item)" v-model="item.kpiDtlCd" dense  class="my-text-field no-padding"/></td>
+                        <td :style="{backgroundColor: getCellStyle(item, 'kpiDtlNm')}"><v-text-field @input="onChange(item)" v-model="item.kpiDtlNm" dense  class="my-text-field no-padding"/></td>
+                        <td :style="{backgroundColor: getCellStyle(item, 'achrt')}"><v-text-field @input="onChange(item)" v-model="item.achrt" dense  class="my-text-field no-padding"/></td>
+                        <td :style="{backgroundColor: getCellStyle(item, 'unt')}"><v-text-field @input="onChange(item)" v-model="item.unt" dense  class="my-text-field no-padding"/></td>                    
+                        <td :style="{backgroundColor: getCellStyle(item, 'msmtVl')}"><v-text-field @input="onChange(item)" v-model="item.msmtVl" dense  class="my-text-field no-padding"/></td>   
+                        <td> {{  getStatue(item) }}</td>                 
+                    </tr>
+                </template> 
+            </v-data-table>
+        </v-col>
+        <v-col col="12" sm="3" md="3">
+            <v-data-table ref="kpiLevel" :headers="kpiLevelHead"  :items="kpiLevelLists" 
+                    item-key="lev" single-select  v-model="kpiLevelInfos"
+                    hide-default-footer :items-per-page="-1" 
+                    class="elevation-1 text-no-wrap" :item-class= "row_classes" @click:row="rowSelectLevel"  @dblclick:row="SetLevel" 
+                    height="130" > 
+            </v-data-table>
+
+            <v-data-table ref="kpiFldDt" :headers="KpiFldDtHead"  :items="KpiFldDtLists" 
+                    item-key="c_gccode" single-select v-model="kpiFldtDtInfos"
+                    hide-default-footer :items-per-page="-1" 
+                    class="elevation-1 text-no-wrap" :item-class= "row_classes"  @click:row="rowSelectFldDt" @dblclick:row="SetFildDt" 
+                    :height="iframeHeight - 130" > 
+            </v-data-table>
+        </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -79,10 +97,20 @@ export default {
                 
             ],
             kpiData:[], kpiDataS:[],
-
             kpiLevlel:['KPILEVEL1', 'KPILEVEL2', 'KPILEVEL3'],
             kpiFldCds:[{CD:"P", NM:"생산"}, {CD:"C", NM:"원가"}, {CD:"Q", NM:"품질"}, {CD:"D", NM:"납기"}],
-            kpiDtlCds:[], kpiDtlCd:[],             
+            kpiDtlCds:[], kpiDtlCd:[],
+
+            KpiFldDtHead:[
+                {text: '성과',      value: 'kpiFldNm',  sortable: false, align:'center', width: "80px"},
+                //{text: '지표코드',  value: 'kpiDtlCd',  sortable: false, align:'center', width: "50px"},
+                {text: '성과지표',  value: 'kpiDtlNm',  sortable: false, align:'left', width: "150px"},
+                {text: '단위',     value: 'unt',  sortable: false, align:'center', width: "50px"},
+            ], KpiFldDtLists:[],  kpiFldtDtInfo:[], kpiFldtDtInfos:[],
+            kpiLevelHead:[
+                {text: 'LEVEL',  value: 'lev',  sortable: false, align:'center', width: "50px"},
+                {text: '시간',   value: 't_time',  sortable: false, align:'center', width: "50px"},
+            ], kpiLevelLists: [], kpiLevelInfo:[], kpiLevelInfos:[],
         }
     },
     computed: {
@@ -152,6 +180,9 @@ export default {
         async init() {
             this.workSite = await this.$axios.post(`/api/kpi/getWorksite`);
             this.kpiDtlCds = await this.$axios.post(`/api/kpi/getKpiFild`); 
+            this.KpiFldDtLists = await this.$axios.post(`/api/kpi/kpiFldDtlist`); 
+            
+
             this.kpiDtlCd = this.kpiDtlCds.filter(function(item) { return item.c_gcode == `KPIP`; });
         },
         async view() {
@@ -164,7 +195,7 @@ export default {
             this.setCom.n_com = this.kpiCom;
             this.setCom.i_kpikey = this.kpiKey; 
             
-
+            this.kpiLevelLists = await this.$axios.post(`/api/kpi/kpiLevellist`, this.setCom);     
             this.kpiData = await this.$axios.post(`/api/kpi/kpiJoblist`, this.setCom);
         },
         async add() {
@@ -172,20 +203,21 @@ export default {
                 this.$toast.warning(`인증키값이 없습니다.`);
                 return;
             }
+            console.log (this.kpiLevelInfo.lev)
             const obj = {}
-                obj.kpilevel = ""
+                obj.kpilevel = this.kpiLevelInfo.lev;
                 obj.t_no = ""
                 obj.c_com = this.setCom.c_com;
                 obj.kpiCertKey = this.setCom.i_kpikey;
                 obj.ocrDttm = ""
-                obj.s_restime = "10:00"
-                obj.systmOprYn = ""
-                obj.kpiFldCd = ""
-                obj.kpiDtlCd = ""
-                obj.kpiDtlNm = ""
+                obj.s_restime = this.kpiLevelInfo.t_time;
+                obj.systmOprYn = this.kpiLevelInfo.lev == "KPILEVEL1" ? "Y":"";
+                obj.kpiFldCd = this.kpiLevelInfo.lev == "KPILEVEL1" ? this.kpiFldtDtInfo.kpiFldCd : "";
+                obj.kpiDtlCd = this.kpiLevelInfo.lev == "KPILEVEL1" ? this.kpiFldtDtInfo.kpiDtlCd : "";
+                obj.kpiDtlNm = this.kpiLevelInfo.lev == "KPILEVEL1" ? this.kpiFldtDtInfo.kpiDtlNm : "";
                 obj.achrt = ""
                 obj.msmtVl = ""
-                obj.unt = ""
+                obj.unt = this.kpiLevelInfo.lev == "KPILEVEL3" ? this.kpiFldtDtInfo.unt : "";
                 obj.trsDttm = ""
                 obj.f_tst = "Y"
                 obj.t_req = ""
@@ -237,9 +269,47 @@ export default {
         },
         async selectItem(item) {
             if (this.kpiDataS == item) return;
-            this.kpiDataS = item;
-            
+            this.kpiDataS = item;            
         },
+        rowSelectLevel :function (item, row) {    
+            row.select(true);            
+            this.kpiLevelInfo = item;            
+        },
+        rowSelectFldDt :function (item, row) {    
+            row.select(true);
+            this.kpiFldtDtInfo = item;
+            // this.item = item;            
+        },
+        async SetLevel(event, { item }) {
+            if(!this.kpiDataS.c_com) return
+            this.kpiDataS.kpilevel = item.lev;
+            this.kpiDataS.systmOprYn = "Y";
+            this.kpiDataS.s_restime = item.t_time;
+        },
+        async SetFildDt(event, { item }) {
+            if(!this.kpiDataS.c_com) return
+            if(this.kpiDataS.kpilevel == "KPILEVEL1") {
+                return
+            } else if (this.kpiDataS.kpilevel == "KPILEVEL2") {
+                this.kpiDataS.kpiFldCd = item.kpiFldCd;
+                this.kpiDataS.kpiDtlCd = item.kpiDtlCd;
+                this.kpiDataS.kpiDtlNm  = item.kpiDtlNm;                
+                this.kpiDataS.achrt     = "";
+                this.kpiDataS.unt       = "";
+                this.kpiDataS.msmtVl    = "";                
+            } else if (this.kpiDataS.kpilevel == "KPILEVEL3") {
+                this.kpiDataS.kpiFldCd = item.kpiFldCd;
+                this.kpiDataS.kpiDtlCd = item.kpiDtlCd;
+                this.kpiDataS.kpiDtlNm  = item.kpiDtlNm;
+                this.kpiDataS.achrt     = "";
+                this.kpiDataS.unt       = item.unt;
+                this.kpiDataS.msmtVl    = "";                
+            }
+            this.kpiDataS.systmOprYn = "";
+            this.kpiDataS.f_edit    = "1";
+            
+            
+        }
     },
 
 }
