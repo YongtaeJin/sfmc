@@ -202,8 +202,7 @@ export default {
             if (!this.kpiKey) {
                 this.$toast.warning(`인증키값이 없습니다.`);
                 return;
-            }
-            console.log (this.kpiLevelInfo.lev)
+            }            
             const obj = {}
                 obj.kpilevel = this.kpiLevelInfo.lev;
                 obj.t_no = ""

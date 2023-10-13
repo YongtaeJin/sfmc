@@ -31,7 +31,7 @@ const store = new Vuex.Store({
 					title : "시스템관리",
 					icon : "mdi-database-settings",
 					to : '',
-					grant : 9, 
+					grant : 8, 
 					newTab : false,
 					subItems : [
 						{
@@ -54,7 +54,7 @@ const store = new Vuex.Store({
 							title : "공지관리",
 							icon : "",
 							to : '/adm/notice',
-							grant : 9, 
+							grant : 8, 
 							newTab : false,
 							subItems : []
 						},
@@ -187,14 +187,14 @@ const store = new Vuex.Store({
 					title : "생산관리",
 					icon : "mdi-basket-fill",
 					to : '',
-					grant : 5, 
+					grant : 6, 
 					newTab : false,
 					subItems : [
 						{
 							title : "생산실적",
 							icon : "",
 							to : '/prod/work',
-							grant : 5, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -202,7 +202,7 @@ const store = new Vuex.Store({
 							title : "생산실적조회",
 							icon : "",
 							to : '/prod/workview',
-							grant : 5, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -210,7 +210,7 @@ const store = new Vuex.Store({
 							title : "공정진행현황",
 							icon : "",
 							to : '/prod/workorderview',
-							grant : 5, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -220,14 +220,14 @@ const store = new Vuex.Store({
 					title : "출하관리",
 					icon : "mdi-car-multiple",
 					to : '',
-					grant : 4, 
+					grant : 6, 
 					newTab : false,
 					subItems : [
 						{
 							title : "출하등록",
 							icon : "",
 							to : '/shipment/derliver',
-							grant : 4, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -235,7 +235,7 @@ const store = new Vuex.Store({
 							title : "출하현황",
 							icon : "",
 							to : '/shipment/derliverlist',
-							grant : 4, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -243,7 +243,7 @@ const store = new Vuex.Store({
 							title : "세금계산서등록(거래명세서)",
 							icon : "",
 							to : '/shipment/invoice',
-							grant : 4, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -251,7 +251,7 @@ const store = new Vuex.Store({
 							title : "대금수금등록",
 							icon : "",
 							to : '/shipment/account',
-							grant : 4, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -259,7 +259,7 @@ const store = new Vuex.Store({
 							title : "수금현황",
 							icon : "",
 							to : '/shipment/invoicelist',
-							grant : 4, 
+							grant : 7, 
 							newTab : false,
 							subItems : []
 						},
@@ -269,14 +269,14 @@ const store = new Vuex.Store({
 					title : "실적분석",
 					icon : "mdi-chart-bar-stacked",
 					to : '',
-					grant : 7, 
+					grant : 6, 
 					newTab : false,
 					subItems : [
 						{
 							title : "납기내역",
 							icon : "",
 							to : '/metrics/derliver',
-							grant : 7, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},
@@ -284,7 +284,7 @@ const store = new Vuex.Store({
 							title : "불량율 분석",
 							icon : "",
 							to : '/metrics/defectrate',
-							grant : 7, 
+							grant : 6, 
 							newTab : false,
 							subItems : []
 						},

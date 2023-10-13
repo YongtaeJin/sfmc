@@ -63,7 +63,7 @@ export default {
                 i_id: "",
                 n_name: "",
                 p_password: "",
-                i_level: 2,
+                i_level: 6,
                 f_use: "Y",
                 t_remark: "",
             },
@@ -98,7 +98,7 @@ export default {
                     n_name: "",                    
                     f_use: "Y",
                     p_password: "",
-                    i_level: 2,
+                    i_level: 6,
                     t_remark: "",
                 }
             }
