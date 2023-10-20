@@ -1,13 +1,17 @@
 <template>
   <v-container fill-height fluid> 
     <v-row >
-      <v-col v-if= "this.$store.state.user.member == undefined" class="text-center" cols="12">
+      <v-col v-if= "this.$store.state.user.member == undefined" class="text-center" cols="12" >
         <!-- <v-img
           :src="require('../../server/upload/mainlog.jpeg')"          
           contain
           height="200"
         /> -->
-        <h1>스마트공방</h1>
+      
+        <v-img src="../assets/logo.png"  contain height="200" />
+
+
+        <!-- <h1><br>스마트공방</h1> -->
       </v-col>
       <v-col v-else cols="12">
         <h1>공지사항</h1> <br>
