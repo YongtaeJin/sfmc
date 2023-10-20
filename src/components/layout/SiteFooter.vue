@@ -1,7 +1,8 @@
 <template>
 	<v-footer app dark class="justify-center" absolute>
 		<v-spacer></v-spacer>
-		&copy; {{ new Date().getFullYear() }} {{ footer }}
+		<!-- &copy; {{ new Date().getFullYear() }} {{ footer }} -->
+		{{ footer }}
 		<v-spacer></v-spacer>
 		<!-- 문의 사항 : 055-602-4277 -->
 	</v-footer>

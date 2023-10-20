@@ -1,4 +1,4 @@
-v-input.v-application .config-list-group {
+.v-application .config-list-group {
 	list-style : none;
 	padding: 0;
 }
@@ -75,10 +75,6 @@ tr.v-data-table__selected {
 }
 .blue_background {	background: linear-gradient(to bottom, #0d54fa, #6894ff) }
 
-.text-input-white .v-text-field__slot input {
-	padding: 0;    margin: 0; 
-	color: white !important;	
-}
 .text-input-blue .v-text-field__slot input {
 	padding: 0;    margin: 0; 
 	color: #00f !important;	
@@ -305,3 +301,4 @@ table.type07 {
 	height: 10px; /* 높이 */
 	min-height: 10px; /* 선택 박스가 닫혔을 때의 최소 높이 */
   }
+  

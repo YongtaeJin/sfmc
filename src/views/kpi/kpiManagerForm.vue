@@ -87,7 +87,7 @@ export default {
                      msmtVl: "",
                      unt: "",
                      trsDttm: "",
-                     f_tst: "Y",
+                     f_tst: "N",
                      i_kpilevel: "",
                      s_day: "",
                      f_sned: "",
