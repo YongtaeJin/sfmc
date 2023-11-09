@@ -440,14 +440,15 @@ const basejobModel = {
         var query = "select a.c_com, a.c_item, b.n_item, a.c_ptype, c.n_ptype, a.f_use, a.t_remark, a.n_crnm, a.d_create_at, a.n_upnm, a.d_update_at " +
                     "  from tb_route a " +
                     "       join tb_item b on a.c_com = b.c_com and a.c_item = b.c_item " +
-                    "       left outer join tb_ptype c on a.c_com = b.c_com and a.c_ptype = c.c_ptype " +
+                    "       left outer join tb_ptype c on a.c_com = c.c_com and a.c_ptype = c.c_ptype " +
                     " where a.c_com = ? ";
         if (c_item) query = query + `   and a.c_item = '${c_item}' `;     
         if (search) query = query + `   and (a.c_item like '${search}%' or b.n_item like '${search}%') `;     
         query = query + ` ORDER BY b.s_sort ASC , c_item ASC `;
 
         var values = new Array();
-        values[0] = c_com;        
+        values[0] = c_com;
+        // console.log(query);
         const [rows] = await db.execute(query, values);        
         return rows;
     },
