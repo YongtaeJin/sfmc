@@ -19,6 +19,9 @@ const rules = {
 	},
 	alphaNum() {
 		return v => !!v ? /^[a-zA-Z0-9_]+$/.test(v) || `영어와 숫자만 입력하세요.` : true; 
+	},
+	alphaNumDash() {
+		return v => !!v ? /^[a-zA-Z0-9--_]+$/.test(v) || `영어와 숫자, "-" 만 입력하세요.` : true; 
 	},	
 	pattern({label, pattern}) {
 		return v => !!v ? pattern.test(v) || `[${label}] 형식에 맞게 입력하세요.` : true; 

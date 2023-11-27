@@ -13,7 +13,7 @@
                         :cbCheck="keyCheckItem"
                         :origin="originKeyId"
                         :readonly="!!data"                        
-                        :rules="[rules.require({ label: '품번' }), rules.alphaNum()]" />
+                        :rules="[rules.require({ label: '품번1' }), rules.alphaNumDash()]" />
                 </v-col>
                 <v-col col="12" sm="4" md="4">
                     <!-- <v-text-field v-model="form.f_use" label="사용" hide-details="false"/> -->
