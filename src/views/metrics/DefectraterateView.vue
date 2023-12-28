@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>        
        <v-toolbar height="40px" background-color="primary" dark>
-           <v-toolbar-title>불양율 분석</v-toolbar-title>
+           <v-toolbar-title>불양률</v-toolbar-title>
            <v-spacer/>
            
            <tooltip-btn label="조회" @click="view"><v-icon>mdi-magnify</v-icon></tooltip-btn>

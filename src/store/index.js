@@ -281,7 +281,7 @@ const store = new Vuex.Store({
 							subItems : []
 						},
 						{
-							title : "불량율 분석",
+							title : "불양률",
 							icon : "",
 							to : '/metrics/defectrate',
 							grant : 6, 

@@ -388,7 +388,7 @@ const prodModel = {
         const { sDate1, sDate2, sVend } = req.body;
         
         var values = new Array();
-        let query = `select a.c_com, a.i_order, b.i_orderser, ` +
+        let query = `select a.c_com, a.i_order, a.s_date, b.i_orderser, ` +
                     `       a.i_orderno, a.n_vend, a.n_order, b.c_item, b.n_item, b.t_size, b.m_cnt m_ocnt, b.s_duedate,  \n` +
                     `       c.m_yescnt, c.m_nocnt, b.d_plan1, b.d_plan2, d.s_works, CASE WHEN c.m_yescnt >= b.m_cnt THEN d.s_worke END s_worke, \n ` +
                     `       CASE WHEN c.m_yescnt >= b.m_cnt THEN f_CountWeekday(d.s_works, d.s_worke) ELSE f_CountWeekday(d.s_works, d.d_now) END w_workcnt, b.f_work \n` +
