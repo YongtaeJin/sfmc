@@ -66,14 +66,45 @@
             <v-toolbar-title>항목(품목)별 일 평균 생산량</v-toolbar-title>
             <v-spacer/>            
         </v-toolbar>
-        <v-data-table ref="item-makeavg" :headers="dayMakeAvgHead" :items="dayMakeList"                     
+        <!-- <v-data-table ref="item-makeavg" :headers="dayMakeAvgHead" :items="dayMakeList"                     
                     item-key="c_item" single-select hide-default-footer  @click:row="rowSelectmake"
                     :item-class= "row_classes" :items-per-page="-1" 
                     class="elevation-1 text-no-wrap"  :height="iframeHeight"
                     >
-
-        </v-data-table>
-
+            <template v-slot:footer>
+                <tr class="center-align">
+                    <td >합계</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                </tr>
+            </template>
+        </v-data-table> -->
+        <v-data-table ref="item-makeavg" :headers="dayMakeAvgHead" :items="dayMakeList"                     
+                    item-key="c_item" single-select hide-default-footer  
+                    :item-class= "row_classes" :items-per-page="-1" 
+                    class="elevation-1 text-no-wrap"  :height="iframeHeight"
+                    >
+            <template v-slot:item="{ item }">
+                <tr :class="{ 'row_select': item === dayMakeInfo }" class="center-align" @click="rowSelectmake(item)" >                
+                    <td> {{ item.c_item }} </td>
+                    <td> {{ item.n_item }} </td>
+                    <td> {{ item.t_size }} </td>
+                    <td> {{ item.m_yescnt }} </td>
+                    <td> {{ item.w_workcnt }} </td>
+                    <td> {{ item.m_dayavgcnt }} </td>
+                </tr>
+            </template>
+            <template slot="body.append">            
+                <tr class="center-align pink--text">
+                    <td colspan="3">합 계</td>
+                    <td > {{ sumField('m_yescnt') }}</td>
+                    <td > {{ sumField('w_workcnt') }}</td>
+                    <td > {{ Math.round((sumField('m_yescnt') / sumField('w_workcnt')) * 100) / 100 }}</td>
+                </tr>
+            </template>
+        </v-data-table> 
     </v-container>
 </template>
 
@@ -149,6 +180,9 @@ export default {
             const windowHeight = window.innerHeight;
             this.iframeHeight = windowHeight - 200 - 400;
         },
+        sumField(key) {
+            return this.dayMakeList.reduce((a, b) => Math.floor(a) + (Math.floor(b[key]) || 0), 0);
+        },
         async init() {
             this.form.sDate1=getDate(-100, 1);
             this.view();
@@ -196,10 +230,14 @@ export default {
         getPer(item) {
             return item.m_ocnt < 1 ? 0 : (item.m_yescnt / item.m_ocnt * 100).toFixed(2);
         },        
-        rowSelectmake:function (item, row) {
-            if (this.dayMakeInfo.c_item == item.c_item) return;
+        // rowSelectmake:function (item, row) {
+        //     if (this.dayMakeInfo.c_item == item.c_item) return;
+        //     this.dayMakeInfo = item;
+        //     if (row) { row.select(true) } else { this.selectMake = [item] }
+        // },
+        async rowSelectmake(item) {
+            if (this.dayMakeInfo == item) return;
             this.dayMakeInfo = item;
-            if (row) { row.select(true) } else { this.selectMake = [item] }
         },
 
     },

@@ -1,8 +1,8 @@
 <template>
-  <v-avatar color="accent" size="32">
-    <template v-if="member">
-      <v-img v-if="hasImage" :src="memberPhoto" @error="imageError" />
-      <div v-else>{{ member.n_name[0] }}</div>
+  <v-avatar color="accent" size="32">  
+    <template v-if="member">      
+      <v-img v-if="hasImage" :src="memberPhoto" @error="imageError" />      
+      <div v-else> {{ member.n_name[0] }}</div>
     </template>
     <v-icon v-else>mdi-account</v-icon>
   </v-avatar>

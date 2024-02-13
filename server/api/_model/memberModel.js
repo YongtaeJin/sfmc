@@ -156,25 +156,26 @@ const memberModel = {
 			delete form.p_idcom;			
 			form.i_id = idcom[0];
 			form.c_com = idcom[1];				
-			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider  from tb_member where 'system'=? and i_id=? and p_password=? and  d_leave_at is null " +
+			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider, (SELECT CONCAT(n_com, ' ', n_name)  FROM tb_worksite WHERE c_com = ?) n_comtoname  from tb_member where 'system'=? and i_id=? and p_password=? and  d_leave_at is null " +
 						"union " +
-			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider from tb_users where c_com=? and i_id=? and p_password=? and f_use = 'Y' and d_leave_at is null "
-			sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_member where
-			sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_users where			
+			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider, (SELECT CONCAT(n_com, ' ', n_name)  FROM tb_worksite WHERE c_com = ?) n_comtoname from tb_users where c_com=? and i_id=? and p_password=? and f_use = 'Y' and d_leave_at is null "
+			sql.values.push(idcom[1]); sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_member where
+			sql.values.push(idcom[1]); sql.values.push(idcom[1]); sql.values.push(idcom[0]); sql.values.push(p_password);   // tb_users where			
 			// console.log("aaa", sql)
 		} else {						
-			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider  from tb_member where 'system'=? and i_id=? " +
+			sql.query = "select 'system' c_com, i_id, p_password, n_name, i_level, i_provider, (SELECT CONCAT(n_com, ' ', n_name)  FROM tb_worksite WHERE c_com = ?) n_comtoname from tb_member where 'system'=? and i_id=? " +
 						"union " +
-			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider from tb_users where c_com=? and i_id=?  "
+			 			"select c_com, i_id, p_password, n_name, i_level, null i_provider, (SELECT CONCAT(n_com, ' ', n_name)  FROM tb_worksite WHERE c_com = ?) n_comtoname from tb_users where c_com=? and i_id=?  "
 			// sql.values.push(form.c_com|"-"); sql.values.push(form.i_id);   // tb_member where
 			// sql.values.push(form.c_com|"-"); sql.values.push(form.i_id);   // tb_users where
-			sql.values.push(c_com); sql.values.push(i_id);
-			sql.values.push(c_com); sql.values.push(i_id);
+			sql.values.push(c_com); sql.values.push(c_com); sql.values.push(i_id);
+			sql.values.push(c_com); sql.values.push(c_com); sql.values.push(i_id);
 		}
 		const [[row]] = await db.execute(sql.query, sql.values);
 		if (!row) {			
 			throw new Error('존재하지 않는 회원입니다.');
 		}
+
 		
 		return clearMemberField(row);
 	},

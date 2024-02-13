@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-progress-circular v-if="isLoading" indeterminate></v-progress-circular>
-    <v-menu v-else offset-y>
+    <v-progress-circular v-if="isLoading" indeterminate></v-progress-circular>    
+    <v-menu v-else offset-y>      
       <template v-slot:activator="{ on, attrs }">
-        <v-btn icon v-on="on" v-bind="attrs">
+        <v-btn icon v-on="on" v-bind="attrs">          
           <display-avatar :member="member" />
         </v-btn>
       </template>
