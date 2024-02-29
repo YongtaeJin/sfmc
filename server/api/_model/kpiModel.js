@@ -319,20 +319,22 @@ const kpiModel = {
       
       const query = `SELECT 'KPILEVEL1' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, NULL kpiFldCd, NULL kpiDtlCd, NULL kpiDtlNm, NULL achrt, NULL msmtVl, NULL unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
                     `  FROM tb_kpilevel1 \n` +
-                    ` WHERE c_com = ? AND ocrDttm > DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n` +
+                    ` WHERE c_com = ? AND ocrDttm >= DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n` +
                     `UNION \n` +
                     `SELECT 'KPILEVEL2' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, NULL systmOprYn, kpiFldCd, kpiDtlCd, kpiDtlNm, achrt, NULL msmtVl, NULL unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
                     `  FROM tb_kpilevel2 \n` +
-                    ` WHERE c_com = ? AND ocrDttm > DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n` +
+                    ` WHERE c_com = ? AND ocrDttm >= DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n` +
                     `UNION \n` +
                     `SELECT 'KPILEVEL3' kpilevel, t_no, c_com, kpiCertKey, ocrDttm, s_restime, NULL systmOprYn, kpiFldCd, kpiDtlCd, kpiDtlNm, NULL achrt, msmtVl, unt, trsDttm, f_tst, t_req, t_res, f_err \n` +
                     `  FROM tb_kpilevel3 \n` +
-                    ` WHERE c_com = ? AND ocrDttm > DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n ` +
+                    ` WHERE c_com = ? AND ocrDttm >= DATE_FORMAT(NOW(),'%Y%m%d') AND f_err = '-'\n ` +
                     ` ORDER BY c_com, kpilevel, ocrDttm, t_no`;
       var values = new Array();
       values.push(c_com); values.push(c_com); values.push(c_com); 
         
       const [rows] = await db.execute(query, values);
+
+      console.log(query)
       rows.forEach((row) => {
         sqlHelper.addEditCol(row);
       });
