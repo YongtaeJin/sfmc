@@ -33,7 +33,10 @@
                     <v-col>
                         <v-toolbar height="30px" background-color="primary" dark> 
                             <v-toolbar-title>KPI 1</v-toolbar-title>
-                            <v-spacer/><tooltip-btn x-small label="KPI1 추가" @click="addKpi('kpi1')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
+                            <v-spacer/>                            
+                            <tooltip-btn x-small label="KPI1 삭제" @click="delKpi('kpi1')"><v-icon>mdi-minus-circle-multiple-outline</v-icon></tooltip-btn>
+                            <tooltip-btn x-small label="KPI1 추가" @click="addKpi('kpi1')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
+
                         </v-toolbar>
                         <v-data-table ref="kpi1" :headers="kpi1Head"  :items="kpi1ItemFiled" @click:row="rowSelectKpi1" 
                                 item-key="t_no" single-select v-model="kip1S"        
@@ -50,7 +53,9 @@
                     <v-col>
                         <v-toolbar height="30px" background-color="primary" dark> 
                             <v-toolbar-title>KPI 2</v-toolbar-title>
-                            <v-spacer/><tooltip-btn x-small label="KPI2 추가" @click="addKpi('kpi2')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
+                            <v-spacer/>
+                            <tooltip-btn x-small label="KPI2 삭제" @click="delKpi('kpi2')"><v-icon>mdi-minus-circle-multiple-outline</v-icon></tooltip-btn>
+                            <tooltip-btn x-small label="KPI2 추가" @click="addKpi('kpi2')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
                         </v-toolbar>
                         <v-data-table ref="kpi2" :headers="kpi2Head"  :items="kpi2ItemFiled" @click:row="rowSelectKpi2" 
                                 item-key="t_no" single-select v-model="kip2S"        
@@ -66,7 +71,9 @@
                     <v-col>
                         <v-toolbar height="30px" background-color="primary" dark> 
                             <v-toolbar-title>KPI 3</v-toolbar-title>
-                            <v-spacer/><tooltip-btn x-small label="KPI3 추가" @click="addKpi('kpi3')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
+                            <v-spacer/>
+                            <tooltip-btn x-small label="KPI3 삭제" @click="delKpi('kpi3')"><v-icon>mdi-minus-circle-multiple-outline</v-icon></tooltip-btn>
+                            <tooltip-btn x-small label="KPI3 추가" @click="addKpi('kpi3')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
                         </v-toolbar>
                         <v-data-table ref="kpi3" :headers="kpi3Head"  :items="kpi3ItemFiled" @click:row="rowSelectKpi3" 
                                 item-key="t_no" single-select v-model="kip3S"        
@@ -258,20 +265,30 @@ export default {
             this.kpi1ItemFiled = this.kpi1Items.filter((i) => i.ocrDttm === item.s_date);
             this.kpi2ItemFiled = this.kpi2Items.filter((i) => i.ocrDttm === item.s_date);
             this.kpi3ItemFiled = this.kpi3Items.filter((i) => i.ocrDttm === item.s_date);
+
+            this.kpi1Info = [];
+            this.kpi2Info = [];
+            this.kpi3Info = [];
         },
         async rowSelectKpi1(item, row) {
             if(this.kpi1Info.t_no == item.t_no) return;            
             this.kpi1Info = item;
+            this.kpi2Info = [];
+            this.kpi3Info = [];
             if (row) { row.select(true) } else { this.kip1S = [item] }; 
         },
         async rowSelectKpi2(item, row) {
             if(this.kpi2Info.t_no == item.t_no) return;            
             this.kpi2Info = item;
+            this.kpi1Info = [];
+            this.kpi3Info = [];
             if (row) { row.select(true) } else { this.kip2S = [item] }; 
         },
         async rowSelectKpi3(item, row) {
             if(this.kpi3Info.t_no == item.t_no) return;            
             this.kpi3Info = item;
+            this.kpi1Info = [];
+            this.kpi2Info = [];
             if (row) { row.select(true) } else { this.kip3S = [item] }; 
         },
         async addKpi(kpi) {
@@ -286,6 +303,21 @@ export default {
             this.ResTime = kpi == "kpi3" ? this.kpiResTime.KPI3 : kpi == "kpi2" ? this.kpiResTime.KPI2 : this.kpiResTime.KPI1;             
             this.$refs.dialog_kpi.open();
 
+        },
+        async delKpi(kpi) {
+            if (!this.kpiKey) {
+                this.$toast.warning(`인증키값이 없습니다.`);
+                return;
+            }
+            const kpidata = kpi == "kpi3" ? this.kpi3Info  : kpi == "kpi2" ? this.kpi2Info : this.kpi1Info;
+            if(kpidata.length == 0) {
+                this.$toast.warning(`선택 자료가 없습니다.`);
+                return;
+            }
+            console.log(kpidata)
+            return;
+            kpidata.kpilev = kpi;            
+            await this.$axios.post(`/api/kpi/delKPIJob`, kpidata); 
         },
         async kpi_close() {
             // this.$refs.dialog_kpi.close();            

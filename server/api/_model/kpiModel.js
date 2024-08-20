@@ -7,6 +7,7 @@ const TABLE = require('../../../util/TABLE');
 const moment = require('../../../util/moment');
 
 const axios = require('axios');
+const { mdiCheckboxMultipleMarkedCircleOutline } = require('@mdi/js');
 
 function getCurrentDateYYYYMMDD() {
     var currentDate = new Date();
@@ -313,6 +314,18 @@ const kpiModel = {
         await db.execute('COMMIT');
       }      
     },
+    // KPI 삭제
+    async delKPIJob(req) {
+      const payload = { ...req.body }
+      const {c_com, t_no, kpiCertKey, ocrDttm, kpilev } = { ...payload }
+      const table = kpilev == "kpi3" ? TABLE.KPI3 : kpilev == "kpi2" ? TABLE.KPI2 : TABLE.KPI1;
+
+      const sql = sqlHelper.DeleteSimple(table, {c_com, t_no, kpiCertKey, ocrDttm});
+      
+      //const [rv] = await db.execute(sql.query, sql.values);
+      return true;
+    },
+
     // KPI 전송내역 조회 (한번에 입력작업 위해서)
     async kpiJoblist(req) {
       const { c_com } = req.body;
