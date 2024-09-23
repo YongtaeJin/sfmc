@@ -242,7 +242,24 @@ const metricsModel = {
                     `  GROUP BY a.c_com, a.c_item \n`;
                     `  ORDER BY a.c_com, MAX(c1.s_sort)`;
 
-        const [rows] = await db.execute(query, values);   
+        const [rows] = await db.execute(query, values);
+        if (rows.length) {
+            // console.log(rows)
+            // 합계 표시            
+            const data = {                
+                c_com: rows[0].c_com, 
+                c_item: '합계',
+                n_item: '',
+                m_ordcnt: rows.reduce((acc, item) => acc + parseInt(item.m_ordcnt), 0),
+                m_err: rows.reduce((acc, item) => acc + parseInt(item.m_err), 0),                
+            };
+            if(data.m_err) {
+                const err = data.m_err / data.m_ordcnt * 100;
+                data.p_per =  (Math.round(err * 100) / 100).toString();
+                // rows.unshift(data);
+                rows.push(data);
+            }
+        }
         return rows;
     },
     async getDefectrateratedt2(req) {
@@ -273,7 +290,7 @@ const metricsModel = {
             values.push(sDate2);
         }    
         query += ` ORDER BY a.c_com, c1.s_sort, s_workday, i_orderno, b.s_sort`;
-        console.log(query)
+        // console.log(query)
         const [rows] = await db.execute(query, values);   
         return rows;
     },
@@ -304,7 +321,7 @@ const metricsModel = {
         }     
         query +=    ` GROUP BY a.c_com, b.f_cause \n` +
                     ` ORDER BY s_sort`;
-        console.log(query, values)
+        // console.log(query, values)
         const [rows] = await db.execute(query, values);   
         return rows;
     },

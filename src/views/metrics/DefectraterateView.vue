@@ -250,12 +250,16 @@ export default {
         rowSelectHead2 :function (item, row) {       
             this.tabIndex = 2;
             this.headItem2Info = item;  
-            if (row) {row.select(true) } else {this.selectedM2 = [item]};
-
+            if (row) {row.select(true) } else {this.selectedM2 = [item]};            
             if (this.itemItems.length > 0) {
-                this.itemFilter = this.itemItems.filter((r) => {
-                    return r.c_item == item.c_item && r.c_com == item.c_com;
-                }); 
+                console.log("item: ", item)
+                if (item.c_item == '합계') {
+                    this.itemFilter = this.itemItems;
+                } else {
+                    this.itemFilter = this.itemItems.filter((r) => {
+                        return r.c_item == item.c_item && r.c_com == item.c_com;
+                    }); 
+                }
             } else {
                 this.itemFilter = [];
             }

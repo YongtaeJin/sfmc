@@ -8,6 +8,8 @@
 		   <v-app-bar-nav-icon @click="toggleDrawer" />
 		   <!-- <site-title /> 테라스트림 스마트공방 생산관리 시스템 -->
 		   <!-- <site-title /> (주)테라스트림 생산관리시스템 -->
+		   <!-- PS D:\WEBAPP\run-quasar\firebase> node -v
+		      v16.18.0  nvm use 16.18-->
 		   <site-title /> Mi MES
 		   <v-spacer></v-spacer> 
 		   <template v-if="this.$store.state.user.member">{{this.$store.state.user.member.n_comtoname}}</template>
