@@ -211,7 +211,7 @@ const kpiModel = {
     },
 
     async getWorksite(req) {
-      const query = `SELECT c_com, n_com, i_company, i_kpikey, f_kpichk, n_kpiconm FROM tb_worksite ORDER BY n_com` ;
+      const query = `SELECT c_com, n_com, i_company, i_kpikey, f_kpichk, n_kpiconm FROM tb_worksite ORDER BY c_com, n_com` ;
       const [rows] = await db.execute(query);
       return rows;
     },
@@ -492,6 +492,24 @@ const kpiModel = {
     var values = new Array();    values.push(c_com);     values.push(`${s_ym}%`); 
     const [rows] = await db.execute(query, values);    
     return rows;
+  },
+  // KPI1 월단위로 자료 저장  // 기존자료 존재시 SKIP처리
+  async saveKPI1Wizard(req) {
+    const payload = {...req.body};
+    let query = ''
+    
+    // console.log(req.body)
+
+    for(let i = 0;  i < req.body.length; i++) {
+      query = `select count(*) rv from tb_kpilevel1 where c_com = '${req.body[i].c_com}' and ocrDttm = '${req.body[i].date}'`
+      const [[res]] = await db.execute(query);
+      if (res.rv == 1) continue;
+
+      query = `insert into tb_kpilevel1 (c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, f_tst) value ('${req.body[i].c_com}', '${req.body[i].i_kpikey}', '${req.body[i].date}', '${req.body[i].time}', 'Y', 'N') `;
+
+      // console.log(query)
+      await db.execute(query);
+    }
   },
 
 }

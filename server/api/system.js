@@ -24,6 +24,12 @@ router.post('/', async (req, res) => {
 	res.json(result);
 });
 
+// 사업장 삭제 처리
+router.post('/worksiteDel', async (req,res) => {
+	const result = await modelCall(systemModel.worksiteDel, req);
+	res.json(result);
+});
+
 router.patch('/', async (req, res) => {
 	const result = await modelCall(systemModel.updateWorksite, req);
 	res.json(result);

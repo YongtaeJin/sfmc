@@ -66,7 +66,14 @@
         <v-text-field label="장비모니터링주소" v-model="form.t_monitor"></v-text-field>
         <!-- <v-file-input  label="회사 Log" v-model="form.t_worklog" prepend-icon="mdi-account-box" accept="image/jpg,image/png" /> -->
         <v-textarea label="설명" v-model="form.t_remark" />        
-        <v-btn type="submit" block>저장</v-btn>
+        <v-row no-gutters>
+            <v-responsive width="160px">
+                <v-btn type="submit" block color="primary">저장</v-btn>                   
+            </v-responsive>
+            <v-spacer></v-spacer>            
+            <v-btn color="red" @click="onDelete">삭제</v-btn>
+        </v-row>
+        <!-- <v-btn type="submit" block color="primay">저장</v-btn> <v-btn color="red">삭제</v-btn> -->
         
     </v-form>
     </v-container>
@@ -118,6 +125,7 @@ export default {
                 t_worklog: "",
                 t_worksign: "",
                 t_remark: "",
+                f_del: "",
             },
             isNew : false,            
         };
@@ -162,6 +170,7 @@ export default {
                     n_kpiconm: "",
                     t_monitor: "",
                     t_remark: "",
+                    f_del: "",
                 },
                 this.isNew = true;
             }
@@ -189,7 +198,12 @@ export default {
 
             this.$emit('onSave', this.form);  
             this.init();      
-        }       
+        },
+        async onDelete(){
+            this.$emit('onDelete', this.form);
+            this.init();
+        }
+
     },
 }
 </script>

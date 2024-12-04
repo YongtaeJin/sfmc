@@ -36,6 +36,7 @@
                             <v-spacer/>                            
                             <tooltip-btn x-small label="KPI1 삭제" @click="delKpi('kpi1')"><v-icon>mdi-minus-circle-multiple-outline</v-icon></tooltip-btn>
                             <tooltip-btn x-small label="KPI1 추가" @click="addKpi('kpi1')"><v-icon>mdi-plus-circle-multiple-outline</v-icon></tooltip-btn>
+                            <tooltip-btn x-small label="KPI1 추가마법사" @click="appKpidb('kpi1')"><v-icon>mdi-database-edit</v-icon></tooltip-btn>
 
                         </v-toolbar>
                         <v-data-table ref="kpi1" :headers="kpi1Head"  :items="kpi1ItemFiled" @click:row="rowSelectKpi1" 
@@ -93,15 +94,23 @@
             </kpi-manager-form>
             
         </ez-dialog>
+
+        <ez-dialog ref="dialog_wizard" :label=kpi1title persistent width="450px"> 
+            <kpi-manager-wizard :data="kpi1wdata">
+
+            </kpi-manager-wizard>
+        </ez-dialog>
     </v-container>
 </template>
 
 <script>
+import {deepCopy, generateRandomTimes} from '../../../util/lib';
 import TooltipBtn from '../../components/etc/TooltipBtn.vue';
 import EzDialog from '../../components/etc/EzDialog.vue';
 import KpiManagerForm from './kpiManagerForm.vue';
+import KpiManagerWizard from './kpiManagerWizard.vue';
 export default {
-    components: { TooltipBtn, KpiManagerForm, EzDialog },
+    components: { TooltipBtn, KpiManagerForm, EzDialog, KpiManagerWizard },
     mounted() {
         // 창 크기가 변경될 때마다 iframe의 높이를 조정
         window.addEventListener('resize', this.adjustIframeHeight);
@@ -164,9 +173,13 @@ export default {
             ],
             kpi3Items:[], kpi3ItemFiled:[], kpi3Info:[], kip3S:[],
             kpiResTime:[], ResTime: "",  kpiPopTitle:"",
+            kpi1wdata:[],
         }
     },
     computed: {
+        kpi1title() {
+            return `${this.setCom.n_com} -- KPI1 자료 생성`
+        },
         cleandarYM() {
             return `${this.ym.y}년 ${String(this.ym.m + 1).padStart(2, '0')}월`;
         },
@@ -201,6 +214,7 @@ export default {
             handler(newItems, oldItems) {                
             }
         },
+        
 
     },
     methods: {
@@ -321,6 +335,41 @@ export default {
         },
         async kpi_close() {
             // this.$refs.dialog_kpi.close();            
+        },
+        async appKpidb(kpi) {
+            if (!this.kpiKey) {
+                this.$toast.warning(`인증키값이 없습니다.`);
+                return;
+            }
+
+            // this.$refs.dialog_wizard.open();
+            // return;
+            const year = this.form.s_ym.slice(0, 4);  // 앞 4자리: 연도
+            const month = this.form.s_ym.slice(4);   // 나머지 2자리: 월
+            this.kpi1wdata = generateRandomTimes(`${year}-${month}`)
+            this.kpi1wdata = this.kpi1wdata.filter(item => {
+                // 날짜 문자열 분리
+                let year = item.date.slice(0, 4);   // 연도: 앞 4자리
+                let month = item.date.slice(4, 6); // 월: 5~6번째 자리
+                let day = item.date.slice(6);      // 일: 마지막 2자리
+
+                // Date 객체 생성 (month는 0부터 시작하므로 -1)
+                let date = new Date(year, month - 1, day);
+
+                // 요일 확인
+                let dayOfWeek = date.getDay();
+                return dayOfWeek !== 0 && dayOfWeek !== 6; // 0: 일요일, 6: 토요일
+            });
+            if (this.kpi1wdata.length) {
+                this.kpi1wdata.forEach(item => {
+                    item.c_com = this.setCom.c_com;
+                    item.i_kpikey = this.setCom.i_kpikey;
+                    item.n_com = this.setCom.n_com;
+                    item.yn = 'Y';
+                })
+            }
+            this.$refs.dialog_wizard.open();
+            return;
         }
         
     },

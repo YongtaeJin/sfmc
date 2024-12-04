@@ -24,7 +24,7 @@
         </div>
 
         <ez-dialog ref="dialog" label="사업장" persistent @onClose="closeDialog" width="500px">
-            <worksite-form :data="item" :keyCheckCom="keyCheckCom" :keyCheckId="keyCheckId" :isLoad="isLoad" @onSave="save">                
+            <worksite-form :data="item" :keyCheckCom="keyCheckCom" :keyCheckId="keyCheckId" :isLoad="isLoad" @onSave="save" @onDelete="workdel">                
             </worksite-form>
         </ez-dialog>
         <ez-dialog ref="dialog_log" label="회사 Log Image 선택"  persistent width="400px">
@@ -77,6 +77,7 @@ export default {
                 t_worklog: "",
                 t_worksign: "",
                 t_remark: "",
+                f_del:"",
             },
             isLoad: false,
         };
@@ -173,7 +174,21 @@ export default {
             }
             this.$refs.dialog_log.close();
         },
-        
+        async workdel(form) {
+            const res = await this.$ezNotify.confirm("<br>삭제 처리 하시겠습니까 ?<br>사용한 사업장 코드는 사용 불가합니다. ", `${this.selected.n_com}`, {icon: "mdi-message-bulleted-off", width: 400,});
+            if(!res) return;
+
+            // DB삭제코드 부여 작업
+            const rv = await this.$axios.post(`/api/system/worksiteDel`, this.selected);
+            if (rv) {
+                const idx = this.items.indexOf(this.selected);
+                if (idx >= 0) {
+                    this.items.splice(idx, 1);
+                }
+                this.$refs.dialog.close();
+                this.$toast.info(`삭제 처리 하였습니다...`);
+            }
+        }
     },
 }
 </script>

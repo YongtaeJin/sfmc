@@ -150,8 +150,44 @@ const lib = {
 	},
 	later3Month() {
 
-	}
+	},
 
+	generateRandomTimes(yearMonth) {
+		if (!yearMonth || !/^\d{4}-\d{2}$/.test(yearMonth)) {
+		  throw new Error("올바른 YYYY-MM 형식의 기준 년월을 입력하세요.");
+		}
+	  
+		const [year, month] = yearMonth.split("-").map(Number);
+	  
+		// 해당 월의 마지막 날짜 계산
+		const lastDay = new Date(year, month, 0).getDate();
+
+		// 날짜별로 랜덤 시간 생성
+		const randomTimes = Array.from({ length: lastDay }, (_, index) => {
+			const day = index + 1;
+			
+			const startMinutes = 8 * 60 + 10; // 08:10을 분 단위로 변환
+			const endMinutes = 8 * 60 + 40; // 08:40을 분 단위로 변환
+			
+			 // 랜덤 분 계산
+			 const randomMinutes = Math.floor(
+				Math.random() * (endMinutes - startMinutes + 1) + startMinutes
+			  );
+		
+			  // 시와 분으로 변환
+			  const hours = Math.floor(randomMinutes / 60);
+			  const minutes = randomMinutes % 60;
+			  
+			  const randomTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+    
+			//   console.log(randomTime)
+			return {
+			   date: `${year}${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}`,
+			   time: `${randomTime}`,
+			};
+		});
+		return randomTimes;
+	},
 
 }
 

@@ -77,5 +77,8 @@ router.post('/getKPI3List', async (req, res) => {
     const result = await modelCall(kpiModel.getKPI3List, req);
     res.json(result);
 });
-
+router.post('/saveKPI1Wizard', async (req, res) => {    
+    const result = await modelCall(kpiModel.saveKPI1Wizard, req);
+    res.json(result);
+})
 module.exports = router;

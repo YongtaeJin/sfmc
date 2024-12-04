@@ -27,6 +27,9 @@ const systemModel = {
             throw new Error('권한이 없습니다.');
         }   
         const sql = sqlHelper.SelectSimple(TABLE.WORKSITE);        
+
+        sql.query = sql.query + ` WHERE IFNULL(f_del, 'N')  <> 'Y' ORDER BY C_COM`;
+        // console.log(sql)
         const [rows] = await db.execute(sql.query, sql.values);
         return rows;
     },
@@ -113,6 +116,17 @@ const systemModel = {
         }
         await db.execute('COMMIT');
         return row;
+    },
+    async worksiteDel(req) {
+        // 권한 확인        
+        if (!isGrant(req, LV.SYSTEM))  throw new Error('권한이 없습니다.');  
+        const {c_com} = req.body;
+        let sql;
+        sql = `update tb_worksite set f_del = 'Y' where c_com = '${c_com}'`;
+        const res = await db.execute(sql);
+        if (res.affectedRows < 1) { db.execute('ROLLBACK'); return false;}
+        await db.execute('COMMIT');
+        return true;        
     },
     
     // 사업장별 사용자 관리
