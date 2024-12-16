@@ -211,7 +211,7 @@ const kpiModel = {
     },
 
     async getWorksite(req) {
-      const query = `SELECT c_com, n_com, i_company, i_kpikey, f_kpichk, n_kpiconm FROM tb_worksite ORDER BY c_com, n_com` ;
+      const query = `SELECT c_com, n_com, i_company, i_kpikey, f_kpichk, n_kpiconm FROM tb_worksite WHERE IFNULL(f_del, 'N')  <> 'Y' AND f_use = 'Y' ORDER BY c_com, n_com` ;
       const [rows] = await db.execute(query);
       return rows;
     },

@@ -38,7 +38,9 @@
                 <v-card color="grey lighten-4">
                 <v-row no-gutters class="my-text-field" >
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주번호" readonly dense hide-details class="text-input-redbrg no-padding"/></v-col>
-                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="!edit" @input="onChangeOrdno" dense hide-details class="no-padding"/></v-col>
+                    <!-- <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" :readonly="!edit" @input="onChangeOrdno" dense hide-details class="no-padding"/></v-col> -->
+                    <!-- 수주번호 수정하게 처리 : 24.12.16 -->
+                    <v-col col="8" sm="3" md="3"><v-text-field v-model="masterinfo.i_orderno" @input="onChangeOrdno" dense hide-details class="no-padding"/></v-col>
                     <v-col col="8" sm="2" md="2"></v-col>
                     <v-col col="8" sm="1" md="1"><v-text-field value="수주상태" readonly dense hide-details class="text-input-bluebrg"/></v-col>
                     <v-col col="8" sm="2" md="2"><v-text-field :value="getOrderStatus(masterinfo.f_status)" readonly dense hide-details class="text-input-redbrg inputPrice"/></v-col>
@@ -108,16 +110,20 @@
                         <span v-else>{{comma(item.m_cnt)}}</span>
                     </template>
                     <template v-slot:[`item.a_unit`]="{ item }">
-                        <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
-                        <span v-else><div class="right2-align">{{comma(item.a_unit)}}</div></span>
+                        <!-- <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
+                        <span v-else><div class="right2-align">{{comma(item.a_unit)}}</div></span> -->
+                        <!-- 수주단가 수정 처리 : 24.12.16  -->
+                        <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>                        
                     </template>
                     <template v-slot:[`item.a_amt`]="{ item }">
                         <input-amt v-model="item.a_amt" @input="onChangeAmt2" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
                         <span v-else><div class="right2-align">{{comma(item.a_amt)}}</div></span>
                     </template>
                     <template v-slot:[`item.s_duedate`]="{ item }">
-                        <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" :rules="rules.date({required: false})" />
-                        <span v-else>{{item.s_duedate}}</span>
+                        <!-- <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" :rules="rules.date({required: false})" />
+                        <span v-else>{{item.s_duedate}}</span> -->
+                        <!-- 납기일 수정 처리 : 24.12.16 -->
+                        <input-date-2 v-model="item.s_duedate" @input="onChangeDetail" :rules="rules.date({required: false})" />
                     </template>
                     <template v-slot:[`item.t_remark`]="{ item }">
                         <v-text-field v-model="item.t_remark" @input="onChangeDetail" v-if="edit && item.i_orderser === itemInfo.i_orderser" dense hide-details class="my-text-field" />
