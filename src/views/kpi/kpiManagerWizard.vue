@@ -33,7 +33,7 @@ export default {
     methods: {
         async save() {            
             await this.$axios.post(`/api/kpi/saveKPI1Wizard`, this.data);             
-            this.$toast.info(`저장 하였습니다....`);
+            this.$toast.info(`저장 하였습니다....`);            
         }
     }
 

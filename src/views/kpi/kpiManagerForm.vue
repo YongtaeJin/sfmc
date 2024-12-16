@@ -117,6 +117,7 @@ export default {
             await this.$axios.post(`/api/kpi/sendKPIJob`, this.form); 
 
             this.$toast.info(`${this.form.f_sned} 처리 하였습니다 ...`);
+            this.$emit('onAdd', this.tabindex == 0 ? "kpi1" : this.tabindex == 1 ? "kpi2" : "kpi3", this.form, 'a');
         },
         changeFild(Cd) {            
             this.kpifildfilter = this.kpifilds.filter(function(item) { return item.c_gcode == `KPI${Cd}`; });         

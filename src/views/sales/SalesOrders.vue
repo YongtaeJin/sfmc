@@ -113,7 +113,7 @@
                         <!-- <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>
                         <span v-else><div class="right2-align">{{comma(item.a_unit)}}</div></span> -->
                         <!-- 수주단가 수정 처리 : 24.12.16  -->
-                        <input-amt v-model="item.a_unit" @input="onChangeAmt" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>                        
+                        <input-amt v-model="item.a_unit" @input="onChangeAmt" ></input-amt>                        
                     </template>
                     <template v-slot:[`item.a_amt`]="{ item }">
                         <input-amt v-model="item.a_amt" @input="onChangeAmt2" v-if="edit && item.i_orderser === itemInfo.i_orderser" ></input-amt>

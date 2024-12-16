@@ -90,13 +90,13 @@
         </v-row>
 
         <ez-dialog ref="dialog_kpi" label="KPI 추가" persistent  width="450px" @onClose="kpi_close">
-            <kpi-manager-form :tabindex="kpiindex" :data="setCom" :resTime="ResTime">
+            <kpi-manager-form @onAdd="modKPIData" :tabindex="kpiindex" :data="setCom" :resTime="ResTime">
             </kpi-manager-form>
             
         </ez-dialog>
 
         <ez-dialog ref="dialog_wizard" :label=kpi1title persistent width="450px"> 
-            <kpi-manager-wizard :data="kpi1wdata">
+            <kpi-manager-wizard  :data="kpi1wdata">
 
             </kpi-manager-wizard>
         </ez-dialog>
@@ -328,10 +328,30 @@ export default {
                 this.$toast.warning(`선택 자료가 없습니다.`);
                 return;
             }
-            console.log(kpidata)
-            return;
+            // console.log(kpidata)
+            // return;
             kpidata.kpilev = kpi;            
-            await this.$axios.post(`/api/kpi/delKPIJob`, kpidata); 
+            const rv = await this.$axios.post(`/api/kpi/delKPIJob`, kpidata); 
+            if (rv) {
+                console.log(kpi, kpidata)
+                if (kpi == "kpi3") {
+                    const idxf = this.kpi3ItemFiled.indexOf(kpidata);
+                    if (idxf >= 0) this.kpi3ItemFiled.splice(idxf, 1);
+                    const idx = this.kpi3Items.indexOf(kpidata);
+                    if (idx >= 0) this.kpi3Items.splice(idx, 1);
+                } else if (kpi == "kpi2") {
+                    const idxf = this.kpi2ItemFiled.indexOf(kpidata);
+                    if (idxf >= 0) this.kpi2ItemFiled.splice(idxf, 1);
+                    const idx = this.kpi2Items.indexOf(kpidata);
+                    if (idx >= 0) this.kpi2Items.splice(idx, 1);
+                } else {
+                    const idxf = this.kpi1ItemFiled.indexOf(kpidata);
+                    if (idxf >= 0) this.kpi1ItemFiled.splice(idxf, 1);
+                    const idx = this.kpi1Items.indexOf(kpidata);
+                    if (idx >= 0) this.kpi1Items.splice(idx, 1);                    
+                }
+                this.modKPIData(kpi, kpidata, 'd');
+            }
         },
         async kpi_close() {
             // this.$refs.dialog_kpi.close();            
@@ -370,9 +390,36 @@ export default {
             }
             this.$refs.dialog_wizard.open();
             return;
+        },
+        modKPIData(kpi, kpidata, job) {
+            
+            if (job == "a") {
+                this.$refs.dialog_kpi.close();
+                if (kpi == "kpi3") {
+                    this.kpi3Items.push(kpidata);
+                    this.kpi3ItemFiled.push(kpidata);
+                } else if (kpi == "kpi2") {
+                    this.kpi2Items.push(kpidata);
+                    this.kpi2ItemFiled.push(kpidata);
+                } else {
+                    this.kpi1Items.push(kpidata);
+                    this.kpi1ItemFiled.push(kpidata);
+                }                
+            }
+
+            const cnt = kpi == "kpi3" ? this.kpi3ItemFiled.length  : kpi == "kpi2" ? this.kpi2ItemFiled.length : this.kpi1ItemFiled.length;
+            if (kpi == "kpi3") {
+                this.masterinfo.s_k3time = cnt == 0 ? '': kpidata.s_restime;
+            } else if (kpi == "kpi2") {
+                this.masterinfo.s_k2time = cnt == 0 ? '': kpidata.s_restime;
+            } else {
+                this.masterinfo.s_k1time = cnt == 0 ? '': kpidata.s_restime;
+            }
+
+            
         }
-        
     },
+   
 }
 </script>
 

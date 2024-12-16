@@ -319,10 +319,9 @@ const kpiModel = {
       const payload = { ...req.body }
       const {c_com, t_no, kpiCertKey, ocrDttm, kpilev } = { ...payload }
       const table = kpilev == "kpi3" ? TABLE.KPI3 : kpilev == "kpi2" ? TABLE.KPI2 : TABLE.KPI1;
-
-      const sql = sqlHelper.DeleteSimple(table, {c_com, t_no, kpiCertKey, ocrDttm});
-      
-      //const [rv] = await db.execute(sql.query, sql.values);
+      const sql = sqlHelper.DeleteSimple(table, {c_com, t_no, kpiCertKey, ocrDttm});      
+      const res = await db.execute(sql.query, sql.values);
+      if (res.affectedRows < 1) { db.execute('ROLLBACK'); return false;}
       return true;
     },
 
