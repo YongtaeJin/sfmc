@@ -511,7 +511,7 @@ const basejobModel = {
         var dtjob = 0;
         // `       (SELECT @ROWNUM1:=IFNULL((SELECT MAX(i_ser) from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'),0)) R, ` +
         var sqldt = `insert into tb_routeproc (c_com, c_item, i_ser, s_sort, c_process, n_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, n_crnm, d_create_at) \n` +
-                    `select c_com, '${c_item}', @ROWNUM1:=@ROWNUM1+1 i_ser, @ROWNUM2:=@ROWNUM2+1 s_sort, c_process, n_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, '${req.user.n_name}', now() \n` + 
+                    `select c_com, '${c_item}', @ROWNUM1:=@ROWNUM1+1 i_ser, @ROWNUM2:=@ROWNUM2+1, c_process, n_process, c_ptype, m_whour, f_jobs, f_jobf, f_jobo, '${req.user.n_name}', now() \n` + 
                     `  from tb_ptypeli , \n` +
                     `       (SELECT @ROWNUM1:=DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')) R, \n` +
                     `       (SELECT @ROWNUM2:=IFNULL((SELECT MAX(s_sort) from tb_routeproc WHERE c_com = '${c_com}' AND c_item = '${c_item}'),0)) S \n` +
