@@ -504,7 +504,7 @@ const kpiModel = {
       const [[res]] = await db.execute(query);
       if (res.rv == 1) continue;
 
-      query = `insert into tb_kpilevel1 (c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, f_tst) value ('${req.body[i].c_com}', '${req.body[i].i_kpikey}', '${req.body[i].date}', '${req.body[i].time}', 'Y', 'N') `;
+      query = `insert into tb_kpilevel1 (c_com, kpiCertKey, ocrDttm, s_restime, systmOprYn, f_tst, f_err) value ('${req.body[i].c_com}', '${req.body[i].i_kpikey}', '${req.body[i].date}', '${req.body[i].time}', 'Y', 'N', '-') `;
 
       // console.log(query)
       await db.execute(query);

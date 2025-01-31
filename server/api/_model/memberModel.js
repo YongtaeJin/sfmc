@@ -172,8 +172,8 @@ const memberModel = {
 			sql.values.push(c_com); sql.values.push(c_com); sql.values.push(i_id);
 		}
 		const [[row]] = await db.execute(sql.query, sql.values);
-		if (!row) {			
-			throw new Error('존재하지 않는 회원입니다.');
+		if (!row) {						
+			throw new Error('존재하지 않는 회원입니다.');			
 		}
 
 		
