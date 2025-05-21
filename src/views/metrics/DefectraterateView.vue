@@ -44,6 +44,14 @@
                             <strong>{{ item.p_per }}%</strong>                        
                         </v-progress-linear>
                     </template>
+                    <template slot="body.append">            
+                        <tr class="center-align pink--text">
+                            <td colspan="2">합 계</td>
+                            <td > {{ sumField('m_ordcnt') }}</td>
+                            <td > {{ sumField('m_err') }}</td>
+                            <td > {{ Math.round((sumField('m_err') / sumField('m_ordcnt')) * 100) / 100 }}</td>
+                        </tr>
+                    </template>
                 </v-data-table>   
             </v-col>
             <v-col>
@@ -294,7 +302,10 @@ export default {
         },
         getCasueper(item) {
             return (Number(item.m_err) / this.sumCause() * 100).toFixed(2);
-        }
+        },
+        sumField(key) {
+            return this.headItem2.reduce((a, b) => Math.floor(a) + (Math.floor(b[key]) || 0), 0);
+        },
    },
 
 }
