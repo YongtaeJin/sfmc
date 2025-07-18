@@ -79,7 +79,7 @@ export default {
         adjustIframeHeight() {
         // 브라우저 창의 높이를 iframe의 높이로 설정
             const windowHeight = window.innerHeight;
-            this.iframeHeight = windowHeight - 200;           
+            this.iframeHeight = windowHeight - 130;           
         },
         getLvlabel (lv) {            
             var i = LVITEMS.findIndex(i => i.lv == lv );

@@ -159,7 +159,7 @@ export default {
         adjustIframeHeight() {
         // 브라우저 창의 높이를 iframe의 높이로 설정
             const windowHeight = window.innerHeight;
-            this.iframeHeight = windowHeight - 200 - 410;
+            this.iframeHeight = windowHeight - 200 - 410 + 40;
         },
         comma (value) {
             if (value !== null && value !== undefined) {

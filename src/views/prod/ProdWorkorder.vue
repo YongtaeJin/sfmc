@@ -238,7 +238,7 @@ export default {
         adjustIframeHeight() {
         // 브라우저 창의 높이를 iframe의 높이로 설정
             const windowHeight = window.innerHeight;
-            this.iframeHeight = windowHeight - 200 - 400;           
+            this.iframeHeight = windowHeight - 200 - 400 + 60;           
         },
         shouldMergeRow(item) {
             const index = this.itemList.findIndex((i) => i.i_orderno === item.i_orderno);

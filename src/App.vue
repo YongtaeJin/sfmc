@@ -21,7 +21,7 @@
 		   <router-view />			 
 	   </v-main>
 	   
-	   <site-footer />
+	   <!-- <site-footer /> -->
 	   <vue-progress-bar></vue-progress-bar>
    </v-app>
 </template>
