@@ -44,14 +44,14 @@
                             <strong>{{ item.p_per }}%</strong>                        
                         </v-progress-linear>
                     </template>
-                    <template slot="body.append">            
+                    <!-- <template slot="body.append">            
                         <tr class="center-align pink--text">
                             <td colspan="2">합 계</td>
                             <td > {{ sumField('m_ordcnt') }}</td>
                             <td > {{ sumField('m_err') }}</td>
                             <td > {{ Math.round((sumField('m_err') / sumField('m_ordcnt')) * 100) / 100 }}</td>
                         </tr>
-                    </template>
+                    </template> -->
                 </v-data-table>   
             </v-col>
             <v-col>

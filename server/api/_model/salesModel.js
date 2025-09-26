@@ -148,11 +148,10 @@ const salesModel = {
         const master = objectSplit(req.body, 'm');
         const detail = objectSplit(req.body, 'd');        
         // console.log(req.body)
-        // console.log(master)
-        // console.log(detail)
+        //  console.log(master)
+        //  console.log(detail)
         
-        const {c_com, i_ser } = master;
-        
+        const {c_com, i_ser } = master;        
         if (master.f_edit !== "0" || master.f_editold !== "0") {                        
             const newdata = master.f_editold !== "0" ? true : false;
             delete master.f_edit;

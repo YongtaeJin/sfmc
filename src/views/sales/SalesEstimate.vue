@@ -117,7 +117,7 @@
                 </v-row>
                 <v-row no-gutters class="my-text-field">
                     <v-col col="8" sm="1" md="1"><v-text-field value="메모" readonly dense hide-details class="text-input-bluebrg no-padding"/> </v-col>
-                    <v-col col="12" sm="8" md="8"><v-text-field v-model="estimate.t_remark" dense hide-details class="no-padding"/> </v-col>
+                    <v-col col="12" sm="8" md="8"><v-text-field v-model="estimate.t_remark" dense hide-details class="no-padding" @input="onChangeMaster"/> </v-col>
                 </v-row>
                 <v-row no-gutters class="my-text-fieldend"><v-col></v-col></v-row>
                 </v-card>
@@ -262,8 +262,10 @@ export default {
             const max = Math.max(...this.itmelitFilter.map((item) => item.s_sort));
             return isFinite(max) ? max : 0;
         },
-        edit() {            
-            // if (this.estimate.i_ser == undefined || ((this.estimate.f_status == "S" || this.estimate.f_status == "A") && this.estimate.f_edit !== "1")) return false;
+        // 2025-09-26   견적상태 상관 없이 수정삭제 처리  
+        edit() {
+            return true;
+
             if (this.estimate.i_ser == undefined || this.estimate.f_status == "A" || (this.estimate.f_status == "S"  && this.estimate.f_edit !== "1")) return false;
             return true;
         },
@@ -272,7 +274,9 @@ export default {
             if (this.estimate.f_status == "A" && this.estimate.f_editold == "0" && this.estimate.f_edit !== "1") return false;            
             return true;
         },
-        editDetail() {
+        editDetail() {            
+            return true;
+
             if (!this.edit) return false;
             if (this.itmelit.i_serno == undefined) return false;            
             return true;
@@ -586,15 +590,22 @@ export default {
         async delDetail() {              
             if (!this.editDetail) return;            
 
-            const idx = this.itmelits.indexOf(this.itmelit);
+            let idx = -1;
+            idx = this.itmelits.indexOf(this.itmelit);
+            if (idx < 0) {
+                idx = this.itmelits.findIndex((item) => item.i_serno === this.itmelit.i_serno)
+            }
             if (idx > -1) {
                 if (this.itmelits[idx].f_editold == "0") {
                     this.itmelits[idx].f_edit = this.itmelits[idx].f_edit === "2" ? "0": "2";
+                    const idx1 = this.itmelitFilter.findIndex((item) => item.i_serno === this.itmelit.i_serno)
+                     this.itmelitFilter[idx1].f_edit = this.itmelitFilter[idx1].f_edit === "2" ? "0": "2";
                 } else {
                     this.itmelits.splice(idx, 1)
                     const idx1 = this.itmelitFilter.indexOf(this.itmelit)
                     if (idx1 > -1) this.itmelitFilter.splice(idx1, 1);
                 }
+            
             }
         },
 
@@ -666,6 +677,8 @@ export default {
         },
         onChangeMasterDate() {
             const idx = this.estimates.indexOf(this.estimate);
+
+
             if (idx > -1) this.estimates[idx].f_edit = '1';
             this.itmelitFilter.forEach((row) => {
                 if (row.s_duedate < this.estimate.s_date3 || row.s_duedate == null ) {
@@ -683,9 +696,18 @@ export default {
             });
         },
         onChangeDetail() {            
-            const idx = this.itmelits.indexOf(this.itmelit);
+            let idx = -1;
+            idx = this.itmelits.indexOf(this.itmelit);
+            if (idx < 0) {
+                idx = this.itmelits.findIndex((item) => item.i_serno === this.itmelit.i_serno)                
+            }
             if (idx > -1) {
-                this.itmelits[idx].f_edit = '1';                
+                this.itmelits[idx].f_edit = '1';
+            };
+
+            idx = this.itmelitFilter.findIndex((item) => item.i_serno === this.itmelit.i_serno);
+            if (idx > -1) {
+                this.itmelitFilter[idx].f_edit = '1';
             };
             
         },
