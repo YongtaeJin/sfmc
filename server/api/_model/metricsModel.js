@@ -154,7 +154,9 @@ const metricsModel = {
                     `                            GROUP BY c_com, i_order, i_orderser, c_item, i_ser) b \n` +
                     `                        ON a.c_com = b.c_com AND a.i_order = b.i_order AND a.i_orderser = b.i_orderser AND a.c_item = b.c_item AND a.i_ser = b.i_ser \n` +
                     `        LEFT OUTER JOIN tb_process c1 ON a.c_com = c1.c_com AND a.c_process = c1.c_process \n` +
-                    `    WHERE a.c_com = ? \n`;
+                    `    WHERE a.c_com = ? \n` +
+                    `      AND EXISTS (SELECT * FROM tb_orderli t WHERE a.c_com = t.c_com AND a.i_order = t.i_order AND a.i_orderser = t.i_orderser) \n` ;
+
         if (sDate1.length > 0 && sDate2.length > 0 ) {
             query += `    AND a.s_date1 BETWEEN ? and ? \n `;  
             values.push(sDate1);
@@ -169,7 +171,7 @@ const metricsModel = {
         query +=    `    GROUP BY a.c_com, a.c_process \n`;
         query +=    `    ORDER BY a.c_com, MAX(c1.s_sort)`;
 
-        
+        // console.log("query : ", query)
         const [rows] = await db.execute(query, values);   
         return rows;
     },
