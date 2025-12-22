@@ -37,7 +37,7 @@ export function createRouter() {
 				c_com: store.state.user.member.c_com,
 				i_id: store.state.user.member.i_id,
 				n_name: store.state.user.member.n_name,
-				i_level: store.state.user.member.i_level,
+				i_level: store.state.user.member.i_level,				
 				to_name: to.name,
 				to_path: to.path,
 				from_name: from.name,

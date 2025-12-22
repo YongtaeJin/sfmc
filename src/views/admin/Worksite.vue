@@ -78,6 +78,7 @@ export default {
                 t_worksign: "",
                 t_remark: "",
                 f_del:"",
+                f_dashboard: "N",
             },
             isLoad: false,
         };

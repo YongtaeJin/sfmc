@@ -8,7 +8,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-	SET_MEMBER(state, member) {
+	SET_MEMBER(state, member) {		
 		state.member = member;
 	},
 	SET_TOKEN(state, token) {

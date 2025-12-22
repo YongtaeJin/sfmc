@@ -52,12 +52,14 @@
              <v-responsive width="60px">
                 <v-text-field label="사업자번호" v-model="form.i_company" />
             </v-responsive>
-            <v-spacer />
+            <v-spacer /> 
             <v-text-field label="KPI 인증키" v-model="form.i_kpikey">
             </v-text-field>            
         </v-row>
         <v-row no-gutters>
-            <v-responsive width="130px"></v-responsive>
+            <v-responsive width="60px">
+                <v-text-field label="대시보드" v-model="form.f_dashboard" />
+            </v-responsive>
             <v-spacer />
             <v-text-field label="KPI 인증키 등록 회사명" v-model="form.n_kpiconm" readonly color="red">
                 <template v-slot:append> <v-btn @click="kpichk" small icon ><v-icon>mdi-check</v-icon></v-btn> </template>
@@ -126,6 +128,7 @@ export default {
                 t_worksign: "",
                 t_remark: "",
                 f_del: "",
+                f_dashboard: "N",
             },
             isNew : false,            
         };
@@ -171,6 +174,8 @@ export default {
                     t_monitor: "",
                     t_remark: "",
                     f_del: "",
+                    f_dashboard: "N",
+
                 },
                 this.isNew = true;
             }

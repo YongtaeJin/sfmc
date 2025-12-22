@@ -172,10 +172,19 @@ const memberModel = {
 			sql.values.push(c_com); sql.values.push(c_com); sql.values.push(i_id);
 		}
 		const [[row]] = await db.execute(sql.query, sql.values);
+
+		if (row) {			
+			const select = `SELECT f_dashboard FROM tb_worksite WHERE c_com =  ? `;
+			const [[rv]] = await db.execute(select, [form.c_com]);
+			if (!rv) {
+				row.f_dashboard = 'Y';
+			} else {			
+				row.f_dashboard = rv.f_dashboard
+			}
+		}
 		if (!row) {						
 			throw new Error('존재하지 않는 회원입니다.');			
 		}
-
 		
 		return clearMemberField(row);
 	},
