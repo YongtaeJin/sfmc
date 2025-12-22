@@ -22,7 +22,7 @@
     <v-tabs-items v-model="tab">
       <v-tab-item v-if="member.f_dashboard === 'Y'">
         <v-row>
-          <v-col><line-chart :labels="['1월', '2월', '3월']" :values="[120, 90, 150]"/></v-col>
+          <v-col><line-chart /></v-col>
         </v-row>
         <v-row>
           <v-col>좌</v-col>
