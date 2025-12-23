@@ -1,11 +1,12 @@
 <template>
-  <div style="height:300px">
+  <div style="height:220px">
     <canvas ref="chart"></canvas>
   </div>
 </template>
 
 <script>
 import Chart from 'chart.js/auto'   // v3+
+import {getYYYYmmdd} from '../../../util/lib';
 const MONTH_KEYS = ['M01','M02','M03','M04','M05','M06','M07','M08','M09','M10','M11','M12',];
 const MONTHA_KEYS = ['A01','A02','A03','A04','A05','A06','A07','A08','A09','A10','A11','A12',];
 
@@ -47,9 +48,13 @@ export default {
   },
   methods: {    
     async drawChart() {
-      const ctx = this.$refs.chart.getContext('2d')
-      const res = await this.$axios.post(`/api/maindashboard/getLineChart`);
-      if (res) {
+      const yy = getYYYYmmdd().substring(0, 4);
+      
+      const ctx = this.$refs.chart.getContext('2d');
+      const res = await this.$axios.post(`/api/maindashboard/getLineChart`, {today: yy});
+      console.log(res.length)
+
+      if (res.length) {
         this.data.datasets[0].data = this.mapMonthlyData(res[0]);
         this.data.datasets[1].data = this.mapMonthlyAData(res[0]);;
       } else {
@@ -67,6 +72,9 @@ export default {
             y: { beginAtZero: true },
           },
           plugins: {
+            title: { display: true, text:`${yy}년 매출액`, 
+                     font: {size: 24, weight: 'bold', family: 'Arial'},
+                   },
             datalabels: { display: false }, // ✅ 이 차트에서는 표시 안 함
           },
         },

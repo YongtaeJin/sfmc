@@ -61,5 +61,5 @@ module.exports = {
 		historyApiFallback: true,		
 	},
 	configureWebpack: process.env.VUE_ENV === 'server' ? serverConfig : cilentConfig,
-	transpileDependencies: ['vue-chartjs', 'chart.js']
+	transpileDependencies: ['vue-chartjs', 'chart.js', ]
 }

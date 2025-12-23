@@ -67,6 +67,13 @@ const lib = {
 		const day = String(now.getDate()).padStart(2, '0');		
 		return year + month + day;
 	},
+	getDay() {
+		const now = new Date(Date.now());
+		const year = now.getFullYear();		
+		const month = String(now.getMonth() + 1).padStart(2, '0');
+		const day = String(now.getDate()).padStart(2, '0');		
+		return year + '-' + month + '-' + day;
+	},
 	getHHmm() {
 		const now = new Date(Date.now());
 		const hours = now.getHours().toString().padStart(2, '0');
@@ -122,6 +129,23 @@ const lib = {
 	},
 	amtToKorean(amount) {
 		return amount.toLocaleString('ko-KR');
+	},
+
+	dateToKorean (dateStr) {
+  		// 정규식으로 연, 월, 일을 추출
+  		const match = dateStr.match(/^(\d{4})[-./]?(\d{2})[-./]?(\d{2})$/);
+  		if (!match) return dateStr;
+  		const [, year, month, day] = match;
+  		// 앞의 "0"을 제거하여 자연스러운 출력
+  		return `${Number(year)}년 ${Number(month)}월 ${Number(day)}일`;
+	},
+	dateToKoreanYM (dateStr) {
+  		// 정규식으로 연, 월, 일을 추출
+  		const match = dateStr.match(/^(\d{4})[-./]?(\d{2})[-./]?(\d{2})$/);
+  		if (!match) return dateStr;
+  		const [, year, month, day] = match;
+  		// 앞의 "0"을 제거하여 자연스러운 출력
+  		return `${Number(year)}년 ${Number(month)}월`;
 	},
 
 	addToUniqueArray(array, value) {

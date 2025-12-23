@@ -48,7 +48,7 @@ const prodModel = {
         }
         where += ` order by a.i_order, b.s_sort, b.i_orderser `;
         
-        console.log(where, values);            
+        console.log("getProdPlanlist : ", where, values);            
         const [rows] = await db.execute(where, values);        
         
         rows.forEach((row) => {
@@ -280,7 +280,7 @@ const prodModel = {
         values.push(c_com);  
         values.push(i_order);
         values.push(i_orderser);
-        console.log(query);
+        console.log("getProdWorkProcess : ", query);
         const [rows] = await db.execute(query, values); 
         return rows; 
     },
@@ -465,7 +465,7 @@ const prodModel = {
         }
         query += ` GROUP BY a.c_com,  b.c_item \n` ;
         query += ` ORDER BY (SELECT t.s_sort FROM tb_item t WHERE t.c_com = b.c_com AND t.c_item = b.c_item) \n` ;
-        console.log(query)
+        // console.log("----", query)
         const [rows] = await db.execute(query, values);         
         return rows;        
     },

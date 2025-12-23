@@ -25,11 +25,11 @@
           <v-col><line-chart /></v-col>
         </v-row>
         <v-row>
-          <v-col>좌</v-col>
-          <v-col>우</v-col>
+          <v-col><pie-chart1 /></v-col>
+          <v-col><pie-chart2 /></v-col>
         </v-row>
         <v-row>
-          <v-col>하단</v-col>
+          <v-col><data-table-box /></v-col>
         </v-row>
       </v-tab-item>
       <v-tab-item>        
@@ -49,11 +49,16 @@ import qs from "qs";
 import { mapState } from "vuex";
 import SiteTitle from '../components/layout/SiteTitle.vue';
 import LineChart from "../components/dashboard/LineChart.vue";
+import PieChart1 from "../components/dashboard/PieChart1.vue";
+import PieChart2 from "../components/dashboard/PieChart2.vue";
+import DataTableBox from "../components/dashboard/DataTableBox.vue";
 import { deepCopy } from '../../util/lib';
 
 
+
+
 export default {
-  components: { SiteTitle, LineChart  },
+  components: { SiteTitle, LineChart, PieChart1, PieChart2, DataTableBox  },
   
   name: "Home",
 	data() {
@@ -78,7 +83,8 @@ export default {
       this.init();
     } else {      
     }
-    this.tab = this.$store.state.user.member.f_dashboard === 'Y' ? 0 : 1;
+    
+    this.tab = this.$store.state.user.member && this.$store.state.user.member.f_dashboard === 'Y' ? 0 : 1;
   },
 
 	

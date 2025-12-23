@@ -171,7 +171,7 @@ const metricsModel = {
         query +=    `    GROUP BY a.c_com, a.c_process \n`;
         query +=    `    ORDER BY a.c_com, MAX(c1.s_sort)`;
 
-        // console.log("query : ", query)
+         console.log("query : ", query)
         const [rows] = await db.execute(query, values);   
         return rows;
     },
